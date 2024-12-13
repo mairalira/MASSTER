@@ -94,20 +94,61 @@ def generate_data():
     Y[:, 2] = X[:, 1] * 5.0 - X[:, 4] * 2.0  # Target 3
 
     return train_test_split(X, Y, test_size=0.25, random_state=42)
-
 if __name__ == "__main__":
     X_train, X_test, Y_train, Y_test = generate_data()
 
-    pct = PredictiveClusteringTree(max_depth=5, min_samples_split=10)
-    pct.fit(X_train, Y_train)
+    # Simular dados incompletos no conjunto de treinamento
+    missing_mask = np.random.rand(*Y_train.shape) < 0.2  # 20% dos valores ausentes
+    Y_train_missing = Y_train.copy()
+    Y_train_missing[missing_mask] = np.nan
 
-    Y_pred = pct.predict(X_test)
+    # Filtrar apenas as linhas com todos os valores não nulos em Y_train
+    not_missing_mask = ~np.isnan(Y_train_missing).any(axis=1)
+    X_train_not_missing = X_train[not_missing_mask]
+    Y_train_not_missing = Y_train_missing[not_missing_mask]
 
-    # Evaluate performance
-    scores = []
-    for i in range(Y_test.shape[1]):
-        score = explained_variance_score(Y_test[:, i], Y_pred[:, i])
-        scores.append(score)
-        print(f"Explained variance for Target {i+1}: {score:.3f}")
+    # Treinar o modelo com os dados originais e rótulos completos
+    pct_original = PredictiveClusteringTree(max_depth=5, min_samples_split=10)
+    pct_original.fit(X_train_not_missing, Y_train_not_missing)
+    Y_pred_original = pct_original.predict(X_test)
 
-    print(f"Average explained variance: {np.mean(scores):.3f}")
+    # Avaliar desempenho antes da classificação semi-supervisionada
+    scores_original = [
+        explained_variance_score(Y_test[:, i], Y_pred_original[:, i])
+        for i in range(Y_test.shape[1])
+    ]
+    print("Desempenho antes da classificação semi-supervisionada:")
+    for i, score in enumerate(scores_original):
+        print(f"Explained variance para Target {i+1}: {score:.3f}")
+
+    # Simular uma classificação semi-supervisionada preenchendo valores ausentes
+    Y_train_filled = Y_train_missing.copy()
+    for i in range(Y_train_filled.shape[1]):
+        nan_mask = np.isnan(Y_train_filled[:, i])
+        Y_train_filled[nan_mask, i] = np.nanmean(Y_train_missing[:, i])
+
+    # Treinar o modelo com os dados refinados
+    pct_refined = PredictiveClusteringTree(max_depth=5, min_samples_split=10)
+    pct_refined.fit(X_train, Y_train_filled)
+    Y_pred_refined = pct_refined.predict(X_test)
+
+    # Avaliar desempenho após a classificação semi-supervisionada
+    scores_refined = [
+        explained_variance_score(Y_test[:, i], Y_pred_refined[:, i])
+        for i in range(Y_test.shape[1])
+    ]
+    print("\nDesempenho após a classificação semi-supervisionada:")
+    for i, score in enumerate(scores_refined):
+        print(f"Explained variance para Target {i+1}: {score:.3f}")
+
+    # Comparar os resultados
+    print("\nComparação geral:")
+    for i in range(len(scores_original)):
+        print(
+            f"Target {i+1}: Antes={scores_original[i]:.3f}, "
+            f"Depois={scores_refined[i]:.3f}, "
+            f"Delta={(scores_refined[i] - scores_original[i]):.3f}"
+        )
+
+    print(f"Média explicada antes: {np.mean(scores_original):.3f}")
+    print(f"Média explicada depois: {np.mean(scores_refined):.3f}")
