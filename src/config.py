@@ -1,5 +1,7 @@
 from pathlib import Path
 from numpy.random import RandomState
+import logging
+import os
 
 # Project-specific root directory path (for reusability)
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -8,9 +10,24 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 
 # Define variables to run data-preprocessing
-DATASET_NAME = 'edm'
+DATASET_NAME = 'andro'
+K_FOLDS = 10
 TRAIN_SIZE = 0.1
 POOL_SIZE = 0.7
 TEST_SIZE = 0.2
 DATA_PATH = DATA_DIR / 'raw' / f'{DATASET_NAME}.csv'
 RANDOM_STATE = RandomState(seed=42)
+
+# Define log structure
+LOG_DIR = PROJECT_ROOT / "reports"
+os.makedirs(LOG_DIR, exist_ok = True)
+LOG_FILE = LOG_DIR / 'output_log.log'
+
+logging.basicConfig(
+    level=logging.INFO,  # Set the log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',  # Log message format
+    handlers=[
+        logging.FileHandler(LOG_FILE),  # Log to a file
+        logging.StreamHandler()  # Log to the console
+    ]
+)
