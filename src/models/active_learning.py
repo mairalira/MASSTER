@@ -65,8 +65,7 @@ class activelearning:
                 targets_collected[i].append(target[i])
         return targets_collected
 
-    # NEW: introduction of selected_targets
-    def instances_transfer(self, X_train, X_pool, y_train, y_pool, indices, method, selected_targets=None):
+    def instances_transfer(self, X_train, X_pool, y_train, y_pool, indices, method):
     # transfer data instances from the unlabelled pool to the training dataset
         instances_epoch = list()
         targets_epoch = list()
@@ -74,16 +73,12 @@ class activelearning:
         for index in indices:
             instance = X_pool[index]
             target = y_pool[index]
-            # Transfer only the selected targets
-            if selected_targets is not None:
-                transferred_targets = [target[i] for i in selected_targets]
-            else:
-                transferred_targets = target  # Default to all targets
+            
             instances_epoch.append(instance)
-            targets_epoch.append(transferred_targets)
+            targets_epoch.append(target)
 
             X_train.append(instance)
-            y_train.append(transferred_targets)
+            y_train.append(target)
             X_pool.pop(index)
             y_pool.pop(index)
 

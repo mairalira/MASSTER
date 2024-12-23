@@ -79,38 +79,16 @@ class instancebased(activelearning):
             # sum the variances for the instance based approach
             summed_variances = [sum(values) for values in variances]
             maxima, indices = self.max_var(summed_variances) 
-            print("     Maxima:")
-            print(maxima)
-            print("     Indices:")
-            print(indices) 
 
-            # NEW: selected_targets intro
-            # Retrieve targets corresponding to each selected index with the highest variance
-            selected_targets_for_epoch = [y_pool[idx] for idx in indices]
-            # Print and store the selected targets for the current epoch
-            print("     Selected targets with the highest variance:")
-            for target in selected_targets_for_epoch:
-                print(target)
+            instances_transfer, targets_transfer = self.instances_transfer(X_train, X_pool, y_train, y_pool, indices, "qbc")
+            #print("     Instances transfer:")
+            #print(instances_transfer)
+            #print("     Targets transfer:")
+            #print(targets_transfer)
 
-            # Add the selected targets of this epoch to the overall list
-            selected_targets.append(selected_targets_for_epoch)
-
-            print("     Selected targets for transfer:", selected_targets)
-
-            # TODO: include selected_targets on instances_transfer
-            instances_transfer, targets_transfer = self.instances_transfer(X_train, X_pool, y_train, y_pool, indices, "qbc", selected_targets)
-            print("     Instances transfer:")
-            print(instances_transfer)
-            print("     Targets transfer:")
-            print(targets_transfer)
-
-            for inst, tgt in zip(instances_transfer, targets_transfer):
-                instances_pool_qbc.append(inst)
-                targets_pool_qbc.append(tgt)
-
-            #for i in range(len(instances_transfer)):
-            #    instances_pool_qbc.append(instances_transfer[i])
-            #    targets_pool_qbc.append(targets_transfer[i])
+            for i in range(len(instances_transfer)):
+                instances_pool_qbc.append(instances_transfer[i])
+                targets_pool_qbc.append(targets_transfer[i])
 
         r2_auc, mse_auc, mae_auc = np.round(auc(self.epochs, R2[0,:-1]), 4), np.round(auc(self.epochs, MSE[0,:-1]), 4), np.round(auc(self.epochs, MAE[0,:-1]), 4) 
         R2[:,-1] = (r2_auc)
