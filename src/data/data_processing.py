@@ -64,9 +64,7 @@ class DataProcessor():
 
         return
     
-
 if __name__ == '__main__':
     data_module = DataProcessor()
     df, target_fts_length = data_module.fetch_features()
     data_module.split_datasets(df)
-

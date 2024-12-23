@@ -10,13 +10,17 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 
 # Define variables to run data-preprocessing
-DATASET_NAME = 'atp7d'
+DATASET_NAME = 'sf1'
 K_FOLDS = 10
 TRAIN_SIZE = 0.1
 POOL_SIZE = 0.7
 TEST_SIZE = 0.2
 DATA_PATH = DATA_DIR / 'raw' / f'{DATASET_NAME}.csv'
 RANDOM_STATE = RandomState(seed=42)
+N_EPOCHS = 15   
+BATCH_PERCENTAGE = 5
+N_TREES = 100
+ITERATIONS = 10
 
 # Define log structure
 LOG_DIR = PROJECT_ROOT / "reports"
