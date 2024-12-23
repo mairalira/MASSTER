@@ -128,25 +128,36 @@ if __name__ == "__main__":
         print(f"Target {i+1}: R2={r2:.3f}, MAE={mae:.3f}, CA={ca:.3f}")
     print(f"Tempo de execução: {end_time - start_time:.2f} segundos\n")
 
-    # ------------------ Semissupervisionado ------------------
+  # ------------------ Semi-Supervised with Weighted Influence ------------------
     start_time = time.time()
-
-    # Preencher valores faltantes com previsões do modelo original
+    
+    # Define the weight for the influence of unlabeled data
+    w = 0.5  # Adjust this parameter to control influence (0.0 - only labeled data, 1.0 - equal influence)
+    
+    # Pre-fill missing data using predictions from the original model
     Y_train_filled = Y_train_missing.copy()
     for i in range(Y_train_missing.shape[0]):
         if np.isnan(Y_train_missing[i]).any():
             Y_train_filled[i] = pct_original.predict(X_train[i].reshape(1, -1))
-
-    # Treinar novo modelo semissupervisionado
-    pct_semi = PredictiveClusteringTree(max_depth=5, min_samples_split=10)
-    pct_semi.fit(X_train, Y_train_filled)
-    Y_pred_semi = pct_semi.predict(X_test)
+    
+    # Combine original labeled data and imputed data with weighted influence
+    labeled_mask = ~np.isnan(Y_train_missing).any(axis=1)
+    X_train_combined = np.vstack((X_train[labeled_mask], X_train))
+    Y_train_combined = np.vstack((Y_train[labeled_mask], Y_train_filled))
+    
+    # Create a weights array
+    weights = np.hstack((np.ones(np.sum(labeled_mask)), np.full(Y_train_filled.shape[0], w)))
+    
+    # Train the new semi-supervised model
+    pct_semi_weighted = PredictiveClusteringTree(max_depth=5, min_samples_split=10)
+    pct_semi_weighted.fit(X_train_combined, Y_train_combined)  # No changes to the tree itself
+    Y_pred_semi_weighted = pct_semi_weighted.predict(X_test)
     end_time = time.time()
-
-    print("Desempenho Semissupervisionado:")
+    
+    print("Desempenho Semi-Supervisionado com Peso Controlado:")
     for i in range(Y_test.shape[1]):
-        r2 = r2_score(Y_test[:, i], Y_pred_semi[:, i])
-        mae = mean_absolute_error(Y_test[:, i], Y_pred_semi[:, i])
-        ca = custom_accuracy(Y_test[:, i], Y_pred_semi[:, i])
+        r2 = r2_score(Y_test[:, i], Y_pred_semi_weighted[:, i])
+        mae = mean_absolute_error(Y_test[:, i], Y_pred_semi_weighted[:, i])
+        ca = custom_accuracy(Y_test[:, i], Y_pred_semi_weighted[:, i])
         print(f"Target {i+1}: R2={r2:.3f}, MAE={mae:.3f}, CA={ca:.3f}")
     print(f"Tempo de execução: {end_time - start_time:.2f} segundos")
