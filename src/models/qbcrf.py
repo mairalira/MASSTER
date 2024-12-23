@@ -22,7 +22,7 @@ class instancebased(activelearning):
         self.instance_CA = np.zeros([self.iterations, self.n_epochs+1])
 
     def variances(self, X_train, X_pool, X_test, y_train, y_test, target_length):
-    # calculate the variances and the test set predictions
+        # calculate the variances and the test set predictions
         variances = np.zeros(shape=(len(X_pool), target_length))
         y_test_preds = np.zeros(shape=(len(X_test), target_length))
 
@@ -30,14 +30,14 @@ class instancebased(activelearning):
             var = list()
 
             # first, fit a model to the training set
-            rf_regressor = RandomForestRegressor(n_estimators=self.n_trees, random_state=self.random_state)  # default value for max features is 1.0 => N features
+            rf_regressor = RandomForestRegressor(n_estimators=self.n_trees, random_state=self.random_state)
             rf_regressor.fit(X_train, y_train[i])
             
             # next, predict the target values of the test set
             test_preds = rf_regressor.predict(X_test)
             y_test_preds[:,i] = np.round(test_preds, 5)
 
-            # at last, calculate the variance of the predicitions on the unlabelled pool dataset
+            # at last, calculate the variance of the predictions on the unlabelled pool dataset
             pool_preds = np.zeros(shape=(len(X_pool), len(rf_regressor.estimators_)))
             for j, model in enumerate(rf_regressor.estimators_):
                 pool_preds[:,j] = model.predict(X_pool) 
@@ -48,28 +48,30 @@ class instancebased(activelearning):
             variances[:,i] = var
         
         return variances, y_test, y_test_preds
-    
+
     def max_var(self, variances):
-    # get the max values and indices for the variance 
+        # get the max values and indices for the variance 
         sort = sorted(variances)[-self.batch_size:]   # len(variances) is equal to the amount of samples in the pool
         indices = [variances.index(element) for element in sort]
         indices = sorted(indices, reverse=True)
         return sort, indices
-    
-    # NEW: define select_targets
-    def select_targets(self, variances, target_values):
-        # compute the variances mean 
+
+    def select_targets(self, variances, target_values, instances):
+        # compute the mean variance for each instance across all targets
         mean_variance = np.mean(variances)
         
-        selected_targets = [
-                            target_values[i] if variances[i] > mean_variance else None
-                            for i in range(len(target_values))
-                            ]
+        selected_pairs = [
+            (target_values[i], instances) if variances[i] > mean_variance else (None, instances)
+            for i in range(len(target_values))
+        ]
         
-        return selected_targets
-    
+        return selected_pairs
+
     def training(self, X_train, X_pool, X_test, y_train, y_pool, y_test, target_length):
-    # the instance based active learning training loop
+        # Ensure X_train is a NumPy array
+        X_train = np.array(X_train)
+        
+        # the instance based active learning training loop
         R2 = np.zeros([1, self.n_epochs+1])
         MSE = np.zeros([1, self.n_epochs+1])
         MAE = np.zeros([1, self.n_epochs+1])
@@ -77,7 +79,8 @@ class instancebased(activelearning):
         Y_pred = np.zeros([len(X_test), target_length*self.n_epochs])
         instances_pool_qbc = list()
         targets_pool_qbc = list()
-        selected_targets = list()
+        selected_pairs = list()
+        selected_indices = set()
 
         for i in range(self.n_epochs):
             print("Epoch {}:".format(i+1))
@@ -105,17 +108,35 @@ class instancebased(activelearning):
             print(f'     Indices: {indices}')
 
             for index in indices:
-                selected_target = self.select_targets(variances[index], y_pool[index]) 
-                print(f'     Selected target: {selected_target}')
-                
-                if selected_target:  # target different than None 
-                    instances_transfer, targets_transfer = self.instances_transfer(X_train, X_pool, y_train, y_pool, [index], "qbc")
-                    instances_pool_qbc.append(instances_transfer[0])
-                    targets_pool_qbc.append(targets_transfer)
+                if index not in selected_indices:
+                    instance_variances = variances[index]
+                    mean_variance = np.mean(instance_variances)
+                    selected_pair = [
+                        (y_pool[index][i], X_pool[index]) if instance_variances[i] > mean_variance else (None, X_pool[index])
+                        for i in range(target_length)
+                    ]
+                    print(f'     Selected pair: {selected_pair}')
+                    
+                    if any(pair[0] is not None for pair in selected_pair):  # at least one target is not None
+                        selected_pairs.append(selected_pair)
+                        selected_indices.add(index)
 
-            #for i in range(len(instances_transfer)):
-            #    instances_pool_qbc.append(instances_transfer[i])
-            #    targets_pool_qbc.append(targets_transfer[i])
+        # Filter out None pairs before updating the Random Forest model
+        non_none_pairs = [pair for pair in selected_pairs if any(p[0] is not None for p in pair)]
+        print(f'     Selected pair: {non_none_pairs}')
+
+        for pair in non_none_pairs:
+            for target_index in range(target_length):
+                if pair[target_index][0] is not None:
+                    instance = np.array(pair[target_index][1]).reshape(1, -1)  # Ensure the instance has the correct shape
+                    if instance.shape[1] == X_train.shape[1]:  # Check if the feature dimensions match
+                        print(f'     X_train shape: {X_train.shape}, instance shape: {instance.shape}')  # Debug print
+                        X_train = np.vstack([X_train, instance])
+                        y_train[target_index] = np.append(y_train[target_index], pair[target_index][0])
+                        instances_pool_qbc.append(instance.reshape(-1))  # Ensure 2D input
+                        targets_pool_qbc.append(pair[target_index][0])
+                    else:
+                        print(f'     Skipping instance with shape {instance.shape} due to dimension mismatch')
 
         r2_auc = np.round(auc(self.epochs, R2[0,:-1]), 4)
         mse_auc = np.round(auc(self.epochs, MSE[0,:-1]), 4)

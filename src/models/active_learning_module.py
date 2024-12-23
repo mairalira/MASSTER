@@ -15,7 +15,7 @@ from pathlib import Path
 
 # Absolute path using Path
 project_root = Path(__file__).resolve().parent.parent
-# Adding path to sys.path
+# Adding path to sys.path   
 sys.path.append(str(project_root))
 
 from utils.data_handling import *
