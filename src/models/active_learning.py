@@ -69,18 +69,17 @@ class activelearning:
     # transfer data instances from the unlabelled pool to the training dataset
         instances_epoch = list()
         targets_epoch = list()
-
+        
         for index in indices:
             instance = X_pool[index]
             target = y_pool[index]
-            
-            instances_epoch.append(instance)
-            targets_epoch.append(target)
 
             X_train.append(instance)
             y_train.append(target)
             X_pool.pop(index)
             y_pool.pop(index)
+            instances_epoch.append(instance)
+            targets_epoch.append(target)
 
         instances_epoch.append([])
         targets_epoch.append([])

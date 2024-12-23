@@ -51,6 +51,18 @@ class instancebased(activelearning):
         indices = sorted(indices, reverse=True)
         return sort, indices
     
+    # NEW: define select_targets
+    def select_targets(self, variances, target_values):
+        # compute the variances mean 
+        mean_variance = np.mean(variances)
+        
+        selected_targets = [
+                            target_values[i] if variances[i] > mean_variance else None
+                            for i in range(len(target_values))
+                            ]
+        
+        return selected_targets
+    
     def training(self, X_train, X_pool, X_test, y_train, y_pool, y_test, target_length):
     # the instance based active learning training loop
         R2 = np.zeros([1, self.n_epochs+1])
@@ -69,6 +81,7 @@ class instancebased(activelearning):
             y_train_coll = self.target_collect(y_train, target_length)
             variances, y_test, y_test_preds = self.variances(X_train, X_pool, X_test, y_train_coll, y_test, target_length)
             Y_pred[:,(i*target_length):((i+1)*target_length)] = y_test_preds
+
             r2, mse, mae = (np.round(r2_score(np.asarray(y_test), y_test_preds), 4)), \
                             (np.round(mean_squared_error(np.asarray(y_test), y_test_preds), 4)), \
                             (np.round(mean_absolute_error(np.asarray(y_test), y_test_preds), 4))
@@ -79,16 +92,20 @@ class instancebased(activelearning):
             # sum the variances for the instance based approach
             summed_variances = [sum(values) for values in variances]
             maxima, indices = self.max_var(summed_variances) 
+            print(f'     Indices: {indices}')
 
-            instances_transfer, targets_transfer = self.instances_transfer(X_train, X_pool, y_train, y_pool, indices, "qbc")
-            #print("     Instances transfer:")
-            #print(instances_transfer)
-            #print("     Targets transfer:")
-            #print(targets_transfer)
+            for index in indices:
+                selected_target = self.select_targets(variances[index], y_pool[index]) 
+                print(f'     Selected target: {selected_target}')
+                
+                if selected_target:  # target different than None 
+                    instances_transfer, targets_transfer = self.instances_transfer(X_train, X_pool, y_train, y_pool, [index], "qbc")
+                    instances_pool_qbc.append(instances_transfer[0])
+                    targets_pool_qbc.append(selected_target)
 
-            for i in range(len(instances_transfer)):
-                instances_pool_qbc.append(instances_transfer[i])
-                targets_pool_qbc.append(targets_transfer[i])
+            #for i in range(len(instances_transfer)):
+            #    instances_pool_qbc.append(instances_transfer[i])
+            #    targets_pool_qbc.append(targets_transfer[i])
 
         r2_auc, mse_auc, mae_auc = np.round(auc(self.epochs, R2[0,:-1]), 4), np.round(auc(self.epochs, MSE[0,:-1]), 4), np.round(auc(self.epochs, MAE[0,:-1]), 4) 
         R2[:,-1] = (r2_auc)
@@ -97,4 +114,5 @@ class instancebased(activelearning):
 
         cols = ["Target_{}".format(i+1) for epoch in range(self.n_epochs) for i in range(target_length)]
         Y_pred_df = pd.DataFrame(Y_pred, columns=cols)
+
         return R2, MSE, MAE, Y_pred_df, instances_pool_qbc, targets_pool_qbc
