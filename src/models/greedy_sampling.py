@@ -4,6 +4,10 @@ import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error, pairwise_distances_argmin_min, auc
 
+def custom_accuracy(y_true, y_pred, threshold= CA_THRESHOLD):
+    """Custom accuracy: percentage of predictions within a certain threshold."""
+    return np.mean(np.abs(y_true - y_pred) <= threshold)
+
 class baseline(activelearning):
     def __init__(self, batch_size, n_epochs):
         self.batch_size = batch_size
@@ -14,6 +18,7 @@ class baseline(activelearning):
         self.baseline_R2 = np.zeros([self.iterations, self.n_epochs+1])
         self.baseline_MSE = np.zeros([self.iterations, self.n_epochs+1])
         self.baseline_MAE = np.zeros([self.iterations, self.n_epochs+1])
+        self.baseline_CA = np.zeros([self.iterations, self.n_epochs+1])
 
     def distances(self, X_train, X_pool, X_test, y_train, y_test, target_length):
     # here, the instances from the unlabelled pool are chosen based on the distance to the training cluster centroid
@@ -47,6 +52,7 @@ class baseline(activelearning):
         R2 = np.zeros([1, self.n_epochs+1])
         MSE = np.zeros([1, self.n_epochs+1])
         MAE = np.zeros([1, self.n_epochs+1])
+        CA = np.zeros([1, self.n_epochs+1])
         Y_pred = np.zeros([len(X_test), target_length*self.n_epochs])
         instances_pool_baseline = list()
         targets_pool_baseline = list()
@@ -59,10 +65,15 @@ class baseline(activelearning):
             y_train_coll = self.target_collect(y_train, target_length)
             distances, y_test, y_test_preds = self.distances(X_train, X_pool, X_test, y_train_coll, y_test, target_length)
             Y_pred[:,(i*target_length):((i+1)*target_length)] = y_test_preds 
-            r2, mse, mae = (np.round(r2_score(np.asarray(y_test), y_test_preds), 4)), (np.round(mean_squared_error(np.asarray(y_test), y_test_preds), 4)), (np.round(mean_absolute_error(np.asarray(y_test), y_test_preds), 4))
+            r2 = (np.round(r2_score(np.asarray(y_test), y_test_preds), 4))
+            mse = (np.round(mean_squared_error(np.asarray(y_test), y_test_preds), 4))
+            mae = (np.round(mean_absolute_error(np.asarray(y_test), y_test_preds), 4))
+            ca = (np.round(custom_accuracy(np.asarray(y_test), y_test_preds), 4))
+
             R2[:,i] = (r2)
             MSE[:,i] = (mse)
             MAE[:,i] = (mae)
+            CA[:,i] = (ca)
 
             maxima, indices = self.max_dist(distances) 
             instances_transfer, targets_transfer = self.instances_transfer(X_train, X_pool, y_train, y_pool, indices, "baseline")
@@ -70,12 +81,17 @@ class baseline(activelearning):
                 instances_pool_baseline.append(instances_transfer[i])
                 targets_pool_baseline.append(targets_transfer[i])
 
-        r2_auc, mse_auc, mae_auc = np.round(auc(self.epochs, R2[0,:-1]), 4), np.round(auc(self.epochs, MSE[0,:-1]), 4), np.round(auc(self.epochs, MAE[0,:-1]), 4) 
+        r2_auc = np.round(auc(self.epochs, R2[0,:-1]), 4)
+        mse_auc = np.round(auc(self.epochs, MSE[0,:-1]), 4)
+        mae_auc = np.round(auc(self.epochs, MAE[0,:-1]), 4) 
+        ca_auc = np.round(auc(self.epochs, CA[0,:-1]), 4) 
+
         R2[:,-1] = (r2_auc)
         MSE[:,-1] = (mse_auc)
         MAE[:,-1] = (mae_auc)
+        CA[:,-1] = (ca_auc)
 
         cols = ["Target_{}".format(i+1) for epoch in range(self.n_epochs) for i in range(target_length)]
         Y_pred_df = pd.DataFrame(Y_pred, columns=cols)
 
-        return R2, MSE, MAE, Y_pred_df, instances_pool_baseline, targets_pool_baseline
+        return R2, MSE, MAE, CA, Y_pred_df, instances_pool_baseline, targets_pool_baseline

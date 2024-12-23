@@ -5,6 +5,10 @@ from sklearn.ensemble import RandomForestRegressor
 from statistics import variance
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error, auc
 
+def custom_accuracy(y_true, y_pred, threshold= CA_THRESHOLD):
+    """Custom accuracy: percentage of predictions within a certain threshold."""
+    return np.mean(np.abs(y_true - y_pred) <= threshold)
+
 class instancebased(activelearning):
     def __init__(self, batch_size, n_epochs):
         self.batch_size = batch_size
@@ -15,6 +19,7 @@ class instancebased(activelearning):
         self.instance_R2 = np.zeros([self.iterations, self.n_epochs+1])
         self.instance_MSE = np.zeros([self.iterations, self.n_epochs+1])
         self.instance_MAE = np.zeros([self.iterations, self.n_epochs+1])
+        self.instance_CA = np.zeros([self.iterations, self.n_epochs+1])
 
     def variances(self, X_train, X_pool, X_test, y_train, y_test, target_length):
     # calculate the variances and the test set predictions
@@ -68,6 +73,7 @@ class instancebased(activelearning):
         R2 = np.zeros([1, self.n_epochs+1])
         MSE = np.zeros([1, self.n_epochs+1])
         MAE = np.zeros([1, self.n_epochs+1])
+        CA = np.zeros([1, self.n_epochs+1])
         Y_pred = np.zeros([len(X_test), target_length*self.n_epochs])
         instances_pool_qbc = list()
         targets_pool_qbc = list()
@@ -82,16 +88,20 @@ class instancebased(activelearning):
             variances, y_test, y_test_preds = self.variances(X_train, X_pool, X_test, y_train_coll, y_test, target_length)
             Y_pred[:,(i*target_length):((i+1)*target_length)] = y_test_preds
 
-            r2, mse, mae = (np.round(r2_score(np.asarray(y_test), y_test_preds), 4)), \
-                            (np.round(mean_squared_error(np.asarray(y_test), y_test_preds), 4)), \
-                            (np.round(mean_absolute_error(np.asarray(y_test), y_test_preds), 4))
+            r2 = (np.round(r2_score(np.asarray(y_test), y_test_preds), 4))
+            mse = (np.round(mean_squared_error(np.asarray(y_test), y_test_preds), 4))
+            mae = (np.round(mean_absolute_error(np.asarray(y_test), y_test_preds), 4))
+            ca = (np.round(custom_accuracy(np.asarray(y_test), y_test_preds), 4))
+
             R2[:,i] = (r2)
             MSE[:,i] = (mse)
             MAE[:,i] = (mae)
+            CA[:,i] = (ca)
 
             # sum the variances for the instance based approach
             summed_variances = [sum(values) for values in variances]
             maxima, indices = self.max_var(summed_variances) 
+            print(f'     Maxima: {maxima}')
             print(f'     Indices: {indices}')
 
             for index in indices:
@@ -101,18 +111,23 @@ class instancebased(activelearning):
                 if selected_target:  # target different than None 
                     instances_transfer, targets_transfer = self.instances_transfer(X_train, X_pool, y_train, y_pool, [index], "qbc")
                     instances_pool_qbc.append(instances_transfer[0])
-                    targets_pool_qbc.append(selected_target)
+                    targets_pool_qbc.append(targets_transfer)
 
             #for i in range(len(instances_transfer)):
             #    instances_pool_qbc.append(instances_transfer[i])
             #    targets_pool_qbc.append(targets_transfer[i])
 
-        r2_auc, mse_auc, mae_auc = np.round(auc(self.epochs, R2[0,:-1]), 4), np.round(auc(self.epochs, MSE[0,:-1]), 4), np.round(auc(self.epochs, MAE[0,:-1]), 4) 
+        r2_auc = np.round(auc(self.epochs, R2[0,:-1]), 4)
+        mse_auc = np.round(auc(self.epochs, MSE[0,:-1]), 4)
+        mae_auc = np.round(auc(self.epochs, MAE[0,:-1]), 4) 
+        ca_auc = np.round(auc(self.epochs, CA[0,:-1]), 4) 
+
         R2[:,-1] = (r2_auc)
         MSE[:,-1] = (mse_auc)
         MAE[:,-1] = (mae_auc)
+        CA[:,-1] = (ca_auc)
 
         cols = ["Target_{}".format(i+1) for epoch in range(self.n_epochs) for i in range(target_length)]
         Y_pred_df = pd.DataFrame(Y_pred, columns=cols)
 
-        return R2, MSE, MAE, Y_pred_df, instances_pool_qbc, targets_pool_qbc
+        return R2, MSE, MAE, CA, Y_pred_df, instances_pool_qbc, targets_pool_qbc

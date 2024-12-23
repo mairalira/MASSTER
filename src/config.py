@@ -21,6 +21,7 @@ N_EPOCHS = 15
 BATCH_PERCENTAGE = 5
 N_TREES = 100
 ITERATIONS = 10
+CA_THRESHOLD = 0.1
 
 # Define log structure
 LOG_DIR = PROJECT_ROOT / "reports"
