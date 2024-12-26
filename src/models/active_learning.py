@@ -55,11 +55,11 @@ class activelearning:
         return inputs, targets, n_instances, target_length
     
     def target_collect(self, targets, target_length):
-    # collect all the values for specific targets in seperate lists
+        # collect all the values for specific targets in separate lists
         targets_collected = list()
         for j, target in enumerate(targets):
             for i in range(target_length):
-                # only make the seperate lists in the beginning
+                # only make the separate lists in the beginning
                 if j == 0:
                     targets_collected.append(list())
                 targets_collected[i].append(target[i])

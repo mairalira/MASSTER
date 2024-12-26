@@ -24,6 +24,7 @@ from models.instance_based import *
 from models.upperbound import *
 from models.randomsampling import *
 from models.greedy_sampling import *
+from models.qbcrf import *
 
 # Helper function to create directories
 def create_directories(base_path, sub_dirs):
@@ -98,6 +99,7 @@ proposed_method_instance = instancebased(batch_size, n_epochs)
 upperbound_method = upperbound(n_epochs)
 lowerbound_method = lowerbound(batch_size, n_epochs)
 baseline_method = baseline(batch_size, n_epochs)
+qbcrf_method = qbcrf(batch_size, n_epochs)
 
 # make the folders to store the results
 folder_path = Path('reports') / 'active_learning' / f'{dataset}'
@@ -113,10 +115,20 @@ for i in range(Method.iterations):
     X_train_instance, X_pool_instance, y_train_instance, y_pool_instance = X_train.copy(), X_pool.copy(), y_train.copy(), y_pool.copy()
     X_train_random, X_pool_random, y_train_random, y_pool_random = X_train.copy(), X_pool.copy(), y_train.copy(), y_pool.copy()
     X_train_baseline, X_pool_baseline, y_train_baseline, y_pool_baseline = X_train.copy(), X_pool.copy(), y_train.copy(), y_pool.copy()
+    X_train_qbcrf, X_pool_qbcrf, y_train_qbcrf, y_pool_qbcrf = X_train.copy(), X_pool.copy(), y_train.copy(), y_pool.copy()
     
     print("\n" + 50*"-" + f"Iteration {i+1}" + 50*"-" + "\n")
 
-    # QBC-RF    
+    # QBC-RF method
+    print("\n" + 50*"-" + "QBC-RF method" + 50*"-" + "\n")
+    R2, MSE, MAE, CA, Y_pred_df, instances_pool_qbcrf, targets_pool_qbcrf = qbcrf_method.training(X_train_qbcrf, X_pool_qbcrf, X_test, y_train_qbcrf, y_pool_qbcrf, y_test, target_length)
+    qbcrf_method.qbcrf_R2[i,:] = R2
+    qbcrf_method.qbcrf_MSE[i,:] = MSE
+    qbcrf_method.qbcrf_MAE[i,:] = MAE
+    qbcrf_method.qbcrf_CA[i,:] = CA
+    save_predictions_and_transfers(folder_path, 'qbcrf', i, Y_pred_df, instances_pool_qbcrf, targets_pool_qbcrf)
+
+    # Instance based    
     print("\n" + 50*"-" + "Instance based method" + 50*"-" + "\n")
     cols = [f"Target_{i+1}" for epoch in range(n_epochs) for i in range(target_length)]
     R2, MSE, MAE, CA, Y_pred_df, instances_pool_qbc, targets_pool_qbc = proposed_method_instance.training(X_train_instance, X_pool_instance, X_test, y_train_instance, y_pool_instance, y_test, target_length)
@@ -159,26 +171,26 @@ for i in range(Method.iterations):
 
     # Plot the results
     plot_and_save_figures(proposed_method_instance.epochs, 
-                          [proposed_method_instance.instance_R2[i,:-1], upperbound_method.upperbound_R2[i,:-1], lowerbound_method.random_R2[i,:-1], baseline_method.baseline_R2[i,:-1]], 
-                          ['Instance based QBC', 'Upper bound', 'Random sampling', 'Greedy sampling'], 
+                          [proposed_method_instance.instance_R2[i,:-1], upperbound_method.upperbound_R2[i,:-1], lowerbound_method.random_R2[i,:-1], baseline_method.baseline_R2[i,:-1], qbcrf_method.qbcrf_R2[i,:-1]], 
+                          ['Instance based QBC', 'Upper bound', 'Random sampling', 'Greedy sampling', 'QBC-RF'], 
                           f'Instance based QBC method R2 performance for {Method.dataset_name} dataset: iteration {i+1}', 
                           'R2 score', fig_path / 'r2', f'r2_score_{i+1}')
 
     plot_and_save_figures(proposed_method_instance.epochs, 
-                          [proposed_method_instance.instance_MSE[i,:-1], upperbound_method.upperbound_MSE[i,:-1], lowerbound_method.random_MSE[i,:-1], baseline_method.baseline_MSE[i,:-1]], 
-                          ['Instance based QBC', 'Upper bound', 'Random sampling', 'Greedy sampling'], 
+                          [proposed_method_instance.instance_MSE[i,:-1], upperbound_method.upperbound_MSE[i,:-1], lowerbound_method.random_MSE[i,:-1], baseline_method.baseline_MSE[i,:-1], qbcrf_method.qbcrf_MSE[i,:-1]], 
+                          ['Instance based QBC', 'Upper bound', 'Random sampling', 'Greedy sampling', 'QBC-RF'], 
                           f'Instance based QBC method MSE performance for {Method.dataset_name} dataset: iteration {i+1}', 
                           'MSE', fig_path / 'mse', f'mse_{i+1}')
 
     plot_and_save_figures(proposed_method_instance.epochs, 
-                          [proposed_method_instance.instance_MAE[i,:-1], upperbound_method.upperbound_MAE[i,:-1], lowerbound_method.random_MAE[i,:-1], baseline_method.baseline_MAE[i,:-1]], 
-                          ['Instance based QBC', 'Upper bound', 'Random sampling', 'Greedy sampling'], 
+                          [proposed_method_instance.instance_MAE[i,:-1], upperbound_method.upperbound_MAE[i,:-1], lowerbound_method.random_MAE[i,:-1], baseline_method.baseline_MAE[i,:-1], qbcrf_method.qbcrf_MAE[i,:-1]], 
+                          ['Instance based QBC', 'Upper bound', 'Random sampling', 'Greedy sampling', 'QBC-RF'], 
                           f'Instance based QBC method MAE performance for {Method.dataset_name} dataset: iteration {i+1}', 
                           'MAE', fig_path / 'mae', f'mae_{i+1}')
 
     plot_and_save_figures(proposed_method_instance.epochs, 
-                          [proposed_method_instance.instance_CA[i,:-1], upperbound_method.upperbound_CA[i,:-1], lowerbound_method.random_CA[i,:-1], baseline_method.baseline_CA[i,:-1]], 
-                          ['Instance based QBC', 'Upper bound', 'Random sampling', 'Greedy sampling'], 
+                          [proposed_method_instance.instance_CA[i,:-1], upperbound_method.upperbound_CA[i,:-1], lowerbound_method.random_CA[i,:-1], baseline_method.baseline_CA[i,:-1], qbcrf_method.qbcrf_CA[i,:-1]], 
+                          ['Instance based QBC', 'Upper bound', 'Random sampling', 'Greedy sampling', 'QBC-RF'], 
                           f'Instance based QBC method CA performance for {Method.dataset_name} dataset: iteration {i+1}', 
                           'CA', fig_path / 'ca', f'ca_{i+1}')
 
@@ -187,28 +199,29 @@ instance_mean_R2, instance_mean_MSE, instance_mean_MAE, instance_mean_CA = calcu
 upperbound_mean_R2, upperbound_mean_MSE, upperbound_mean_MAE, upperbound_mean_CA = calculate_mean_performances(upperbound_method, 'upperbound')
 random_mean_R2, random_mean_MSE, random_mean_MAE, random_mean_CA = calculate_mean_performances(lowerbound_method, 'random')
 greedy_mean_R2, greedy_mean_MSE, greedy_mean_MAE, greedy_mean_CA = calculate_mean_performances(baseline_method, 'baseline')
+qbcrf_mean_R2, qbcrf_mean_MSE, qbcrf_mean_MAE, qbcrf_mean_CA = calculate_mean_performances(qbcrf_method, 'qbcrf')
 
 plot_and_save_figures(proposed_method_instance.epochs, 
-                      [instance_mean_R2[:-1], upperbound_mean_R2[:-1], random_mean_R2[:-1], greedy_mean_R2[:-1]], 
-                      ['Instance based QBC', 'Upper bound', 'Random sampling', 'Greedy sampling'], 
+                      [instance_mean_R2[:-1], upperbound_mean_R2[:-1], random_mean_R2[:-1], greedy_mean_R2[:-1], qbcrf_mean_R2[:-1]], 
+                      ['Instance based QBC', 'Upper bound', 'Random sampling', 'Greedy sampling', 'QBC-RF'], 
                       f'Instance based QBC method R2 performance for {Method.dataset_name} dataset', 
                       'R2 score', fig_path / 'r2', 'r2_all')
 
 plot_and_save_figures(proposed_method_instance.epochs, 
-                      [instance_mean_MSE[:-1], upperbound_mean_MSE[:-1], random_mean_MSE[:-1], greedy_mean_MSE[:-1]], 
-                      ['Instance based QBC', 'Upper bound', 'Random sampling', 'Greedy sampling'], 
+                      [instance_mean_MSE[:-1], upperbound_mean_MSE[:-1], random_mean_MSE[:-1], greedy_mean_MSE[:-1], qbcrf_mean_MSE[:-1]], 
+                      ['Instance based QBC', 'Upper bound', 'Random sampling', 'Greedy sampling', 'QBC-RF'], 
                       f'Instance based QBC method MSE performance for {Method.dataset_name} dataset', 
                       'MSE', fig_path / 'mse', 'mse_all')
 
 plot_and_save_figures(proposed_method_instance.epochs, 
-                      [instance_mean_MAE[:-1], upperbound_mean_MAE[:-1], random_mean_MAE[:-1], greedy_mean_MAE[:-1]], 
-                      ['Instance based QBC', 'Upper bound', 'Random sampling', 'Greedy sampling'], 
+                      [instance_mean_MAE[:-1], upperbound_mean_MAE[:-1], random_mean_MAE[:-1], greedy_mean_MAE[:-1], qbcrf_mean_MAE[:-1]], 
+                      ['Instance based QBC', 'Upper bound', 'Random sampling', 'Greedy sampling', 'QBC-RF'], 
                       f'Instance based QBC method MAE performance for {Method.dataset_name} dataset', 
                       'MAE', fig_path / 'mae', 'mae_all')
 
 plot_and_save_figures(proposed_method_instance.epochs, 
-                      [instance_mean_CA[:-1], upperbound_mean_CA[:-1], random_mean_CA[:-1], greedy_mean_CA[:-1]], 
-                      ['Instance based QBC', 'Upper bound', 'Random sampling', 'Greedy sampling'], 
+                      [instance_mean_CA[:-1], upperbound_mean_CA[:-1], random_mean_CA[:-1], greedy_mean_CA[:-1], qbcrf_mean_CA[:-1]], 
+                      ['Instance based QBC', 'Upper bound', 'Random sampling', 'Greedy sampling', 'QBC-RF'], 
                       f'Instance based QBC method CA performance for {Method.dataset_name} dataset', 
                       'CA', fig_path / 'ca', 'ca_all')
 
@@ -233,11 +246,17 @@ greedy_total_MSE = append_mean_performances(baseline_method.baseline_MSE, greedy
 greedy_total_MAE = append_mean_performances(baseline_method.baseline_MAE, greedy_mean_MAE)
 greedy_total_CA = append_mean_performances(baseline_method.baseline_CA, greedy_mean_CA)
 
+qbcrf_total_R2 = append_mean_performances(qbcrf_method.qbcrf_R2, qbcrf_mean_R2)
+qbcrf_total_MSE = append_mean_performances(qbcrf_method.qbcrf_MSE, qbcrf_mean_MSE)
+qbcrf_total_MAE = append_mean_performances(qbcrf_method.qbcrf_MAE, qbcrf_mean_MAE)
+qbcrf_total_CA = append_mean_performances(qbcrf_method.qbcrf_CA, qbcrf_mean_CA)
+
 # Save total performances to CSV
 save_total_performances_to_csv(folder_path, 'instance', [instance_total_R2, instance_total_MSE, instance_total_MAE, instance_total_CA], ['r2', 'mse', 'mae', 'ca'])
 save_total_performances_to_csv(folder_path, 'upperbound', [upperbound_total_R2, upperbound_total_MSE, upperbound_total_MAE, upperbound_total_CA], ['r2', 'mse', 'mae', 'ca'])
 save_total_performances_to_csv(folder_path, 'random', [random_total_R2, random_total_MSE, random_total_MAE, random_total_CA], ['r2', 'mse', 'mae', 'ca'])
 save_total_performances_to_csv(folder_path, 'greedy', [greedy_total_R2, greedy_total_MSE, greedy_total_MAE, greedy_total_CA], ['r2', 'mse', 'mae', 'ca'])
+save_total_performances_to_csv(folder_path, 'qbcrf', [qbcrf_total_R2, qbcrf_total_MSE, qbcrf_total_MAE, qbcrf_total_CA], ['r2', 'mse', 'mae', 'ca'])
 
 print("Instance based results:")
 print(instance_total_R2)
@@ -247,3 +266,5 @@ print("Random based results:")
 print(random_total_R2)
 print("Greedy based results:")
 print(greedy_total_R2)
+print("QBC-RF based results:")
+print(qbcrf_total_R2)

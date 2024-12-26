@@ -9,19 +9,22 @@ def custom_accuracy(y_true, y_pred, threshold= CA_THRESHOLD):
     """Custom accuracy: percentage of predictions within a certain threshold."""
     return np.mean(np.abs(y_true - y_pred) <= threshold)
 
-class instancebased(activelearning):
+class qbcrf(activelearning):
     def __init__(self, batch_size, n_epochs):
         self.batch_size = batch_size
         self.n_epochs = n_epochs
         self.epochs = [i for i in range(n_epochs)]
-        self.instances_pool_qbc = list()
-        self.targets_pool_qbc = list()
-        self.instance_R2 = np.zeros([self.iterations, self.n_epochs+1])
-        self.instance_MSE = np.zeros([self.iterations, self.n_epochs+1])
-        self.instance_MAE = np.zeros([self.iterations, self.n_epochs+1])
-        self.instance_CA = np.zeros([self.iterations, self.n_epochs+1])
+        self.instances_pool_qbcrf = list()
+        self.targets_pool_qbcrf = list()
+        self.qbcrf_R2 = np.zeros([self.iterations, self.n_epochs+1])
+        self.qbcrf_MSE = np.zeros([self.iterations, self.n_epochs+1])
+        self.qbcrf_MAE = np.zeros([self.iterations, self.n_epochs+1])
+        self.qbcrf_CA = np.zeros([self.iterations, self.n_epochs+1])
 
     def variances(self, X_train, X_pool, X_test, y_train, y_test, target_length):
+        # Convert y_train to a NumPy array
+        y_train = np.array(y_train)
+
         # calculate the variances and the test set predictions
         variances = np.zeros(shape=(len(X_pool), target_length))
         y_test_preds = np.zeros(shape=(len(X_test), target_length))
@@ -29,9 +32,9 @@ class instancebased(activelearning):
         for i in range(target_length):
             var = list()
 
-            # first, fit a model to the training set
+            # first, fit a model to the training set for the selected target
             rf_regressor = RandomForestRegressor(n_estimators=self.n_trees, random_state=self.random_state)
-            rf_regressor.fit(X_train, y_train[i])
+            rf_regressor.fit(X_train, y_train[:, i])
             
             # next, predict the target values of the test set
             test_preds = rf_regressor.predict(X_test)
@@ -48,95 +51,108 @@ class instancebased(activelearning):
             variances[:,i] = var
         
         return variances, y_test, y_test_preds
-
-    def max_var(self, variances):
-        # get the max values and indices for the variance 
-        sort = sorted(variances)[-self.batch_size:]   # len(variances) is equal to the amount of samples in the pool
-        indices = [variances.index(element) for element in sort]
-        indices = sorted(indices, reverse=True)
-        return sort, indices
-
-    def select_targets(self, variances, target_values, instances):
-        # compute the mean variance for each instance across all targets
-        mean_variance = np.mean(variances)
+    
+    def max_var(self, variances, k):
+        # Flatten the variances array to get pairs of (variance, instance_index, target_index)
+        flattened_variances = [(var, i, j) for i, instance_variances in enumerate(variances) for j, var in enumerate(instance_variances)]
         
-        selected_pairs = [
-            (target_values[i], instances) if variances[i] > mean_variance else (None, instances)
-            for i in range(len(target_values))
-        ]
+        # Sort the flattened variances by variance value in descending order
+        sorted_variances = sorted(flattened_variances, key=lambda x: x[0], reverse=True)
         
-        return selected_pairs
-
+        # Select the top-k variances
+        top_k_variances = sorted_variances[:k]
+        
+        # Extract the instance indices and target indices
+        instance_indices = [item[1] for item in top_k_variances]
+        target_indices = [item[2] for item in top_k_variances]
+        
+        return top_k_variances, instance_indices, target_indices
+    
+    def target_collect(self, targets, target_length):
+        # Collect all the values for specific targets in separate lists
+        targets_collected = [[] for _ in range(target_length)]
+        for target in targets:
+            if isinstance(target, (list, np.ndarray)):
+                for i in range(target_length):
+                    targets_collected[i].append(target[i])
+            else:
+                for i in range(target_length):
+                    targets_collected[i].append(target)
+        return targets_collected
+    
     def training(self, X_train, X_pool, X_test, y_train, y_pool, y_test, target_length):
-        # Ensure X_train is a NumPy array
-        X_train = np.array(X_train)
-        
         # the instance based active learning training loop
         R2 = np.zeros([1, self.n_epochs+1])
         MSE = np.zeros([1, self.n_epochs+1])
         MAE = np.zeros([1, self.n_epochs+1])
         CA = np.zeros([1, self.n_epochs+1])
         Y_pred = np.zeros([len(X_test), target_length*self.n_epochs])
-        instances_pool_qbc = list()
-        targets_pool_qbc = list()
-        selected_pairs = list()
-        selected_indices = set()
+        instances_pool_qbcrf = list()
+        targets_pool_qbcrf = list()
+
+        # Convert X_pool and y_pool to NumPy arrays
+        X_pool = np.array(X_pool)
+        y_pool = np.array(y_pool)
+        original_indices = list(range(len(X_pool)))
 
         for i in range(self.n_epochs):
             print("Epoch {}:".format(i+1))
             print("     The training set size: {}".format(len(X_train)))
             print("     The unlabelled pool size: {}".format(len(X_pool)))
 
+            # Ensure y_train_coll has the same number of samples as X_train
             y_train_coll = self.target_collect(y_train, target_length)
+
+            # Convert y_train_coll to a NumPy array
+            y_train_coll = np.array(y_train_coll).T
+
             variances, y_test, y_test_preds = self.variances(X_train, X_pool, X_test, y_train_coll, y_test, target_length)
             Y_pred[:,(i*target_length):((i+1)*target_length)] = y_test_preds
-
             r2 = (np.round(r2_score(np.asarray(y_test), y_test_preds), 4))
             mse = (np.round(mean_squared_error(np.asarray(y_test), y_test_preds), 4))
             mae = (np.round(mean_absolute_error(np.asarray(y_test), y_test_preds), 4))
             ca = (np.round(custom_accuracy(np.asarray(y_test), y_test_preds), 4))
-
             R2[:,i] = (r2)
             MSE[:,i] = (mse)
             MAE[:,i] = (mae)
             CA[:,i] = (ca)
+            
+            # Select top-k instances with highest variance
+            k = self.batch_size
+            top_k_variances, instance_indices, target_indices = self.max_var(variances, k)
+            
+            # Map instance indices to original indices
+            mapped_indices = [original_indices[idx] for idx in instance_indices]
 
-            # sum the variances for the instance based approach
-            summed_variances = [sum(values) for values in variances]
-            maxima, indices = self.max_var(summed_variances) 
-            print(f'     Maxima: {maxima}')
-            print(f'     Indices: {indices}')
+            # Sort indices in descending order (largest index first)
+            sorted_indices = sorted(zip(mapped_indices, target_indices), key=lambda x: x[0], reverse=True)
 
-            for index in indices:
-                if index not in selected_indices:
-                    instance_variances = variances[index]
-                    mean_variance = np.mean(instance_variances)
-                    selected_pair = [
-                        (y_pool[index][i], X_pool[index]) if instance_variances[i] > mean_variance else (None, X_pool[index])
-                        for i in range(target_length)
-                    ]
-                    print(f'     Selected pair: {selected_pair}')
-                    
-                    if any(pair[0] is not None for pair in selected_pair):  # at least one target is not None
-                        selected_pairs.append(selected_pair)
-                        selected_indices.add(index)
+            # Collect instances and targets to be removed after the epoch
+            instances_to_remove = []
+            targets_to_remove = []
 
-        # Filter out None pairs before updating the Random Forest model
-        non_none_pairs = [pair for pair in selected_pairs if any(p[0] is not None for p in pair)]
-        print(f'     Selected pair: {non_none_pairs}')
+            # Reverse iterate through the sorted indices
+            for idx, target_idx in sorted_indices:
+                
+                # Validate the index against current pool size
+                if idx >= len(X_pool):
+                    print(f"Skipping invalid index: {idx} (current pool size: {len(X_pool)})")
+                    continue
 
-        for pair in non_none_pairs:
-            for target_index in range(target_length):
-                if pair[target_index][0] is not None:
-                    instance = np.array(pair[target_index][1]).reshape(1, -1)  # Ensure the instance has the correct shape
-                    if instance.shape[1] == X_train.shape[1]:  # Check if the feature dimensions match
-                        print(f'     X_train shape: {X_train.shape}, instance shape: {instance.shape}')  # Debug print
-                        X_train = np.vstack([X_train, instance])
-                        y_train[target_index] = np.append(y_train[target_index], pair[target_index][0])
-                        instances_pool_qbc.append(instance.reshape(-1))  # Ensure 2D input
-                        targets_pool_qbc.append(pair[target_index][0])
-                    else:
-                        print(f'     Skipping instance with shape {instance.shape} due to dimension mismatch')
+                # Append the selected instance and target value to respective lists
+                instances_pool_qbcrf.append(X_pool[idx].flatten())
+                targets_pool_qbcrf.append((idx, target_idx, y_pool[idx, target_idx]))
+
+                # Collect the indices for removal
+                instances_to_remove.append(idx)
+                targets_to_remove.append(target_idx)
+
+            # Remove the selected instances and targets from the pool after the epoch
+            X_pool = np.delete(X_pool, instances_to_remove, axis=0)
+            y_pool = np.delete(y_pool, targets_to_remove, axis=0)
+
+            # Update original_indices after removal
+            original_indices = list(range(len(X_pool)))
 
         r2_auc = np.round(auc(self.epochs, R2[0,:-1]), 4)
         mse_auc = np.round(auc(self.epochs, MSE[0,:-1]), 4)
@@ -151,4 +167,15 @@ class instancebased(activelearning):
         cols = ["Target_{}".format(i+1) for epoch in range(self.n_epochs) for i in range(target_length)]
         Y_pred_df = pd.DataFrame(Y_pred, columns=cols)
 
-        return R2, MSE, MAE, CA, Y_pred_df, instances_pool_qbc, targets_pool_qbc
+        # Create a DataFrame to store the transfer targets
+        df = pd.DataFrame(columns=range(target_length))
+
+        # Populate the DataFrame with the transfer targets
+        for instance_idx, target_idx, target_value in targets_pool_qbcrf:
+            if instance_idx not in df.index:
+                df.loc[instance_idx] = [None] * target_length
+            df.at[instance_idx, target_idx] = target_value
+
+        transfer_targets_qbcrf_df = df
+
+        return R2, MSE, MAE, CA, Y_pred_df, instances_pool_qbcrf, transfer_targets_qbcrf_df
