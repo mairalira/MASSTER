@@ -20,7 +20,7 @@ sys.path.append(str(project_root))
 
 from utils.data_handling import *
 from models.active_learning import *
-from models.qbcrf import *
+from models.instance_based import *
 from models.upperbound import *
 from models.randomsampling import *
 from models.greedy_sampling import *

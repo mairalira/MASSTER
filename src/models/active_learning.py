@@ -66,7 +66,7 @@ class activelearning:
         return targets_collected
 
     def instances_transfer(self, X_train, X_pool, y_train, y_pool, indices, method):
-    # transfer data instances from the unlabelled pool to the training dataset
+        # transfer data instances from the unlabelled pool to the training dataset
         instances_epoch = list()
         targets_epoch = list()
         
