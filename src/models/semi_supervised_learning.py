@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import explained_variance_score
+from sklearn.metrics import explained_variance_score, r2_score, mean_absolute_error
+import time
 
 class PCTNode:
     def __init__(self, depth=0):
@@ -25,10 +26,10 @@ class PredictiveClusteringTree:
         n_samples, n_features = X.shape
 
         # Stop conditions: leaf node
-        if depth >= self.max_depth or n_samples < self.min_samples_split or np.isnan(Y).any():
+        if depth >= self.max_depth or n_samples < self.min_samples_split:
             leaf = PCTNode(depth=depth)
             leaf.is_leaf = True
-            leaf.prediction = np.nanmean(Y, axis=0)
+            leaf.prediction = np.mean(Y, axis=0)
             return leaf
 
         # Find the best split
@@ -45,8 +46,8 @@ class PredictiveClusteringTree:
                     Y_left, Y_right = Y[left_mask], Y[right_mask]
 
                     # Compute variance for this split
-                    var_left = np.nanvar(Y_left, axis=0).sum()
-                    var_right = np.nanvar(Y_right, axis=0).sum()
+                    var_left = np.var(Y_left, axis=0).sum()
+                    var_right = np.var(Y_right, axis=0).sum()
                     combined_variance = var_left + var_right
 
                     if combined_variance < best_variance:
@@ -57,7 +58,7 @@ class PredictiveClusteringTree:
             # If no valid split is found, create a leaf node
             leaf = PCTNode(depth=depth)
             leaf.is_leaf = True
-            leaf.prediction = np.nanmean(Y, axis=0)
+            leaf.prediction = np.mean(Y, axis=0)
             return leaf
 
         # Create internal node with the best split
@@ -81,7 +82,12 @@ class PredictiveClusteringTree:
         else:
             return self._predict_single(x, node.right)
 
-# Example usage
+# Custom Accuracy (CA)
+def custom_accuracy(y_true, y_pred, threshold=0.1):
+    """Custom accuracy: percentage of predictions within a certain threshold."""
+    return np.mean(np.abs(y_true - y_pred) <= threshold)
+
+# Gerar dados simulados
 def generate_data():
     np.random.seed(123)
     n, m, t = 1000, 5, 3  # n: samples, m: features, t: targets
@@ -94,61 +100,53 @@ def generate_data():
     Y[:, 2] = X[:, 1] * 5.0 - X[:, 4] * 2.0  # Target 3
 
     return train_test_split(X, Y, test_size=0.25, random_state=42)
+
 if __name__ == "__main__":
     X_train, X_test, Y_train, Y_test = generate_data()
 
-    # Simular dados incompletos no conjunto de treinamento
-    missing_mask = np.random.rand(*Y_train.shape) < 0.2  # 20% dos valores ausentes
+    # Simulate missing data in training set
+    missing_mask = np.random.rand(*Y_train.shape) < 0.2
     Y_train_missing = Y_train.copy()
     Y_train_missing[missing_mask] = np.nan
 
-    # Filtrar apenas as linhas com todos os valores não nulos em Y_train
+    # ------------------ Modelo Original ------------------
+    start_time = time.time()
     not_missing_mask = ~np.isnan(Y_train_missing).any(axis=1)
     X_train_not_missing = X_train[not_missing_mask]
     Y_train_not_missing = Y_train_missing[not_missing_mask]
 
-    # Treinar o modelo com os dados originais e rótulos completos
     pct_original = PredictiveClusteringTree(max_depth=5, min_samples_split=10)
     pct_original.fit(X_train_not_missing, Y_train_not_missing)
     Y_pred_original = pct_original.predict(X_test)
+    end_time = time.time()
 
-    # Avaliar desempenho antes da classificação semi-supervisionada
-    scores_original = [
-        explained_variance_score(Y_test[:, i], Y_pred_original[:, i])
-        for i in range(Y_test.shape[1])
-    ]
-    print("Desempenho antes da classificação semi-supervisionada:")
-    for i, score in enumerate(scores_original):
-        print(f"Explained variance para Target {i+1}: {score:.3f}")
+    print("Desempenho Original:")
+    for i in range(Y_test.shape[1]):
+        r2 = r2_score(Y_test[:, i], Y_pred_original[:, i])
+        mae = mean_absolute_error(Y_test[:, i], Y_pred_original[:, i])
+        ca = custom_accuracy(Y_test[:, i], Y_pred_original[:, i])
+        print(f"Target {i+1}: R2={r2:.3f}, MAE={mae:.3f}, CA={ca:.3f}")
+    print(f"Tempo de execução: {end_time - start_time:.2f} segundos\n")
 
-    # Simular uma classificação semi-supervisionada preenchendo valores ausentes
+    # ------------------ Semissupervisionado ------------------
+    start_time = time.time()
+
+    # Preencher valores faltantes com previsões do modelo original
     Y_train_filled = Y_train_missing.copy()
-    for i in range(Y_train_filled.shape[1]):
-        nan_mask = np.isnan(Y_train_filled[:, i])
-        Y_train_filled[nan_mask, i] = np.nanmean(Y_train_missing[:, i])
+    for i in range(Y_train_missing.shape[0]):
+        if np.isnan(Y_train_missing[i]).any():
+            Y_train_filled[i] = pct_original.predict(X_train[i].reshape(1, -1))
 
-    # Treinar o modelo com os dados refinados
-    pct_refined = PredictiveClusteringTree(max_depth=5, min_samples_split=10)
-    pct_refined.fit(X_train, Y_train_filled)
-    Y_pred_refined = pct_refined.predict(X_test)
+    # Treinar novo modelo semissupervisionado
+    pct_semi = PredictiveClusteringTree(max_depth=5, min_samples_split=10)
+    pct_semi.fit(X_train, Y_train_filled)
+    Y_pred_semi = pct_semi.predict(X_test)
+    end_time = time.time()
 
-    # Avaliar desempenho após a classificação semi-supervisionada
-    scores_refined = [
-        explained_variance_score(Y_test[:, i], Y_pred_refined[:, i])
-        for i in range(Y_test.shape[1])
-    ]
-    print("\nDesempenho após a classificação semi-supervisionada:")
-    for i, score in enumerate(scores_refined):
-        print(f"Explained variance para Target {i+1}: {score:.3f}")
-
-    # Comparar os resultados
-    print("\nComparação geral:")
-    for i in range(len(scores_original)):
-        print(
-            f"Target {i+1}: Antes={scores_original[i]:.3f}, "
-            f"Depois={scores_refined[i]:.3f}, "
-            f"Delta={(scores_refined[i] - scores_original[i]):.3f}"
-        )
-
-    print(f"Média explicada antes: {np.mean(scores_original):.3f}")
-    print(f"Média explicada depois: {np.mean(scores_refined):.3f}")
+    print("Desempenho Semissupervisionado:")
+    for i in range(Y_test.shape[1]):
+        r2 = r2_score(Y_test[:, i], Y_pred_semi[:, i])
+        mae = mean_absolute_error(Y_test[:, i], Y_pred_semi[:, i])
+        ca = custom_accuracy(Y_test[:, i], Y_pred_semi[:, i])
+        print(f"Target {i+1}: R2={r2:.3f}, MAE={mae:.3f}, CA={ca:.3f}")
+    print(f"Tempo de execução: {end_time - start_time:.2f} segundos")
