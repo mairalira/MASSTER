@@ -147,6 +147,10 @@ class qbcrf(activelearning):
                 instances_to_remove.append(idx)
                 targets_to_remove.append(target_idx)
 
+            # Append selected instances to training set
+            X_train = np.vstack([X_train, X_pool[instances_to_remove]])
+            y_train = np.vstack([y_train, y_pool[instances_to_remove]])
+
             # Remove the selected instances and targets from the pool after the epoch
             X_pool = np.delete(X_pool, instances_to_remove, axis=0)
             y_pool = np.delete(y_pool, targets_to_remove, axis=0)
