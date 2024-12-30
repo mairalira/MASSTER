@@ -7,6 +7,8 @@ import sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')  # Use the Agg backend for non-interactive plotting
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error, pairwise_distances_argmin_min, auc
 from sklearn.cluster import KMeans
@@ -46,14 +48,16 @@ def save_predictions_and_transfers(folder_path, prefix, i, Y_pred_df, instances_
 
 # Helper function to plot and save figures
 def plot_and_save_figures(epochs, metrics, labels, title, ylabel, fig_path, filename):
+    print(f"Plotting and saving figure: {filename}")
+    print(f"Figure path: {fig_path / filename}")
     for metric, label in zip(metrics, labels):
         plt.plot(epochs, metric, label=label)
     plt.legend(loc='best')
     plt.xlabel('epoch')
     plt.ylabel(ylabel)
     plt.title(title)
-    plt.savefig(fig_path / filename)
-    plt.show()
+    plt.savefig(fig_path / filename)  # Save the figure
+    plt.close()  # Close the figure to avoid displaying it
 
 # Helper function to read data
 def read_data(Method, iteration):
@@ -80,7 +84,7 @@ def save_total_performances_to_csv(folder_path, method_name, total_performances,
     cols = [f'Epoch {i+1}' for i in range(N_EPOCHS)] + ['AUC']
     rows = [f'Iteration {i+1}' for i in range(Method.iterations)] + ['Average']
     for metric, performance in zip(metrics, total_performances):
-        df = pd.DataFrame(performance, index=rows, columns=cols)
+        df = pd.DataFrame(performance, index=rows, columns=cols)  # Define the DataFrame
         df.to_csv(folder_path / metric / f'{method_name}_{metric}.csv', header=cols)
 
 # Main script
@@ -267,4 +271,6 @@ print(random_total_R2)
 print("Greedy based results:")
 print(greedy_total_R2)
 print("QBC-RF based results:")
+print("QBC-RF based results:")
+print(qbcrf_total_R2)
 print(qbcrf_total_R2)
