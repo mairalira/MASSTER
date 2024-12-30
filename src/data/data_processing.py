@@ -9,6 +9,7 @@ from numpy.random import RandomState
 import sys
 import os
 from typing import Tuple
+from sklearn.preprocessing import StandardScaler
 
 # Absolute path using Path
 project_root = Path(__file__).resolve().parent.parent
@@ -40,6 +41,15 @@ class DataProcessor():
         logging.info(f'{self.dataset_name} has {target_fts_length} targets for regression')
         return df, target_fts_length
     
+    def normalize_features(self, df: pd.DataFrame) -> pd.DataFrame:
+        logging.info(f'Normalizing features and targets for {self.dataset_name}...')
+        scaler = StandardScaler()
+        feature_columns = [col for col in df.columns if 'target' not in col]
+        target_columns = [col for col in df.columns if 'target' in col]
+        df[feature_columns] = scaler.fit_transform(df[feature_columns])
+        df[target_columns] = scaler.fit_transform(df[target_columns])
+        return df
+
     def split_datasets(self, df: pd.DataFrame):
         logging.info(f'Splitting {self.dataset_name} in {self.k_folds} splits for cross-validation')
         for i in range(self.k_folds):
@@ -67,4 +77,5 @@ class DataProcessor():
 if __name__ == '__main__':
     data_module = DataProcessor()
     df, target_fts_length = data_module.fetch_features()
+    df = data_module.normalize_features(df)
     data_module.split_datasets(df)

@@ -118,7 +118,7 @@ class qbcrf(activelearning):
             CA[:,i] = (ca)
             
             # Select top-k instances with highest variance
-            k = self.batch_size
+            k = self.batch_size# * target_length
             top_k_variances, instance_indices, target_indices = self.max_var(variances, k)
             
             # Map instance indices to original indices
