@@ -4,10 +4,7 @@ import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from statistics import variance
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error, auc
-
-def custom_accuracy(y_true, y_pred, threshold= CA_THRESHOLD):
-    """Custom accuracy: percentage of predictions within a certain threshold."""
-    return np.mean(np.abs(y_true - y_pred) <= threshold)
+from utils.metrics import *
 
 class qbcrf(activelearning):
     def __init__(self, batch_size, n_epochs):
@@ -20,9 +17,11 @@ class qbcrf(activelearning):
         self.qbcrf_MSE = np.zeros([self.iterations, self.n_epochs+1])
         self.qbcrf_MAE = np.zeros([self.iterations, self.n_epochs+1])
         self.qbcrf_CA = np.zeros([self.iterations, self.n_epochs+1])
+        self.qbcrf_aRRMSE = np.zeros([self.iterations, self.n_epochs+1])
 
     def variances(self, X_train, X_pool, X_test, y_train, y_test, target_length):
-        # Convert y_train to a NumPy array
+        # Convert X_train and y_train to NumPy arrays
+        X_train = np.array(X_train)
         y_train = np.array(y_train)
 
         # calculate the variances and the test set predictions
@@ -32,9 +31,14 @@ class qbcrf(activelearning):
         for i in range(target_length):
             var = list()
 
+            # Filter out rows with NaN values in y_train for the current target
+            valid_indices = ~np.isnan(y_train[:, i])
+            X_train_valid = X_train[valid_indices]
+            y_train_valid = y_train[valid_indices, i]
+
             # first, fit a model to the training set for the selected target
             rf_regressor = RandomForestRegressor(n_estimators=self.n_trees, random_state=self.random_state)
-            rf_regressor.fit(X_train, y_train[:, i])
+            rf_regressor.fit(X_train_valid, y_train_valid)
             
             # next, predict the target values of the test set
             test_preds = rf_regressor.predict(X_test)
@@ -86,9 +90,11 @@ class qbcrf(activelearning):
         MSE = np.zeros([1, self.n_epochs+1])
         MAE = np.zeros([1, self.n_epochs+1])
         CA = np.zeros([1, self.n_epochs+1])
+        ARRMSE = np.zeros([1, self.n_epochs+1])
         Y_pred = np.zeros([len(X_test), target_length*self.n_epochs])
         instances_pool_qbcrf = list()
         targets_pool_qbcrf = list()
+        selected_pairs = set()
 
         # Convert X_pool and y_pool to NumPy arrays
         X_pool = np.array(X_pool)
@@ -112,13 +118,16 @@ class qbcrf(activelearning):
             mse = (np.round(mean_squared_error(np.asarray(y_test), y_test_preds), 4))
             mae = (np.round(mean_absolute_error(np.asarray(y_test), y_test_preds), 4))
             ca = (np.round(custom_accuracy(np.asarray(y_test), y_test_preds), 4))
+            arrmse = (np.round(arrmse_metric(np.asarray(y_test), y_test_preds), 4))
+            
             R2[:,i] = (r2)
             MSE[:,i] = (mse)
             MAE[:,i] = (mae)
             CA[:,i] = (ca)
+            ARRMSE[:,i] = (arrmse)
             
             # Select top-k instances with highest variance
-            k = self.batch_size# * target_length
+            k = self.batch_size * target_length
             top_k_variances, instance_indices, target_indices = self.max_var(variances, k)
             
             # Map instance indices to original indices
@@ -128,7 +137,6 @@ class qbcrf(activelearning):
             sorted_indices = sorted(zip(mapped_indices, target_indices), key=lambda x: x[0], reverse=True)
 
             # Collect instances and targets to be removed after the epoch
-            instances_to_remove = []
             targets_to_remove = []
 
             # Reverse iterate through the sorted indices
@@ -139,34 +147,52 @@ class qbcrf(activelearning):
                     print(f"Skipping invalid index: {idx} (current pool size: {len(X_pool)})")
                     continue
 
+                # Check if the pair (instance, target) has already been selected
+                if (idx, target_idx) in selected_pairs:
+                    continue
+
                 # Append the selected instance and target value to respective lists
                 instances_pool_qbcrf.append(X_pool[idx].flatten())
                 targets_pool_qbcrf.append((idx, target_idx, y_pool[idx, target_idx]))
 
-                # Collect the indices for removal
-                instances_to_remove.append(idx)
-                targets_to_remove.append(target_idx)
+                # Collect the target indices for removal
+                targets_to_remove.append((idx, target_idx))
+
+                # Mark the pair as selected
+                selected_pairs.add((idx, target_idx))
 
             # Append selected instances to training set
-            X_train = np.vstack([X_train, X_pool[instances_to_remove]])
-            y_train = np.vstack([y_train, y_pool[instances_to_remove]])
+            X_train = np.vstack([X_train, X_pool[list(set([idx for idx, _ in targets_to_remove]))]])
+            y_train = np.vstack([y_train, y_pool[list(set([idx for idx, _ in targets_to_remove]))]])
 
-            # Remove the selected instances and targets from the pool after the epoch
-            X_pool = np.delete(X_pool, instances_to_remove, axis=0)
-            y_pool = np.delete(y_pool, targets_to_remove, axis=0)
+            # Remove the selected targets from the pool after the epoch
+            for idx, target_idx in targets_to_remove:
+                y_pool[idx, target_idx] = np.nan  # Mark the target as removed
+
+            # Remove rows with all targets removed
+            mask = ~np.isnan(y_pool).all(axis=1)
+            X_pool = X_pool[mask]
+            y_pool = y_pool[mask]
 
             # Update original_indices after removal
             original_indices = list(range(len(X_pool)))
+
+            # Filter out rows with NaN values in y_train
+            valid_indices = ~np.isnan(y_train).any(axis=1)
+            X_train = X_train[valid_indices]
+            y_train = y_train[valid_indices]
 
         r2_auc = np.round(auc(self.epochs, R2[0,:-1]), 4)
         mse_auc = np.round(auc(self.epochs, MSE[0,:-1]), 4)
         mae_auc = np.round(auc(self.epochs, MAE[0,:-1]), 4) 
         ca_auc = np.round(auc(self.epochs, CA[0,:-1]), 4) 
+        arrmse_auc = np.round(auc(self.epochs, ARRMSE[0,:-1]), 4) 
 
         R2[:,-1] = (r2_auc)
         MSE[:,-1] = (mse_auc)
         MAE[:,-1] = (mae_auc)
         CA[:,-1] = (ca_auc)
+        ARRMSE[:,-1] = (arrmse_auc)
 
         cols = ["Target_{}".format(i+1) for epoch in range(self.n_epochs) for i in range(target_length)]
         Y_pred_df = pd.DataFrame(Y_pred, columns=cols)
@@ -182,4 +208,4 @@ class qbcrf(activelearning):
 
         transfer_targets_qbcrf_df = df
 
-        return R2, MSE, MAE, CA, Y_pred_df, instances_pool_qbcrf, transfer_targets_qbcrf_df
+        return R2, MSE, MAE, CA, ARRMSE, Y_pred_df, instances_pool_qbcrf, transfer_targets_qbcrf_df

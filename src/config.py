@@ -10,7 +10,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 
 # Define variables to run data-preprocessing
-DATASET_NAME = 'rf2'
+DATASET_NAME = 'atp7d'
 K_FOLDS = 10
 TRAIN_SIZE = 0.1
 POOL_SIZE = 0.7

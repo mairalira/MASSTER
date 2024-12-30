@@ -3,10 +3,7 @@ from models.active_learning import *
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error, auc
-
-def custom_accuracy(y_true, y_pred, threshold= CA_THRESHOLD):
-    """Custom accuracy: percentage of predictions within a certain threshold."""
-    return np.mean(np.abs(y_true - y_pred) <= threshold)
+from utils.metrics import *
 
 class lowerbound(activelearning):
     def __init__(self, batch_size, n_epochs):
@@ -17,6 +14,7 @@ class lowerbound(activelearning):
         self.random_MSE = np.zeros([self.iterations, self.n_epochs+1])
         self.random_MAE = np.zeros([self.iterations, self.n_epochs+1])
         self.random_CA = np.zeros([self.iterations, self.n_epochs+1])
+        self.random_aRRMSE = np.zeros([self.iterations, self.n_epochs+1])
     
     def random(self, X_train, X_pool, X_test, y_train, y_test, target_length):
         # here, the instances from the unlabelled pool are chosen randomly
@@ -40,6 +38,7 @@ class lowerbound(activelearning):
         MSE = np.zeros([1, self.n_epochs+1])
         MAE = np.zeros([1, self.n_epochs+1])
         CA = np.zeros([1, self.n_epochs+1])
+        ARRMSE = np.zeros([1, self.n_epochs+1])
         Y_pred = np.zeros([len(X_test), target_length*self.n_epochs])
 
         for i in range(self.n_epochs):
@@ -56,11 +55,13 @@ class lowerbound(activelearning):
             mse = (np.round(mean_squared_error(np.asarray(y_test), y_test_preds), 4))
             mae = (np.round(mean_absolute_error(np.asarray(y_test), y_test_preds), 4))
             ca = (np.round(custom_accuracy(np.asarray(y_test), y_test_preds), 4))
+            arrmse = (np.round(arrmse_metric(np.asarray(y_test), y_test_preds), 4))
 
             R2[:,i] = (r2)
             MSE[:,i] = (mse)
             MAE[:,i] = (mae)
             CA[:,i] = (ca)
+            ARRMSE[:,i] = (arrmse)
             
             _, _ = self.instances_transfer(X_train, X_pool, y_train, y_pool, indices, "random")
 
@@ -68,13 +69,15 @@ class lowerbound(activelearning):
         mse_auc = np.round(auc(self.epochs, MSE[0,:-1]), 4)
         mae_auc = np.round(auc(self.epochs, MAE[0,:-1]), 4) 
         ca_auc = np.round(auc(self.epochs, CA[0,:-1]), 4) 
+        arrmse_auc = np.round(auc(self.epochs, ARRMSE[0,:-1]), 4)
 
         R2[:,-1] = (r2_auc)
         MSE[:,-1] = (mse_auc)
         MAE[:,-1] = (mae_auc)
         CA[:,-1] = (ca_auc)
+        ARRMSE[:,-1] = (arrmse_auc)
 
         cols = ["Target_{}".format(i+1) for epoch in range(self.n_epochs) for i in range(target_length)]
         Y_pred_df = pd.DataFrame(Y_pred, columns=cols)
 
-        return R2, MSE, MAE, CA, Y_pred_df
+        return R2, MSE, MAE, CA, ARRMSE, Y_pred_df
