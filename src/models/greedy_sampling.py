@@ -79,9 +79,9 @@ class baseline(activelearning):
 
             maxima, indices = self.max_dist(distances) 
             instances_transfer, targets_transfer = self.instances_transfer(X_train, X_pool, y_train, y_pool, indices, "baseline")
-            for i in range(len(instances_transfer)):
-                instances_pool_baseline.append(instances_transfer[i])
-                targets_pool_baseline.append(targets_transfer[i])
+            for j in range(len(instances_transfer)):
+                instances_pool_baseline.append(instances_transfer[j])
+                targets_pool_baseline.append(targets_transfer[j])
 
             # Calculate the percentage of targets provided for the current epoch
             total_targets = len(X_pool) * target_length

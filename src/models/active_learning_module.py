@@ -274,10 +274,10 @@ save_total_performances_to_csv(folder_path, 'qbcrf', [qbcrf_total_R2, qbcrf_tota
 save_total_performances_to_csv(folder_path, 'rtal', [rtal_total_R2, rtal_total_MSE, rtal_total_MAE, rtal_total_CA, rtal_total_ARRMSE], ['r2', 'mse', 'mae', 'ca', 'arrmse'])
 
 # Save target coverage to CSV
-concatenate_percentage_files('instance', Method.iterations, 'percentage_targets_instance.csv')
-concatenate_percentage_files('greedy', Method.iterations, 'percentage_targets_greedy.csv')
-concatenate_percentage_files('qbcrf', Method.iterations, 'percentage_targets_qbcrf.csv')
-concatenate_percentage_files('rtal', Method.iterations, 'percentage_targets_rtal.csv')
+concatenate_percentage_files(folder_path, 'instance', Method.iterations, 'percentage_targets_instance.csv')
+concatenate_percentage_files(folder_path, 'baseline', Method.iterations, 'percentage_targets_baseline.csv')
+concatenate_percentage_files(folder_path, 'qbcrf', Method.iterations, 'percentage_targets_qbcrf.csv')
+concatenate_percentage_files(folder_path, 'rtal', Method.iterations, 'percentage_targets_rtal.csv')
 
 print("Instance based results:")
 print(instance_total_R2)

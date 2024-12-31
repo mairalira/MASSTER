@@ -94,13 +94,15 @@ def save_total_performances_to_csv(folder_path, method_name, total_performances,
         df = pd.DataFrame(performance, index=rows, columns=cols)  # Define the DataFrame
         df.to_csv(folder_path / metric / f'{method_name}_{metric}.csv', header=cols)
 
-def concatenate_percentage_files(method_name, n_iterations, output_file):
+def concatenate_percentage_files(folder_path, method_name, n_iterations, output_file):
     all_data = []
 
     for i in range(n_iterations):
-        file_path = f'percentage_targets_provided_{method_name}_{i+1}.csv'
+        file_path = folder_path / 'target_coverage' / f'percentage_targets_provided_{method_name}_{i+1}.csv'
         if os.path.exists(file_path):
             df = pd.read_csv(file_path)
+            if 'Epoch' in df.columns:
+                df = df.drop(columns=['Epoch'])
             df.columns = [f'Iteration {i+1}']
             all_data.append(df)
         else:
@@ -108,7 +110,7 @@ def concatenate_percentage_files(method_name, n_iterations, output_file):
 
     if all_data:
         concatenated_df = pd.concat(all_data, axis=1)
-        concatenated_df.to_csv(output_file, index=False)
+        concatenated_df.to_csv(folder_path / 'target_coverage' / output_file, index=True)
         print(f"Concatenated file saved as {output_file}")
     else:
         print("No data to concatenate.")
