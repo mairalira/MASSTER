@@ -87,7 +87,7 @@ for i in range(Method.iterations):
     # Save percentage targets provided by epoch for RTAL method
     percentage_targets_provided_rtal_df = pd.DataFrame(percentage_targets_provided_rtal, columns=['Percentage Targets Provided'])
     percentage_targets_provided_rtal_df.index.name = 'Epoch'
-    percentage_targets_provided_rtal_df.to_csv(folder_path / f'percentage_targets_provided_rtal_{i+1}.csv')
+    percentage_targets_provided_rtal_df.to_csv(folder_path / 'target_coverage' / f'percentage_targets_provided_rtal_{i+1}.csv')
 
     # QBC-RF method
     print("\n" + 50*"-" + "QBC-RF method" + 50*"-" + "\n")
