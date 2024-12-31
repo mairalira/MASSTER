@@ -159,22 +159,6 @@ for i in range(Method.iterations):
     percentage_targets_provided_baseline_df.index.name = 'Epoch'
     percentage_targets_provided_baseline_df.to_csv(folder_path / 'target_coverage' / f'percentage_targets_provided_baseline_{i+1}.csv')
 
-    # Calculate the percentage of targets provided for each method
-    total_targets = len(X_pool) * target_length
-    rtal_percentage = calculate_percentage_targets_provided(targets_pool_rtal, total_targets)
-    qbcrf_percentage = calculate_percentage_targets_provided(targets_pool_qbcrf, total_targets)
-    instance_percentage = calculate_percentage_targets_provided(targets_pool_qbc, total_targets)
-    greedy_percentage = calculate_percentage_targets_provided(targets_pool_baseline, total_targets)
-    
-    percentages = [rtal_percentage, qbcrf_percentage, instance_percentage, greedy_percentage]
-    save_target_coverage_to_csv(folder_path, i+1, percentages)
-    
-    print(f"Iteration {i+1} - Percentage of targets provided:")
-    print(f"RTAL: {rtal_percentage:.2f}%")
-    print(f"QBC-RF: {qbcrf_percentage:.2f}%")
-    print(f"Instance based: {instance_percentage:.2f}%")
-    print(f"Greedy: {greedy_percentage:.2f}%")
-
     # Plot the results
     plot_and_save_figures(proposed_method_instance.epochs, 
                           [proposed_method_instance.instance_R2[i,:-1], upperbound_method.upperbound_R2[i,:-1], lowerbound_method.random_R2[i,:-1], baseline_method.baseline_R2[i,:-1], qbcrf_method.qbcrf_R2[i,:-1], rtal_method.rtal_R2[i,:-1]], 
@@ -288,6 +272,12 @@ save_total_performances_to_csv(folder_path, 'random', [random_total_R2, random_t
 save_total_performances_to_csv(folder_path, 'greedy', [greedy_total_R2, greedy_total_MSE, greedy_total_MAE, greedy_total_CA, greedy_total_ARRMSE], ['r2', 'mse', 'mae', 'ca', 'arrmse'])
 save_total_performances_to_csv(folder_path, 'qbcrf', [qbcrf_total_R2, qbcrf_total_MSE, qbcrf_total_MAE, qbcrf_total_CA, qbcrf_total_ARRMSE], ['r2', 'mse', 'mae', 'ca', 'arrmse'])
 save_total_performances_to_csv(folder_path, 'rtal', [rtal_total_R2, rtal_total_MSE, rtal_total_MAE, rtal_total_CA, rtal_total_ARRMSE], ['r2', 'mse', 'mae', 'ca', 'arrmse'])
+
+# Save target coverage to CSV
+concatenate_percentage_files('instance', Method.iterations, 'percentage_targets_instance.csv')
+concatenate_percentage_files('greedy', Method.iterations, 'percentage_targets_greedy.csv')
+concatenate_percentage_files('qbcrf', Method.iterations, 'percentage_targets_qbcrf.csv')
+concatenate_percentage_files('rtal', Method.iterations, 'percentage_targets_rtal.csv')
 
 print("Instance based results:")
 print(instance_total_R2)

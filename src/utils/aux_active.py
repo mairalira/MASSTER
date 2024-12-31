@@ -94,16 +94,21 @@ def save_total_performances_to_csv(folder_path, method_name, total_performances,
         df = pd.DataFrame(performance, index=rows, columns=cols)  # Define the DataFrame
         df.to_csv(folder_path / metric / f'{method_name}_{metric}.csv', header=cols)
 
-# Helper function to calculate the percentage of targets provided
-def calculate_percentage_targets_provided(targets_pool, total_targets):
-    provided_targets = np.count_nonzero(~np.isnan(targets_pool))
-    percentage_provided = (provided_targets / total_targets) * 100
-    return percentage_provided
+def concatenate_percentage_files(method_name, n_iterations, output_file):
+    all_data = []
 
-# Helper function to save target coverage percentages to CSV
-def save_target_coverage_to_csv(folder_path, iteration, percentages):
-    coverage_path = folder_path / 'target_coverage'
-    if not coverage_path.exists():
-        coverage_path.mkdir(parents=True)
-    df = pd.DataFrame(percentages, index=['RTAL', 'QBC-RF', 'Instance based', 'Greedy'], columns=[f'Epoch {i+1}' for i in range(len(percentages[0]))])
-    df.to_csv(coverage_path / f'target_coverage_iteration_{iteration}.csv')
+    for i in range(n_iterations):
+        file_path = f'percentage_targets_provided_{method_name}_{i+1}.csv'
+        if os.path.exists(file_path):
+            df = pd.read_csv(file_path)
+            df.columns = [f'Iteration {i+1}']
+            all_data.append(df)
+        else:
+            print(f"File {file_path} does not exist.")
+
+    if all_data:
+        concatenated_df = pd.concat(all_data, axis=1)
+        concatenated_df.to_csv(output_file, index=False)
+        print(f"Concatenated file saved as {output_file}")
+    else:
+        print("No data to concatenate.")
