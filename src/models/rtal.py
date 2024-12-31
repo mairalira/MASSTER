@@ -214,18 +214,13 @@ class rtal(activelearning):
             kmeans.fit(X_pool)
             representativenesses = self.calculate_representativeness(X_pool, cluster_labels, kmeans)
 
-            selected_indices = []
-            for cluster in range(self.n_clusters):
-                cluster_indices = np.where(cluster_labels == cluster)[0]
-                if len(cluster_indices) > 0:
-                    cluster_variances = variances[cluster_indices]
-                    cluster_representativenesses = representativenesses[cluster_indices]
-                    cluster_diversities = diversities[cluster_indices].mean(axis=1)  # Ensure cluster_diversities is 1D
-                    combined_scores = cluster_diversities - cluster_representativenesses
-                    top_index = cluster_indices[np.argmax(combined_scores)]
-                    selected_indices.append(top_index)
+            combined_scores = self.calculate_combined_score(variances, representativenesses, diversities)
 
-            selected_indices = np.array(selected_indices)
+            # Select top-k instances with highest combined score
+            k = self.batch_size 
+            top_k_indices = np.argsort(combined_scores)[-k:]
+
+            selected_indices = top_k_indices
             mapped_indices = [original_indices[idx] for idx in selected_indices]
 
             # Verify that mapped_indices are within the range of X_pool and y_pool
@@ -268,8 +263,8 @@ class rtal(activelearning):
             y_train = y_train[valid_indices]
 
             # Calculate the percentage of targets provided for the current epoch
-            total_targets = len(X_pool) * target_length
-            provided_targets = len(targets_pool_rtal)
+            total_targets = len(original_indices)  
+            provided_targets = len(selected_indices) 
             percentage_provided = (provided_targets / total_targets) * 100
             percentage_targets_provided[i] = percentage_provided
             print(f'Percentage of targets in epoch {i}: {percentage_provided}')

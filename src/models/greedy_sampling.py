@@ -56,6 +56,7 @@ class baseline(activelearning):
         instances_pool_baseline = list()
         targets_pool_baseline = list()
         percentage_targets_provided = np.zeros(self.n_epochs)
+        original_indices = list(range(len(X_pool)))
 
         for i in range(self.n_epochs):
             print("Epoch {}:".format(i+1))
@@ -84,8 +85,8 @@ class baseline(activelearning):
                 targets_pool_baseline.append(targets_transfer[j])
 
             # Calculate the percentage of targets provided for the current epoch
-            total_targets = len(X_pool) * target_length
-            provided_targets = len(targets_pool_baseline)
+            total_targets = len(original_indices) 
+            provided_targets = len(indices) 
             percentage_provided = (provided_targets / total_targets) * 100
             percentage_targets_provided[i] = percentage_provided
             print(f'Percentage of targets in epoch {i}: {percentage_provided}')

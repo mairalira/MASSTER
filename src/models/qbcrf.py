@@ -101,6 +101,7 @@ class qbcrf(activelearning):
         X_pool = np.array(X_pool)
         y_pool = np.array(y_pool)
         original_indices = list(range(len(X_pool)))
+        len_original = len(list(range(len(X_pool))))
 
         for i in range(self.n_epochs):
             print("Epoch {}:".format(i+1))
@@ -184,8 +185,8 @@ class qbcrf(activelearning):
             y_train = y_train[valid_indices]
 
             # Calculate the percentage of targets provided for the current epoch
-            total_targets = len(X_pool) * target_length
-            provided_targets = len(targets_pool_qbcrf)
+            total_targets = len_original * target_length
+            provided_targets = len(selected_pairs)  
             percentage_provided = (provided_targets / total_targets) * 100
             percentage_targets_provided[i] = percentage_provided
             print(f'Percentage of targets in epoch {i}: {percentage_provided}')
