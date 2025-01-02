@@ -1,15 +1,19 @@
-awscli
-black
-flake8
-ipython
-isort
-jupyterlab
-matplotlib
-mkdocs
-notebook
-numpy
-pandas
-pip
-python-dotenv
-scikit-learn
+# Specify the Python version
+python==3.11.7
+
+# Package dependencies
+awscli==1.29.0
+black==23.7.0
+flake8==6.0.0
+ipython==8.15.0
+isort==5.12.0
+jupyterlab==4.0.5
+matplotlib==3.8.0
+mkdocs==1.5.2
+notebook==7.0.3
+numpy==1.25.2
+pandas==2.1.1
+pip==23.2.1
+python-dotenv==1.0.0
+scikit-learn==1.3.0
 -e .
