@@ -36,11 +36,6 @@ from models.greedy_sampling import *
 from models.qbcrf import *
 from models.rtal import *
 
-# Ensure the directory structure exists
-def ensure_directory_exists(path):
-    if not path.exists():
-        path.mkdir(parents=True, exist_ok=True)
-
 # Main script
 data_dir = DATA_DIR
 dataset = DATASET_NAME
@@ -63,7 +58,7 @@ rtal_method = rtal(batch_size, n_epochs)
 # make the folders to store the results
 folder_path = Path('reports') / 'active_learning' / f'{dataset}'
 fig_path = folder_path / 'images'
-create_directories(folder_path, ['r2', 'mse', 'mae', 'ca', 'arrmse','preds', 'target_coverage', 'transfer'])
+create_directories(folder_path, ['r2', 'mse', 'mae', 'ca', 'arrmse','preds', 'transfer'])
 create_directories(fig_path, ['r2', 'mse', 'mae', 'ca', 'arrmse'])
 
 for i in range(Method.iterations):
@@ -80,13 +75,13 @@ for i in range(Method.iterations):
     print("\n" + 50*"-" + f"Iteration {i+1}" + 50*"-" + "\n")
 
     # Ensure directories exist before saving files
-    required_dirs = ['transfer', 'preds', 'target_coverage']
+    required_dirs = ['transfer', 'preds']
     for dir_name in required_dirs:
         ensure_directory_exists(folder_path / dir_name)
 
     # RTAL method
     print("\n" + 50*"-" + "RT-AL method" + 50*"-" + "\n")
-    R2, MSE, MAE, CA, ARRMSE, Y_pred_df, instances_pool_rtal, targets_pool_rtal, percentage_targets_provided_rtal = rtal_method.training(X_train_rtal, X_pool_rtal, X_test, y_train_rtal, y_pool_rtal, y_test, target_length)
+    R2, MSE, MAE, CA, ARRMSE, Y_pred_df, instances_pool_rtal, targets_pool_rtal = rtal_method.training(X_train_rtal, X_pool_rtal, X_test, y_train_rtal, y_pool_rtal, y_test, target_length)
     rtal_method.rtal_R2[i,:] = R2
     rtal_method.rtal_MSE[i,:] = MSE
     rtal_method.rtal_MAE[i,:] = MAE
@@ -94,14 +89,9 @@ for i in range(Method.iterations):
     rtal_method.rtal_aRRMSE[i,:] = ARRMSE
     save_predictions_and_transfers(folder_path, 'rtal', i, Y_pred_df, instances_pool_rtal, targets_pool_rtal)
 
-    # Save percentage targets provided by epoch for RTAL method
-    percentage_targets_provided_rtal_df = pd.DataFrame(percentage_targets_provided_rtal, columns=['Percentage Targets Provided'])
-    percentage_targets_provided_rtal_df.index.name = 'Epoch'
-    percentage_targets_provided_rtal_df.to_csv(folder_path / 'target_coverage' / f'percentage_targets_provided_rtal_{i+1}.csv')
-
     # QBC-RF method
     print("\n" + 50*"-" + "QBC-RF method" + 50*"-" + "\n")
-    R2, MSE, MAE, CA, ARRMSE, Y_pred_df, instances_pool_qbcrf, targets_pool_qbcrf, percentage_targets_provided_qbcrf = qbcrf_method.training(X_train_qbcrf, X_pool_qbcrf, X_test, y_train_qbcrf, y_pool_qbcrf, y_test, target_length)
+    R2, MSE, MAE, CA, ARRMSE, Y_pred_df, instances_pool_qbcrf, targets_pool_qbcrf = qbcrf_method.training(X_train_qbcrf, X_pool_qbcrf, X_test, y_train_qbcrf, y_pool_qbcrf, y_test, target_length)
     qbcrf_method.qbcrf_R2[i,:] = R2
     qbcrf_method.qbcrf_MSE[i,:] = MSE
     qbcrf_method.qbcrf_MAE[i,:] = MAE
@@ -109,26 +99,16 @@ for i in range(Method.iterations):
     qbcrf_method.qbcrf_aRRMSE[i,:] = ARRMSE
     save_predictions_and_transfers(folder_path, 'qbcrf', i, Y_pred_df, instances_pool_qbcrf, targets_pool_qbcrf)
 
-    # Save percentage targets provided by epoch for QBC-RF method
-    percentage_targets_provided_qbcrf_df = pd.DataFrame(percentage_targets_provided_qbcrf, columns=['Percentage Targets Provided'])
-    percentage_targets_provided_qbcrf_df.index.name = 'Epoch'
-    percentage_targets_provided_qbcrf_df.to_csv(folder_path / 'target_coverage' / f'percentage_targets_provided_qbcrf_{i+1}.csv')
-
     # Instance based    
     print("\n" + 50*"-" + "Instance based method" + 50*"-" + "\n")
     cols = [f"Target_{i+1}" for epoch in range(n_epochs) for i in range(target_length)]
-    R2, MSE, MAE, CA, ARRMSE, Y_pred_df, instances_pool_qbc, targets_pool_qbc, percentage_targets_provided_instance = proposed_method_instance.training(X_train_instance, X_pool_instance, X_test, y_train_instance, y_pool_instance, y_test, target_length)
+    R2, MSE, MAE, CA, ARRMSE, Y_pred_df, instances_pool_qbc, targets_pool_qbc = proposed_method_instance.training(X_train_instance, X_pool_instance, X_test, y_train_instance, y_pool_instance, y_test, target_length)
     proposed_method_instance.instance_R2[i,:] = R2
     proposed_method_instance.instance_MSE[i,:] = MSE
     proposed_method_instance.instance_MAE[i,:] = MAE
     proposed_method_instance.instance_CA[i,:] = CA
     proposed_method_instance.instance_aRRMSE[i,:] = ARRMSE
     save_predictions_and_transfers(folder_path, 'instance', i, Y_pred_df, instances_pool_qbc, targets_pool_qbc)
-
-    # Save percentage targets provided by epoch for Instance based method
-    percentage_targets_provided_instance_df = pd.DataFrame(percentage_targets_provided_instance, columns=['Percentage Targets Provided'])
-    percentage_targets_provided_instance_df.index.name = 'Epoch'
-    percentage_targets_provided_instance_df.to_csv(folder_path / 'target_coverage' / f'percentage_targets_provided_instance_{i+1}.csv')
 
     # Upperbound 
     print("\n" + 50*"-" + "Upperbound method" + 50*"-" + "\n")
@@ -156,18 +136,13 @@ for i in range(Method.iterations):
 
     # Greedy sampling
     print("\n" + 50*"-" + "Baseline method" + 50*"-" + "\n")
-    R2, MSE, MAE, CA, ARRMSE, Y_pred_df, instances_pool_baseline, targets_pool_baseline, percentage_targets_provided_baseline = baseline_method.training(X_train_baseline, X_pool_baseline, X_test, y_train_baseline, y_pool_baseline, y_test, target_length)
+    R2, MSE, MAE, CA, ARRMSE, Y_pred_df, instances_pool_baseline, targets_pool_baseline = baseline_method.training(X_train_baseline, X_pool_baseline, X_test, y_train_baseline, y_pool_baseline, y_test, target_length)
     baseline_method.baseline_R2[i,:] = R2
     baseline_method.baseline_MSE[i,:] = MSE
     baseline_method.baseline_MAE[i,:] = MAE
     baseline_method.baseline_CA[i,:] = CA
     baseline_method.baseline_aRRMSE[i,:] = ARRMSE
     save_predictions_and_transfers(folder_path, 'greedy', i, Y_pred_df, instances_pool_baseline, targets_pool_baseline)
-
-    # Save percentage targets provided by epoch for Greedy method
-    percentage_targets_provided_baseline_df = pd.DataFrame(percentage_targets_provided_baseline, columns=['Percentage Targets Provided'])
-    percentage_targets_provided_baseline_df.index.name = 'Epoch'
-    percentage_targets_provided_baseline_df.to_csv(folder_path / 'target_coverage' / f'percentage_targets_provided_baseline_{i+1}.csv')
 
     # Metrics
     metrics = [
@@ -183,7 +158,7 @@ for i in range(Method.iterations):
             proposed_method_instance.epochs,
             [values[i, :-1] for values in metric_values],
             ['Instance based QBC', 'Upper bound', 'Random sampling', 'Greedy sampling', 'QBC-RF', 'RT-AL'],
-            f'Instance based QBC method {metric_name} performance for {Method.dataset_name} dataset: iteration {i+1}',
+            f'{metric_name} performance for {Method.dataset_name} dataset: iteration {i+1}',
             metric_name,
             fig_path / metric_short,
             f'{metric_short}_score_{i+1}'
@@ -242,11 +217,5 @@ metrics_short = ['r2', 'mse', 'mae', 'ca', 'arrmse']
 
 for method_name, (total_R2, total_MSE, total_MAE, total_CA, total_ARRMSE) in zip(method_names, total_performances):
     save_total_performances_to_csv(folder_path, method_name, [total_R2, total_MSE, total_MAE, total_CA, total_ARRMSE], metrics_short)
-
-# Save target coverage to CSV
-concatenate_percentage_files(folder_path, 'instance', Method.iterations, 'percentage_targets_instance.csv')
-concatenate_percentage_files(folder_path, 'baseline', Method.iterations, 'percentage_targets_baseline.csv')
-concatenate_percentage_files(folder_path, 'qbcrf', Method.iterations, 'percentage_targets_qbcrf.csv')
-concatenate_percentage_files(folder_path, 'rtal', Method.iterations, 'percentage_targets_rtal.csv')
 
 print('End')

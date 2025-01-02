@@ -64,8 +64,6 @@ class instancebased(activelearning):
         Y_pred = np.zeros([len(X_test), target_length*self.n_epochs])
         instances_pool_qbc = list()
         targets_pool_qbc = list()
-        percentage_targets_provided = np.zeros(self.n_epochs)
-        original_indices = list(range(len(X_pool)))
 
         for i in range(self.n_epochs):
             print("Epoch {}:".format(i+1))
@@ -96,13 +94,6 @@ class instancebased(activelearning):
                 instances_pool_qbc.append(instances_transfer[j])
                 targets_pool_qbc.append(targets_transfer[j])
 
-            # Calculate the percentage of targets provided for the current epoch
-            total_targets = len(original_indices) 
-            provided_targets = len(indices) 
-            percentage_provided = (provided_targets / total_targets) * 100
-            percentage_targets_provided[i] = percentage_provided
-            print(f'Percentage of targets in epoch {i}: {percentage_provided}')
-
         r2_auc = np.round(auc(self.epochs, R2[0,:-1]), 4)
         mse_auc = np.round(auc(self.epochs, MSE[0,:-1]), 4)
         mae_auc = np.round(auc(self.epochs, MAE[0,:-1]), 4) 
@@ -117,4 +108,4 @@ class instancebased(activelearning):
 
         cols = ["Target_{}".format(i+1) for epoch in range(self.n_epochs) for i in range(target_length)]
         Y_pred_df = pd.DataFrame(Y_pred, columns=cols)
-        return R2, MSE, MAE, CA, ARRMSE, Y_pred_df, instances_pool_qbc, targets_pool_qbc, percentage_targets_provided
+        return R2, MSE, MAE, CA, ARRMSE, Y_pred_df, instances_pool_qbc, targets_pool_qbc

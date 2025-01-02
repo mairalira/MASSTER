@@ -3,7 +3,7 @@ from models.active_learning import *
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error, pairwise_distances_argmin_min, auc
 
 def custom_accuracy(y_true, y_pred, threshold= CA_THRESHOLD):
-    """Custom accuracy: percentage of predictions within a certain threshold."""
+    """Custom accuracy: percentage of predictions within a certain threshold adapted to multi-target."""
     M = y_true.shape[1]  # Number of targets
     custom_accuracy_value = 0
 

@@ -50,7 +50,6 @@ class lowerbound(activelearning):
             indices, y_test, y_test_preds = self.random(X_train, X_pool, X_test, y_train_coll, y_test, target_length)
             Y_pred[:,(i*target_length):((i+1)*target_length)] = y_test_preds
 
-            
             r2 = (np.round(r2_score(np.asarray(y_test), y_test_preds), 4))
             mse = (np.round(mean_squared_error(np.asarray(y_test), y_test_preds), 4))
             mae = (np.round(mean_absolute_error(np.asarray(y_test), y_test_preds), 4))

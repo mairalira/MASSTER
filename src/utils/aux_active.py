@@ -28,7 +28,11 @@ data_dir = DATA_DIR
 dataset = DATASET_NAME
 Method = activelearning(dataset)
 
-
+# Ensure the directory structure exists
+def ensure_directory_exists(path):
+    if not path.exists():
+        path.mkdir(parents=True, exist_ok=True)
+        
 # Helper function to create directories
 def create_directories(base_path, sub_dirs):
     for sub_dir in sub_dirs:
@@ -93,29 +97,6 @@ def save_total_performances_to_csv(folder_path, method_name, total_performances,
     for metric, performance in zip(metrics, total_performances):
         df = pd.DataFrame(performance, index=rows, columns=cols)  # Define the DataFrame
         df.to_csv(folder_path / metric / f'{method_name}_{metric}.csv', header=cols)
-
-def concatenate_percentage_files(folder_path, method_name, n_iterations, output_file):
-    all_data = []
-
-    for i in range(n_iterations):
-        file_path = folder_path / 'target_coverage' / f'percentage_targets_provided_{method_name}_{i+1}.csv'
-        if os.path.exists(file_path):
-            df = pd.read_csv(file_path)
-            if 'Epoch' in df.columns:
-                df = df.drop(columns=['Epoch'])
-            df.columns = [f'Iteration {i+1}']
-            all_data.append(df)
-        else:
-            print(f"File {file_path} does not exist.")
-
-    if all_data:
-        concatenated_df = pd.concat(all_data, axis=1)
-        concatenated_df.to_csv(folder_path / 'target_coverage' / output_file, index=True)
-        print(f"Concatenated file saved as {output_file}")
-    else:
-        print("No data to concatenate.")
-
-# Functions
 
 def copy_datasets(X_train, X_pool, y_train, y_pool):
     X_train_copy, X_pool_copy, y_train_copy, y_pool_copy = X_train.copy(), X_pool.copy(), y_train.copy(), y_pool.copy()
