@@ -2,7 +2,7 @@
 /data/*
 /reports/*
 
-# But do not ignore the directories themselves
+# But do not ignore the directories themselves 
 !/data/
 /data/**/
 !/reports/
