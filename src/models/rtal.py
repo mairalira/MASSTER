@@ -181,12 +181,10 @@ class rtal(activelearning):
         instances_pool_rtal = list()
         targets_pool_rtal = list()
         selected_pairs = set()
-        percentage_targets_provided = np.zeros(self.n_epochs)
 
         X_pool = np.array(X_pool)
         y_pool = np.array(y_pool)
         original_indices = list(range(len(X_pool)))
-        len_original = len(list(range(len(X_pool))))
 
         for i in range(self.n_epochs):
             print("Epoch {}:".format(i+1))
@@ -263,13 +261,6 @@ class rtal(activelearning):
             X_train = X_train[valid_indices]
             y_train = y_train[valid_indices]
 
-            # Calculate the percentage of targets provided for the current epoch
-            total_targets = len_original  
-            provided_targets = len(selected_indices) 
-            percentage_provided = (provided_targets / total_targets) * 100
-            percentage_targets_provided[i] = percentage_provided
-            print(f'Percentage of targets in epoch {i}: {percentage_provided}')
-
         r2_auc = np.round(auc(self.epochs, R2[0, :-1]), 4)
         mse_auc = np.round(auc(self.epochs, MSE[0, :-1]), 4)
         mae_auc = np.round(auc(self.epochs, MAE[0, :-1]), 4)
@@ -296,4 +287,4 @@ class rtal(activelearning):
 
         transfer_targets_rtal_df = df
 
-        return R2, MSE, MAE, CA, ARRMSE, Y_pred_df, instances_pool_rtal, transfer_targets_rtal_df, percentage_targets_provided
+        return R2, MSE, MAE, CA, ARRMSE, Y_pred_df, instances_pool_rtal, transfer_targets_rtal_df
