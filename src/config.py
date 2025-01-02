@@ -17,6 +17,11 @@ POOL_SIZE = 0.7
 TEST_SIZE = 0.2
 DATA_PATH = DATA_DIR / 'raw' / f'{DATASET_NAME}.csv'
 RANDOM_STATE = RandomState(seed=42)
+N_EPOCHS = 15   
+BATCH_PERCENTAGE = 5
+N_TREES = 100
+ITERATIONS = 10
+CA_THRESHOLD = 0.1
 
 # Define log structure
 LOG_DIR = PROJECT_ROOT / "reports"
