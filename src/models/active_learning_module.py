@@ -92,7 +92,7 @@ for i in range(Method.iterations):
     rtal_method.rtal_MAE[i,:] = MAE
     rtal_method.rtal_CA[i,:] = CA
     rtal_method.rtal_aRRMSE[i,:] = ARRMSE
-    save_predictions_and_transfers(folder_path / 'transfer', 'rtal', i, Y_pred_df, instances_pool_rtal, targets_pool_rtal)
+    save_predictions_and_transfers(folder_path, 'rtal', i, Y_pred_df, instances_pool_rtal, targets_pool_rtal)
 
     # Save percentage targets provided by epoch for RTAL method
     percentage_targets_provided_rtal_df = pd.DataFrame(percentage_targets_provided_rtal, columns=['Percentage Targets Provided'])
@@ -107,7 +107,7 @@ for i in range(Method.iterations):
     qbcrf_method.qbcrf_MAE[i,:] = MAE
     qbcrf_method.qbcrf_CA[i,:] = CA
     qbcrf_method.qbcrf_aRRMSE[i,:] = ARRMSE
-    save_predictions_and_transfers(folder_path / 'transfer', 'qbcrf', i, Y_pred_df, instances_pool_qbcrf, targets_pool_qbcrf)
+    save_predictions_and_transfers(folder_path, 'qbcrf', i, Y_pred_df, instances_pool_qbcrf, targets_pool_qbcrf)
 
     # Save percentage targets provided by epoch for QBC-RF method
     percentage_targets_provided_qbcrf_df = pd.DataFrame(percentage_targets_provided_qbcrf, columns=['Percentage Targets Provided'])
@@ -123,7 +123,7 @@ for i in range(Method.iterations):
     proposed_method_instance.instance_MAE[i,:] = MAE
     proposed_method_instance.instance_CA[i,:] = CA
     proposed_method_instance.instance_aRRMSE[i,:] = ARRMSE
-    save_predictions_and_transfers(folder_path / 'transfer', 'instance', i, Y_pred_df, instances_pool_qbc, targets_pool_qbc)
+    save_predictions_and_transfers(folder_path, 'instance', i, Y_pred_df, instances_pool_qbc, targets_pool_qbc)
 
     # Save percentage targets provided by epoch for Instance based method
     percentage_targets_provided_instance_df = pd.DataFrame(percentage_targets_provided_instance, columns=['Percentage Targets Provided'])
@@ -162,7 +162,7 @@ for i in range(Method.iterations):
     baseline_method.baseline_MAE[i,:] = MAE
     baseline_method.baseline_CA[i,:] = CA
     baseline_method.baseline_aRRMSE[i,:] = ARRMSE
-    save_predictions_and_transfers(folder_path / 'transfer', 'greedy', i, Y_pred_df, instances_pool_baseline, targets_pool_baseline)
+    save_predictions_and_transfers(folder_path, 'greedy', i, Y_pred_df, instances_pool_baseline, targets_pool_baseline)
 
     # Save percentage targets provided by epoch for Greedy method
     percentage_targets_provided_baseline_df = pd.DataFrame(percentage_targets_provided_baseline, columns=['Percentage Targets Provided'])

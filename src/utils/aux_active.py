@@ -43,8 +43,8 @@ def save_predictions_and_transfers(folder_path, prefix, i, Y_pred_df, instances_
         Y_pred_df.to_csv(ypred_path)
         instances_pool_df = pd.DataFrame(instances_pool)
         targets_pool_df = pd.DataFrame(targets_pool)
-        instances_pool_path = folder_path / f'transfer_instances_{prefix}_{i}.csv'
-        targets_pool_path = folder_path / f'transfer_targets_{prefix}_{i}.csv'
+        instances_pool_path = folder_path / 'transfer' / f'transfer_instances_{prefix}_{i}.csv'
+        targets_pool_path = folder_path / 'transfer' / f'transfer_targets_{prefix}_{i}.csv'
         instances_pool_df.to_csv(instances_pool_path)
         targets_pool_df.to_csv(targets_pool_path)
     except PermissionError as e:
