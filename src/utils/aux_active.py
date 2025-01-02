@@ -114,3 +114,9 @@ def concatenate_percentage_files(folder_path, method_name, n_iterations, output_
         print(f"Concatenated file saved as {output_file}")
     else:
         print("No data to concatenate.")
+
+# Functions
+
+def copy_datasets(X_train, X_pool, y_train, y_pool):
+    X_train_copy, X_pool_copy, y_train_copy, y_pool_copy = X_train.copy(), X_pool.copy(), y_train.copy(), y_pool.copy()
+    return X_train_copy, X_pool_copy, y_train_copy, y_pool_copy
