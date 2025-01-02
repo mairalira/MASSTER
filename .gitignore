@@ -1,6 +1,12 @@
-# Data
-/data/
-/reports/
+# Ignore all files in data and reports directories
+/data/*
+/reports/*
+
+# But do not ignore the directories themselves
+!/data/
+/data/**/
+!/reports/
+/reports/**/
 
 # Mac OS-specific storage files
 .DS_Store
