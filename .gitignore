@@ -2,16 +2,19 @@
 data/*
 reports/*
 
-# But do not ignore the directories themselves 
+# But do not ignore the directories themselves and .gitkeep files
 !data/
-!data/.gitkeep
+!data/**/
+!data/**/.gitkeep
 !reports/
-!reports/.gitkeep
-!reports/active_learning/
+!reports/**/
+!reports/**/.gitkeep
 
-# Ignore everything else in reports/active_learning
-reports/active_learning/*
-!reports/active_learning/.gitkeep
+# Ignore all other files in data and reports directories
+data/*/*
+!data/*/.gitkeep
+reports/*/*
+!reports/*/.gitkeep
 
 # Mac OS-specific storage files
 .DS_Store
