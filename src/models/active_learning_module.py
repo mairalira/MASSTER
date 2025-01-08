@@ -26,6 +26,7 @@ project_root = Path(__file__).resolve().parent.parent
 # Adding path to sys.path   
 sys.path.append(str(project_root))
 
+import config
 from utils.data_handling import *
 from utils.aux_active import *
 from models.active_learning import *
@@ -37,8 +38,8 @@ from models.qbcrf import *
 from models.rtal import *
 
 # Main script
-data_dir = DATA_DIR
-dataset = DATASET_NAME
+data_dir = config.DATA_DIR
+dataset = config.DATASET_NAME
 Method = activelearning(dataset)
 
 # read the first version of the datasets to define the batch size
