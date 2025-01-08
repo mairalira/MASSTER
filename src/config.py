@@ -2,6 +2,12 @@ from pathlib import Path
 from numpy.random import RandomState
 import logging
 import os
+import argparse
+
+# Argument parser for command-line arguments
+parser = argparse.ArgumentParser(description='Active Learning Configuration')
+parser.add_argument('--dataset', type=str, required=True, help='Name of the dataset')
+args = parser.parse_args()
 
 # Project-specific root directory path (for reusability)
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -10,7 +16,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 
 # Define variables to run data-preprocessing
-DATASET_NAME = 'sf1'
+DATASET_NAME = args.dataset
 K_FOLDS = 10
 TRAIN_SIZE = 0.1
 POOL_SIZE = 0.7
@@ -25,7 +31,7 @@ CA_THRESHOLD = 0.1
 
 # Define log structure
 LOG_DIR = PROJECT_ROOT / "reports"
-os.makedirs(LOG_DIR, exist_ok = True)
+os.makedirs(LOG_DIR, exist_ok=True)
 LOG_FILE = LOG_DIR / 'output_log.log'
 
 logging.basicConfig(
