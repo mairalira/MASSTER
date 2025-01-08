@@ -16,7 +16,7 @@ class ActiveLearningEvaluator:
         self.dataset_name = dataset_name
         self.metric_name = metric_name
         self.n_epochs = n_epochs
-        self.methods = ['greedy', 'instance', 'qbcrf', 'random', 'rtal', 'upperbound']
+        self.methods = ['greedy', 'instance', 'qbcrf', 'random', 'rtal']#, 'upperbound']
         self.iterations = iterations
 
     def assemble_auc(self):
