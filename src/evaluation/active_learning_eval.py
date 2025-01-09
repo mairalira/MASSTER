@@ -111,6 +111,9 @@ def compile_summary_reports(considered_epochs, metric_name):
 
     cols = ['dataset','considered_epoch'] + [col for col in final_summary_df.columns if col not in ['dataset','considered_epoch']]
     final_summary_df = final_summary_df[cols]
+
+    final_summary_df = final_summary_df.sort_values(by='dataset')
+
     final_summary_path = Path(f'reports/active_learning/summary_auc_{metric_name}.csv')
     final_summary_df.to_csv(final_summary_path)
 
