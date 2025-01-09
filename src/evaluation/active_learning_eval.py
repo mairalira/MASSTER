@@ -18,14 +18,15 @@ class ActiveLearningEvaluator:
         self.dataset_name = dataset_name
         self.metric_name = metric_name
         self.n_epochs = n_epochs
-        self.methods = ['greedy', 'instance', 'qbcrf', 'random', 'rtal']
+        self.methods_autorank = ['greedy', 'instance', 'qbcrf', 'random', 'rtal']
+        self.methods = ['greedy', 'instance', 'qbcrf', 'random', 'rtal', 'upperbound']
         self.iterations = iterations
         self.considered_epoch = considered_epoch
 
     def assemble_auc(self):
-        auc_data = {method: [] for method in self.methods}
+        auc_data = {method: [] for method in self.methods_autorank}
         
-        for method in self.methods:
+        for method in self.methods_autorank:
             file_path = Path(f'reports/active_learning/{self.dataset_name}/{self.metric_name}/{method}_{self.metric_name}.csv')
             if file_path.exists():
                 df = pd.read_csv(file_path, index_col=0)
@@ -40,8 +41,6 @@ class ActiveLearningEvaluator:
                     x = range(1, self.considered_epoch + 1)
                     auc_value = auc(x, iteration_data)
                     auc_data[method].append(auc_value)
-                #else:
-                #    auc_data[method] = [None] * self.iterations
         
         index = [f'Iteration {i+1}' for i in range(self.iterations)]
         self.auc_df = pd.DataFrame(auc_data, index=index)
@@ -59,9 +58,9 @@ class ActiveLearningEvaluator:
     def save_summary_metrics(self):
         df_type = self.auc_df
         
-        summary_data = {method: [] for method in self.methods}
+        summary_data = {method: [] for method in self.methods_autorank}
         
-        for method in self.methods:
+        for method in self.methods_autorank:
             mean_values = []
             std_values = []
             for dataset in dataset_names:
@@ -96,6 +95,43 @@ class ActiveLearningEvaluator:
         plt.close(fig) 
         plt.close('all')
 
+    def generate_subplot_image(self, dataset_names, metric_names):
+        legend_labels = {
+            'greedy': 'Greedy',
+            'instance': 'Instance-based QBC',
+            'qbcrf': 'Target-based QBC',
+            'random': 'Random',
+            'rtal': 'RT-AL',
+            'upperbound': 'Upper-bound'
+        }
+        fig, axes = plt.subplots(len(dataset_names), len(metric_names), figsize=(20, 20), sharex=True)
+        fig.subplots_adjust(hspace=0.4, wspace=0.4, top=0.95, bottom=0.05, left=0.05, right=0.95)
+    
+        for i, dataset in enumerate(dataset_names):
+            for j, metric in enumerate(metric_names):
+                ax = axes[i, j]
+                for method in self.methods:
+                    file_path = Path(f'reports/active_learning/{dataset}/{metric}/{method}_{metric}.csv')
+                    if file_path.exists():
+                        df = pd.read_csv(file_path, index_col=0)
+                        if 'AUC' in df.columns:
+                            df = df.drop(columns=['AUC'])
+                        if 'Average' in df.index:
+                            mean_values = df.loc['Average']
+                            ax.plot(range(1, len(mean_values) + 1), mean_values, label=legend_labels[method])
+                    
+                if i == 0:
+                    ax.set_title(metric)
+                if j == 0:
+                    ax.set_ylabel(dataset)
+                if i == len(dataset_names) - 1:
+                    ax.set_xlabel('Epoch')
+        
+        handles, labels = ax.get_legend_handles_labels()
+        fig.legend(handles, labels, loc='lower center', ncol=len(self.methods))
+        plt.savefig('reports/active_learning/summary_subplot_image.png')
+        plt.close(fig)
+
 def compile_summary_reports(considered_epochs, metric_name):
     all_summaries = []
     for considered_epoch in considered_epochs:
@@ -117,7 +153,7 @@ def compile_summary_reports(considered_epochs, metric_name):
     final_summary_path = Path(f'reports/active_learning/summary_auc_{metric_name}.csv')
     final_summary_df.to_csv(final_summary_path)
 
-def run_reports(dataset_names, metric_names, considered_epochs):
+def run_reports(dataset_names, metric_names, considered_epochs, method_names):
     for considered_epoch in considered_epochs:
         for dataset in dataset_names:
             for metric in metric_names:
@@ -130,10 +166,13 @@ def run_reports(dataset_names, metric_names, considered_epochs):
     for metric in metric_names:
         compile_summary_reports(considered_epochs, metric)
 
+    evaluator.generate_subplot_image(dataset_names, metric_names)
+
             
 n_epochs = N_EPOCHS
 iterations = ITERATIONS
 considered_epochs = [int(n_epochs/3), int(n_epochs*(2/3)), N_EPOCHS]
-dataset_names = ['atp7d', 'friedman', 'mp5spec', 'musicOrigin2', 'rf2', 'oes97']
+dataset_names = ['atp7d', 'friedman', 'mp5spec', 'musicOrigin2', 'rf2', 'oes97', 'enb', 'osales', 'wq']
 metric_names = ['arrmse', 'ca', 'mae', 'mse', 'r2'] 
-run_reports(dataset_names, metric_names, considered_epochs)
+method_names = ['greedy', 'instance', 'qbcrf', 'random', 'rtal', 'upperbound']
+run_reports(dataset_names, metric_names, considered_epochs, method_names)
