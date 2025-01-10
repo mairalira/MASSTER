@@ -5,28 +5,26 @@ import numpy as np
 import time
 import sys
 import pandas as pd
-import config
 from pathlib import Path
 
 # Absolute path using Path
 project_root = Path(__file__).resolve().parent.parent
 # Adding path to sys.path
 sys.path.append(str(project_root))
-
+import config
 from config import *
 from data.data_processing import *
-from utils.aux_active import read_data
-from utils.metrics import custom_accuracy
+from utils.metrics import custom_accuracy, arrmse_metric
 
 # Main script
-data_dir = config.DATA_DIR
-dataset = config.DATASET_NAME
+data_dir = DATA_DIR
+dataset = DATASET_NAME
 
-k_folds = config.K_FOLDS
-iterations = config.ITERATIONS
-threshold = config.THRESHOLD
-random_state = config.RANDOM_STATE
-n_trees = config.N_TREES
+k_folds = K_FOLDS
+iterations = ITERATIONS
+threshold = THRESHOLD
+random_state = RANDOM_STATE
+n_trees = N_TREES
 
 class InstanceCoTrainingModel:
     def __init__(self, data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees):
@@ -38,6 +36,51 @@ class InstanceCoTrainingModel:
         self.random_state = random_state
         self.n_trees = n_trees
 
+        self.R2 = np.zeros([self.k_folds, self.iterations+1])
+        self.MSE = np.zeros([self.k_folds, self.iterations+1])
+        self.MAE = np.zeros([self.k_folds, self.iterations+1])
+        self.CA = np.zeros([self.k_folds, self.iterations+1])
+        self.ARRMSE = np.zeros([self.k_folds, self.iterations+1])
+
+    def data_read(self, dataset):
+        # split the csv file in the input and target values
+        folder_dir = data_dir / 'processed' / f'{self.dataset_name}'
+        data_path = folder_dir / f'{dataset}'
+        df = pd.read_csv(data_path)
+
+        # obtain the column names
+        col_names = list(df.columns)
+        target_length = 0
+
+        for name in col_names: 
+            if 'target' in name:
+                target_length += 1
+
+        target_names = col_names[-target_length:]
+
+        inputs = list()
+        targets = list()
+        for i in range(len(df)):
+            input_val = list()
+            target_val = list()
+            for col in col_names:
+                if col in target_names:
+                    target_val.append(df.loc[i, col])
+                else:
+                    input_val.append(df.loc[i, col])
+            inputs.append(input_val)
+            targets.append(target_val)
+
+        n_instances = len(targets)
+        return inputs, targets, n_instances, target_length
+    
+    def read_data(self, iteration):
+        X_train, y_train, _, _ = self.data_read(f'train_{iteration}')
+        X_pool, y_pool, n_pool, target_length = self.data_read(f'pool_{iteration}')
+        X_rest, y_rest, _, _ = self.data_read(f'train+pool_{iteration}')
+        X_test, y_test, _, _ = self.data_read(f'test_{iteration}')
+        return X_train, y_train, X_pool, y_pool, X_rest, y_rest, X_test, y_test, target_length
+
     def train_original_model(self, X_train_labeled, y_train_labeled, X_test_labeled, y_test_labeled):
         print("Desempenho Original:")
         start_time = time.time()
@@ -45,11 +88,14 @@ class InstanceCoTrainingModel:
         model.fit(X_train_labeled, y_train_labeled)
         y_pred = model.predict(X_test_labeled)
         execution_time = time.time() - start_time
-        for j in range(len(y_test_labeled[0])):
-            r2 = r2_score([row[j] for row in y_test_labeled], [row[j] for row in y_pred])
-            mae = mean_absolute_error([row[j] for row in y_test_labeled], [row[j] for row in y_pred])
-            ca = custom_accuracy([row[j] for row in y_test_labeled], [row[j] for row in y_pred], self.threshold)
-            print(f"Target {j+1}: R2={r2:.3f}, MAE={mae:.3f}, CA={ca:.3f}")
+
+        r2 = np.round(r2_score(np.asarray(y_test_labeled), y_pred), 4)
+        mse = np.round(mean_squared_error(np.asarray(y_test_labeled), y_pred), 4)
+        mae = np.round(mean_absolute_error(np.asarray(y_test_labeled), y_pred), 4)
+        ca = np.round(custom_accuracy(np.asarray(y_test_labeled), y_pred, self.threshold), 4)
+        arrmse = np.round(arrmse_metric(np.asarray(y_test_labeled), y_pred), 4)
+
+        print(f"Overall: R²={r2:.3f}, MSE={mse:.3f}, MAE={mae:.3f}, CA={ca:.3f}, ARRMSE={arrmse:.3f}")
         print(f"Tempo de execução (com dados originais): {execution_time:.2f} segundos\n")
         return model
 
@@ -69,14 +115,9 @@ class InstanceCoTrainingModel:
         confident_mask1 = np.std(preds1, axis=1) <= self.threshold
         confident_mask2 = np.std(preds2, axis=1) <= self.threshold
 
-        if confident_mask1.any() and confident_mask2.any():
-            print(f"Adicionando {confident_mask1.sum()} exemplos confiáveis da visão 1.")
-            X_train_labeled_v1 = np.vstack([X_train_labeled_v1, X_unlabeled_v1[confident_mask1]])
-            X_train_labeled_v2 = np.vstack([X_train_labeled_v2, X_unlabeled_v2[confident_mask1]])
-            y_labeled = np.vstack([y_labeled, preds1[confident_mask1]])
-            y_labeled = np.vstack([y_labeled, preds2[confident_mask2]])
+        combined_mask = confident_mask1 | confident_mask2
 
-        if not confident_mask1.any() and not confident_mask2.any():
+        if not combined_mask.any():
             print("Nenhuma previsão confiável encontrada.")
             return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, False
 
@@ -93,10 +134,14 @@ class InstanceCoTrainingModel:
             y_labeled = np.vstack([y_labeled, preds2[confident_mask2]])
 
         print("Removendo exemplos confiáveis do conjunto não rotulado...")
-        X_unlabeled_v1 = X_unlabeled_v1[~confident_mask1]
-        X_unlabeled_v2 = X_unlabeled_v2[~confident_mask2]
+        X_unlabeled_v1 = X_unlabeled_v1[~combined_mask]
+        X_unlabeled_v2 = X_unlabeled_v2[~combined_mask]
 
         print(f"{confident_mask1.sum() + confident_mask2.sum()} exemplos adicionados nesta iteração.")
+        
+        # Ensure X_train_labeled_v1 and X_train_labeled_v2 have the same size
+        assert X_train_labeled_v1.shape[0] == X_train_labeled_v2.shape[0], "Mismatch in sizes of X_train_labeled_v1 and X_train_labeled_v2"
+
         return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, True
 
     def stop_criterion(self, preds1, preds2):
@@ -105,17 +150,29 @@ class InstanceCoTrainingModel:
             return True
         return False
 
-    def training(self, model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled):
+    def training(self, model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled, fold_index):
         execution_times = []
+
         for j in range(self.iterations):
             print(f"Treinando modelo na epoch {j}...")
             start_time = time.time()
             print("Iniciando treinamento com co-training...")
 
             print("Treinando modelo 1 com visão 1...")
-            model_view1.fit(X_train_labeled_v1, y_labeled)
+            # Ensure consistent number of samples
+            if len(X_train_labeled_v1) == len(y_labeled):
+                model_view1.fit(X_train_labeled_v1, y_labeled)
+            else:
+                print(f"Inconsistent number of samples: {len(X_train_labeled_v1)} in X_train_labeled_v1, {len(y_labeled)} in y_labeled")
+                break
+
             print("Treinando modelo 2 com visão 2...")
-            model_view2.fit(X_train_labeled_v2, y_labeled)
+            # Ensure consistent number of samples
+            if len(X_train_labeled_v2) == len(y_labeled):
+                model_view2.fit(X_train_labeled_v2, y_labeled)
+            else:
+                print(f"Inconsistent number of samples: {len(X_train_labeled_v2)} in X_train_labeled_v2, {len(y_labeled)} in y_labeled")
+                break
 
             print("Fazendo previsões para dados não rotulados...")
             preds1 = model_view1.predict(X_unlabeled_v1) if len(X_unlabeled_v1) > 0 else np.array([])
@@ -134,6 +191,14 @@ class InstanceCoTrainingModel:
             execution_time = time.time() - start_time
             execution_times.append(execution_time)
 
+            # Evaluate model at each iteration
+            r2, mse, mae, ca, arrmse = self.evaluate_model(model_view1, model_view2, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled)
+            self.R2[fold_index, j] = r2
+            self.MSE[fold_index, j] = mse
+            self.MAE[fold_index, j] = mae
+            self.CA[fold_index, j] = ca
+            self.ARRMSE[fold_index, j] = arrmse
+
         return model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, y_labeled, execution_times
 
     def evaluate_model(self, model_view1, model_view2, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled):
@@ -142,37 +207,60 @@ class InstanceCoTrainingModel:
         y_pred_v2 = model_view2.predict(X_test_labeled_v2)
         y_pred_combined = (y_pred_v1 + y_pred_v2) / 2
 
-        for j in range(len(y_test_labeled[0])):
-            r2 = r2_score([row[j] for row in y_test_labeled], [row[j] for row in y_pred_combined])
-            mae = mean_absolute_error([row[j] for row in y_test_labeled], [row[j] for row in y_pred_combined])
-            ca = custom_accuracy([row[j] for row in y_test_labeled], [row[j] for row in y_pred_combined], self.threshold)
-            print(f"Target {j+1}: R²={r2:.3f}, MAE={mae:.3f}, CA={ca:.3f}")
+        r2 = np.round(r2_score(np.asarray(y_test_labeled), y_pred_combined), 4)
+        mse = np.round(mean_squared_error(np.asarray(y_test_labeled), y_pred_combined), 4)
+        mae = np.round(mean_absolute_error(np.asarray(y_test_labeled), y_pred_combined), 4)
+        ca = np.round(custom_accuracy(np.asarray(y_test_labeled), y_pred_combined, self.threshold), 4)
+        arrmse = np.round(arrmse_metric(np.asarray(y_test_labeled), y_pred_combined), 4)
 
-    def train_and_evaluate(self):
-        for i in range(self.k_folds):
-            print(f"Treinando modelo no pool {i}...")
-            X_train_not_missing, Y_train_not_missing, X_unlabeled, Y_train_missing, X_rest, y_rest, X_test_labeled, y_test_labeled, target_length = read_data(self, i+1)
+        print(f"Overall: R²={r2:.3f}, MSE={mse:.3f}, MAE={mae:.3f}, CA={ca:.3f}, ARRMSE={arrmse:.3f}")
 
-            self.train_original_model(X_train_not_missing, Y_train_not_missing, X_test_labeled, y_test_labeled)
+        return r2, mse, mae, ca, arrmse
 
-            print("Desempenho Semissupervisionado")
-            model_view1, model_view2 = self.initialize_models()
-            print("Dividindo as features em duas visões...")
+    def train_and_evaluate(self, fold_index):
+        print(f"Treinando modelo no pool {fold_index}...")
+        X_train_not_missing, Y_train_not_missing, X_unlabeled, Y_train_missing, X_rest, y_rest, X_test_labeled, y_test_labeled, target_length = self.read_data(fold_index+1)
 
-            X_train_labeled_v1, X_train_labeled_v2 = self.split_features(X_train_not_missing)
-            X_unlabeled_v1, X_unlabeled_v2 = self.split_features(X_unlabeled)
-            X_test_labeled_v1, X_test_labeled_v2 = self.split_features(X_test_labeled)
+        self.train_original_model(X_train_not_missing, Y_train_not_missing, X_test_labeled, y_test_labeled)
 
-            y_labeled = Y_train_not_missing
+        print("Desempenho Semissupervisionado")
+        model_view1, model_view2 = self.initialize_models()
+        print("Dividindo as features em duas visões...")
 
-            model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, y_labeled, execution_times = self.training(
-                model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled
-            )
+        X_train_labeled_v1, X_train_labeled_v2 = self.split_features(X_train_not_missing)
+        X_unlabeled_v1, X_unlabeled_v2 = self.split_features(X_unlabeled)
+        X_test_labeled_v1, X_test_labeled_v2 = self.split_features(X_test_labeled)
 
-            self.evaluate_model(model_view1, model_view2, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled)
+        y_labeled = Y_train_not_missing
+
+        model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, y_labeled, execution_times = self.training(
+            model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled, fold_index
+        )
+
+        # Evaluate final model
+        r2, mse, mae, ca, arrmse = self.evaluate_model(model_view1, model_view2, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled)
+        self.R2[fold_index, -1] = r2
+        self.MSE[fold_index, -1] = mse
+        self.MAE[fold_index, -1] = mae
+        self.CA[fold_index, -1] = ca
+        self.ARRMSE[fold_index, -1] = arrmse
+
+        # Return or save the metrics as needed
+        return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE
 
 if __name__ == "__main__":
     data_dir = config.DATA_DIR
     dataset_name = config.DATASET_NAME
     cotraining_model = InstanceCoTrainingModel(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees)
-    cotraining_model.train_and_evaluate()
+    
+    for i in range(k_folds):
+        cotraining_model.train_and_evaluate(i)
+    
+    # Return or save the metrics as needed
+    R2, MSE, MAE, CA, ARRMSE = cotraining_model.R2, cotraining_model.MSE, cotraining_model.MAE, cotraining_model.CA, cotraining_model.ARRMSE
+    print("Final Metrics:")
+    print("R2:", R2)
+    print("MSE:", MSE)
+    print("MAE:", MAE)
+    print("CA:", CA)
+    print("ARRMSE:", ARRMSE)
