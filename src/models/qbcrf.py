@@ -1,4 +1,4 @@
-""" The subclass for QBC-RF. """
+""" The subclass for Target-based QBC """
 from models.active_learning import *
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
