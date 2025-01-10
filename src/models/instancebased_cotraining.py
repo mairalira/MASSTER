@@ -82,7 +82,6 @@ class InstanceCoTrainingModel:
         return X_train, y_train, X_pool, y_pool, X_rest, y_rest, X_test, y_test, target_length
 
     def train_original_model(self, X_train_labeled, y_train_labeled, X_test_labeled, y_test_labeled):
-        print("Desempenho Original:")
         start_time = time.time()
         model = MultiOutputRegressor(RandomForestRegressor(n_estimators=self.n_trees, random_state=self.random_state))
         model.fit(X_train_labeled, y_train_labeled)
@@ -95,8 +94,8 @@ class InstanceCoTrainingModel:
         ca = np.round(custom_accuracy(np.asarray(y_test_labeled), y_pred, self.threshold), 4)
         arrmse = np.round(arrmse_metric(np.asarray(y_test_labeled), y_pred), 4)
 
-        print(f"Overall: R²={r2:.3f}, MSE={mse:.3f}, MAE={mae:.3f}, CA={ca:.3f}, ARRMSE={arrmse:.3f}")
-        print(f"Tempo de execução (com dados originais): {execution_time:.2f} segundos\n")
+        print(f"Original Performance: R²={r2:.3f}, MSE={mse:.3f}, MAE={mae:.3f}, CA={ca:.3f}, ARRMSE={arrmse:.3f}")
+        print(f"Execution time (with original data): {execution_time:.2f} seconds\n")
         return model
 
     def initialize_models(self):
@@ -111,74 +110,62 @@ class InstanceCoTrainingModel:
         return X_v1, X_v2
 
     def confidence_computation(self, preds1, preds2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled):
-        print("Calculando a confiança das previsões...")
+        print("Calculating prediction confidence...")
         confident_mask1 = np.std(preds1, axis=1) <= self.threshold
         confident_mask2 = np.std(preds2, axis=1) <= self.threshold
 
         combined_mask = confident_mask1 | confident_mask2
 
         if not combined_mask.any():
-            print("Nenhuma previsão confiável encontrada.")
+            print("No confident predictions found.")
             return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, False
 
         if confident_mask1.any():
-            print(f"Adicionando {confident_mask1.sum()} exemplos confiáveis da visão 1.")
             X_train_labeled_v1 = np.vstack([X_train_labeled_v1, X_unlabeled_v1[confident_mask1]])
             X_train_labeled_v2 = np.vstack([X_train_labeled_v2, X_unlabeled_v2[confident_mask1]])
             y_labeled = np.vstack([y_labeled, preds1[confident_mask1]])
 
         if confident_mask2.any():
-            print(f"Adicionando {confident_mask2.sum()} exemplos confiáveis da visão 2.")
             X_train_labeled_v1 = np.vstack([X_train_labeled_v1, X_unlabeled_v1[confident_mask2]])
             X_train_labeled_v2 = np.vstack([X_train_labeled_v2, X_unlabeled_v2[confident_mask2]])
             y_labeled = np.vstack([y_labeled, preds2[confident_mask2]])
 
-        print("Removendo exemplos confiáveis do conjunto não rotulado...")
         X_unlabeled_v1 = X_unlabeled_v1[~combined_mask]
         X_unlabeled_v2 = X_unlabeled_v2[~combined_mask]
 
-        print(f"{confident_mask1.sum() + confident_mask2.sum()} exemplos adicionados nesta iteração.")
+        print(f"{confident_mask1.sum() + confident_mask2.sum()} examples added in this iteration.")
         
-        # Ensure X_train_labeled_v1 and X_train_labeled_v2 have the same size
         assert X_train_labeled_v1.shape[0] == X_train_labeled_v2.shape[0], "Mismatch in sizes of X_train_labeled_v1 and X_train_labeled_v2"
 
         return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, True
 
     def stop_criterion(self, preds1, preds2):
-        if len(preds1) == 0 or len(preds2) == 0:
-            print("Sem mais exemplos não rotulados.")
-            return True
-        return False
+        return len(preds1) == 0 or len(preds2) == 0
 
     def training(self, model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled, fold_index):
         execution_times = []
 
         for j in range(self.iterations):
-            print(f"Treinando modelo na epoch {j}...")
+            print(f"Training model in epoch {j}...")
             start_time = time.time()
-            print("Iniciando treinamento com co-training...")
 
-            print("Treinando modelo 1 com visão 1...")
-            # Ensure consistent number of samples
             if len(X_train_labeled_v1) == len(y_labeled):
                 model_view1.fit(X_train_labeled_v1, y_labeled)
             else:
                 print(f"Inconsistent number of samples: {len(X_train_labeled_v1)} in X_train_labeled_v1, {len(y_labeled)} in y_labeled")
                 break
 
-            print("Treinando modelo 2 com visão 2...")
-            # Ensure consistent number of samples
             if len(X_train_labeled_v2) == len(y_labeled):
                 model_view2.fit(X_train_labeled_v2, y_labeled)
             else:
                 print(f"Inconsistent number of samples: {len(X_train_labeled_v2)} in X_train_labeled_v2, {len(y_labeled)} in y_labeled")
                 break
 
-            print("Fazendo previsões para dados não rotulados...")
             preds1 = model_view1.predict(X_unlabeled_v1) if len(X_unlabeled_v1) > 0 else np.array([])
             preds2 = model_view2.predict(X_unlabeled_v2) if len(X_unlabeled_v2) > 0 else np.array([])
 
             if self.stop_criterion(preds1, preds2):
+                print("No more unlabeled examples.")
                 break
 
             X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, continue_training = self.confidence_computation(
@@ -191,7 +178,6 @@ class InstanceCoTrainingModel:
             execution_time = time.time() - start_time
             execution_times.append(execution_time)
 
-            # Evaluate model at each iteration
             r2, mse, mae, ca, arrmse = self.evaluate_model(model_view1, model_view2, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled)
             self.R2[fold_index, j] = r2
             self.MSE[fold_index, j] = mse
@@ -202,7 +188,7 @@ class InstanceCoTrainingModel:
         return model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, y_labeled, execution_times
 
     def evaluate_model(self, model_view1, model_view2, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled):
-        print("Fazendo previsões nos dados de teste...")
+        print("Making predictions on test data...")
         y_pred_v1 = model_view1.predict(X_test_labeled_v1)
         y_pred_v2 = model_view2.predict(X_test_labeled_v2)
         y_pred_combined = (y_pred_v1 + y_pred_v2) / 2
@@ -218,15 +204,12 @@ class InstanceCoTrainingModel:
         return r2, mse, mae, ca, arrmse
 
     def train_and_evaluate(self, fold_index):
-        print(f"Treinando modelo no pool {fold_index}...")
+        print(f"Training model in pool {fold_index}...")
         X_train_not_missing, Y_train_not_missing, X_unlabeled, Y_train_missing, X_rest, y_rest, X_test_labeled, y_test_labeled, target_length = self.read_data(fold_index+1)
 
         self.train_original_model(X_train_not_missing, Y_train_not_missing, X_test_labeled, y_test_labeled)
 
-        print("Desempenho Semissupervisionado")
         model_view1, model_view2 = self.initialize_models()
-        print("Dividindo as features em duas visões...")
-
         X_train_labeled_v1, X_train_labeled_v2 = self.split_features(X_train_not_missing)
         X_unlabeled_v1, X_unlabeled_v2 = self.split_features(X_unlabeled)
         X_test_labeled_v1, X_test_labeled_v2 = self.split_features(X_test_labeled)
@@ -237,7 +220,6 @@ class InstanceCoTrainingModel:
             model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled, fold_index
         )
 
-        # Evaluate final model
         r2, mse, mae, ca, arrmse = self.evaluate_model(model_view1, model_view2, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled)
         self.R2[fold_index, -1] = r2
         self.MSE[fold_index, -1] = mse
@@ -245,7 +227,6 @@ class InstanceCoTrainingModel:
         self.CA[fold_index, -1] = ca
         self.ARRMSE[fold_index, -1] = arrmse
 
-        # Return or save the metrics as needed
         return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE
 
 if __name__ == "__main__":
@@ -256,7 +237,6 @@ if __name__ == "__main__":
     for i in range(k_folds):
         cotraining_model.train_and_evaluate(i)
     
-    # Return or save the metrics as needed
     R2, MSE, MAE, CA, ARRMSE = cotraining_model.R2, cotraining_model.MSE, cotraining_model.MAE, cotraining_model.CA, cotraining_model.ARRMSE
     print("Final Metrics:")
     print("R2:", R2)
