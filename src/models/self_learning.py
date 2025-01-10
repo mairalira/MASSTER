@@ -3,30 +3,59 @@ import pandas as pd
 from sklearn.metrics import mean_absolute_error, r2_score
 import time
 from sklearn.ensemble import RandomForestRegressor
+import config
+
+data_dir = config.DATA_DIR
+dataset_name = config.DATASET_NAME
+def data_read(dataset):
+        # split the csv file in the input and target values
+        folder_dir = data_dir / 'processed' / f'{dataset_name}'
+        data_path = folder_dir / f'{dataset}'
+        df = pd.read_csv(data_path)
+
+        # obtain the column names
+        col_names = list(df.columns)
+        target_length = 0
+
+        for name in col_names: 
+            if 'target' in name:
+                target_length += 1
+
+        target_names = col_names[-target_length:]
+
+        inputs = list()
+        targets = list()
+        for i in range(len(df)):
+            input_val = list()
+            target_val = list()
+            for col in col_names:
+                if col in target_names:
+                    target_val.append(df.loc[i, col])
+                else:
+                    input_val.append(df.loc[i, col])
+            inputs.append(input_val)
+            targets.append(target_val)
+
+        n_instances = len(targets)
+        return inputs, targets, n_instances, target_length
+
+# Helper function to read data
+def read_data(iteration):
+    X_train, y_train, _, _ = data_read(f'train_{iteration}')
+    X_pool, y_pool, n_pool, target_length = data_read(f'pool_{iteration}')
+    X_rest, y_rest, _, _ = data_read(f'train+pool_{iteration}')
+    X_test, y_test, _, _ = data_read(f'test_{iteration}')
+    return X_train, y_train, X_pool, y_pool, X_rest, y_rest, X_test, y_test, target_length
 
 def get_datasets(i):
-    df_train_labeled = pd.read_csv(r'C:\Users\danin\Documents\lu\mestrado\artigo_ricardo\Active-and-Self-Learning-for-Multi-target-Regression\src\processed\atp7d\train_'+str(i+1))
-    df_train_unlabeled = pd.read_csv(r'C:\Users\danin\Documents\lu\mestrado\artigo_ricardo\Active-and-Self-Learning-for-Multi-target-Regression\src\processed\atp7d\pool_'+str(i+1))
-    df_test = pd.read_csv(r'C:\Users\danin\Documents\lu\mestrado\artigo_ricardo\Active-and-Self-Learning-for-Multi-target-Regression\src\processed\atp7d\test_'+str(i+1))
+    X_train_not_missing, Y_train_not_missing, X_unlabeled,Y_train_missing,X_rest, y_rest, X_test_labeled, y_test_labeled, target_length = read_data(i+1)
+    X_train_not_missing = np.array(X_train_not_missing)
+    Y_train_not_missing = np.array(Y_train_not_missing)
+    X_unlabeled = np.array(X_unlabeled)
+    X_test_labeled = np.array(X_test_labeled)
+    y_test_labeled = np.array(y_test_labeled)
 
-    X_test_labeled=df_test.drop(columns = ['target_LBL+ALLminpA+bt7d_000','target_LBL+ALLminp0+bt7d_000','target_LBL+aDLminpA+bt7d_000','target_LBL+aCOminpA+bt7d_000','target_LBL+aFLminpA+bt7d_000','target_LBL+aUAminpA+bt7d_000'])
-    y_test_labeled = df_test[['target_LBL+ALLminpA+bt7d_000','target_LBL+ALLminp0+bt7d_000','target_LBL+aDLminpA+bt7d_000','target_LBL+aCOminpA+bt7d_000','target_LBL+aFLminpA+bt7d_000','target_LBL+aUAminpA+bt7d_000']]
-
-    X_unlabeled = df_train_unlabeled.drop(columns = ['target_LBL+ALLminpA+bt7d_000','target_LBL+ALLminp0+bt7d_000','target_LBL+aDLminpA+bt7d_000','target_LBL+aCOminpA+bt7d_000','target_LBL+aFLminpA+bt7d_000','target_LBL+aUAminpA+bt7d_000'])
-    X_train_labeled = df_train_labeled.drop(columns = ['target_LBL+ALLminpA+bt7d_000','target_LBL+ALLminp0+bt7d_000','target_LBL+aDLminpA+bt7d_000','target_LBL+aCOminpA+bt7d_000','target_LBL+aFLminpA+bt7d_000','target_LBL+aUAminpA+bt7d_000'])
-    y_train_labeled = df_train_labeled[['target_LBL+ALLminpA+bt7d_000','target_LBL+ALLminp0+bt7d_000','target_LBL+aDLminpA+bt7d_000','target_LBL+aCOminpA+bt7d_000','target_LBL+aFLminpA+bt7d_000','target_LBL+aUAminpA+bt7d_000']]
-    Y_train_missing = df_train_unlabeled[['target_LBL+ALLminpA+bt7d_000','target_LBL+ALLminp0+bt7d_000','target_LBL+aDLminpA+bt7d_000','target_LBL+aCOminpA+bt7d_000','target_LBL+aFLminpA+bt7d_000','target_LBL+aUAminpA+bt7d_000']]
-    Y_train_missing.loc[:, :] = np.nan  # Substitui todos os valores do DataFrame por np.nan
-    
-    X_train_labeled = X_train_labeled.to_numpy()
-    y_train_labeled = y_train_labeled.to_numpy()
-    X_unlabeled = X_unlabeled.to_numpy()
-    X_test_labeled = X_test_labeled.to_numpy()
-    y_test_labeled = y_test_labeled.to_numpy()
-
-        
-    
-    return X_train_labeled,y_train_labeled,X_unlabeled,X_test_labeled,y_test_labeled,Y_train_missing
+    return X_train_not_missing,Y_train_not_missing,X_unlabeled,X_test_labeled,y_test_labeled,Y_train_missing
 
 
 # Função de acurácia personalizada
@@ -60,7 +89,10 @@ for i in range (number_of_pools):
     print("Desempenho Semissupervisionado")
     # Aprendizado Ativo
     max_iter = 10
-    for j in range(max_iter):  
+    for j in range(max_iter):
+        if X_unlabeled.shape[0] == 0:  # Verifica se X_unlabeled está vazio
+            print("Conjunto de dados não rotulados esgotado.")
+            break  
         print(f"Treinando modelo na epoch {j}...")  
         # modelo de regressão treinado com dados rotulados 
         predictions_unlabeled = regressor.predict(X_unlabeled)

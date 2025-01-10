@@ -5,35 +5,59 @@ import numpy as np
 import time
 import pandas as pd
 import numpy as np
-from sklearn.metrics import mean_absolute_error, r2_score
+import config
+from pathlib import Path
 
+data_dir = config.DATA_DIR
+dataset_name = config.DATASET_NAME
 
-def get_datasets(i):
-    df_train_labeled = pd.read_csv(r'C:\Users\danin\Documents\lu\mestrado\artigo_ricardo\Active-and-Self-Learning-for-Multi-target-Regression\src\processed\atp7d\train_'+str(i))
-    df_train_unlabeled = pd.read_csv(r'C:\Users\danin\Documents\lu\mestrado\artigo_ricardo\Active-and-Self-Learning-for-Multi-target-Regression\src\processed\atp7d\pool_'+str(i))
-    df_test = pd.read_csv(r'C:\Users\danin\Documents\lu\mestrado\artigo_ricardo\Active-and-Self-Learning-for-Multi-target-Regression\src\processed\atp7d\test_'+str(i))
+def data_read(dataset):
+        # split the csv file in the input and target values
+        folder_dir = data_dir / 'processed' / f'{dataset_name}'
+        data_path = folder_dir / f'{dataset}'
+        df = pd.read_csv(data_path)
 
-    X_test_labeled=df_test.drop(columns = ['target_LBL+ALLminpA+bt7d_000','target_LBL+ALLminp0+bt7d_000','target_LBL+aDLminpA+bt7d_000','target_LBL+aCOminpA+bt7d_000','target_LBL+aFLminpA+bt7d_000','target_LBL+aUAminpA+bt7d_000'])
-    y_test_labeled = df_test[['target_LBL+ALLminpA+bt7d_000','target_LBL+ALLminp0+bt7d_000','target_LBL+aDLminpA+bt7d_000','target_LBL+aCOminpA+bt7d_000','target_LBL+aFLminpA+bt7d_000','target_LBL+aUAminpA+bt7d_000']]
+        # obtain the column names
+        col_names = list(df.columns)
+        target_length = 0
 
-    X_unlabeled = df_train_unlabeled.drop(columns = ['target_LBL+ALLminpA+bt7d_000','target_LBL+ALLminp0+bt7d_000','target_LBL+aDLminpA+bt7d_000','target_LBL+aCOminpA+bt7d_000','target_LBL+aFLminpA+bt7d_000','target_LBL+aUAminpA+bt7d_000'])
-    X_train_labeled = df_train_labeled.drop(columns = ['target_LBL+ALLminpA+bt7d_000','target_LBL+ALLminp0+bt7d_000','target_LBL+aDLminpA+bt7d_000','target_LBL+aCOminpA+bt7d_000','target_LBL+aFLminpA+bt7d_000','target_LBL+aUAminpA+bt7d_000'])
-    y_train_labeled = df_train_labeled[['target_LBL+ALLminpA+bt7d_000','target_LBL+ALLminp0+bt7d_000','target_LBL+aDLminpA+bt7d_000','target_LBL+aCOminpA+bt7d_000','target_LBL+aFLminpA+bt7d_000','target_LBL+aUAminpA+bt7d_000']]
-    Y_train_missing = df_train_unlabeled[['target_LBL+ALLminpA+bt7d_000','target_LBL+ALLminp0+bt7d_000','target_LBL+aDLminpA+bt7d_000','target_LBL+aCOminpA+bt7d_000','target_LBL+aFLminpA+bt7d_000','target_LBL+aUAminpA+bt7d_000']]
-    Y_train_missing.loc[:, :] = np.nan  # Substitui todos os valores do DataFrame por np.nan
-    
-    X_train_labeled = X_train_labeled.to_numpy()
-    y_train_labeled = y_train_labeled.to_numpy()
-    X_unlabeled = X_unlabeled.to_numpy()
-    X_test_labeled = X_test_labeled.to_numpy()
-    y_test_labeled = y_test_labeled.to_numpy()
+        for name in col_names: 
+            if 'target' in name:
+                target_length += 1
 
-        
-    
-    return X_train_labeled,y_train_labeled,X_unlabeled,X_test_labeled,y_test_labeled,Y_train_missing
+        target_names = col_names[-target_length:]
+
+        inputs = list()
+        targets = list()
+        for i in range(len(df)):
+            input_val = list()
+            target_val = list()
+            for col in col_names:
+                if col in target_names:
+                    target_val.append(df.loc[i, col])
+                else:
+                    input_val.append(df.loc[i, col])
+            inputs.append(input_val)
+            targets.append(target_val)
+
+        n_instances = len(targets)
+        return inputs, targets, n_instances, target_length
+
+# Helper function to read data
+def read_data(iteration):
+    X_train, y_train, _, _ = data_read(f'train_{iteration}')
+    X_pool, y_pool, n_pool, target_length = data_read(f'pool_{iteration}')
+    X_rest, y_rest, _, _ = data_read(f'train+pool_{iteration}')
+    X_test, y_test, _, _ = data_read(f'test_{iteration}')
+    return X_train, y_train, X_pool, y_pool, X_rest, y_rest, X_test, y_test, target_length
 
 # Função de precisão personalizada
-def custom_accuracy(y_true, y_pred, threshold=0.1):
+def custom_accuracy(y_true_list, y_pred_list, threshold=0.1):
+
+    # Converta para arrays NumPy
+    y_true = np.array(y_true_list)
+    y_pred = np.array(y_pred_list)
+
     """Custom accuracy: percentage of predictions within a certain threshold."""
     return np.mean(np.abs(y_true - y_pred) <= threshold)
 
@@ -41,8 +65,8 @@ def custom_accuracy(y_true, y_pred, threshold=0.1):
 number_of_pools = 10
 for i in range (number_of_pools):
     print(f"Treinando modelo no pool {i}...")
-    X_train_not_missing, Y_train_not_missing, X_unlabeled, X_test_labeled, y_test_labeled, Y_train_missing = get_datasets(i+1)
-
+    X_train_not_missing, Y_train_not_missing, X_unlabeled,Y_train_missing,X_rest, y_rest, X_test_labeled, y_test_labeled, target_length = read_data(i+1)
+    #X_train, y_train, X_pool, y_pool, X_rest, y_rest, X_test, y_test, target_length
     print("Desempenho Original:")
     start_time = time.time()
 
@@ -54,10 +78,11 @@ for i in range (number_of_pools):
         # Fazer previsões nos dados de teste
     Y_pred_original = model_original.predict(X_test_labeled)
     execution_time = time.time() - start_time
-    for j in range(y_test_labeled.shape[1]):
-        r2 = r2_score(y_test_labeled[:, j], Y_pred_original[:, j])
-        mae = mean_absolute_error(y_test_labeled[:, j], Y_pred_original[:, j])
-        ca = custom_accuracy(y_test_labeled[:, j], Y_pred_original[:, j])
+    for j in range(len(y_test_labeled[0])):
+        # Acesse a coluna j de cada lista manualmente
+        r2 = r2_score([row[j] for row in y_test_labeled], [row[j] for row in Y_pred_original])
+        mae = mean_absolute_error([row[j] for row in y_test_labeled], [row[j] for row in Y_pred_original])
+        ca = custom_accuracy([row[j] for row in y_test_labeled], [row[j] for row in Y_pred_original])
         print(f"Target {i+1}: R2={r2:.3f}, MAE={mae:.3f}, CA={ca:.3f}")
     print(f"Tempo de execução (com dados originais): {time.time() - start_time:.2f} segundos\n")
 
@@ -73,6 +98,13 @@ for i in range (number_of_pools):
      # Dividir as features em duas visões
     print("Dividindo as features em duas visões...")
         # Dividindo as features corretamente
+
+# Converte a lista para um array NumPy
+    X_train_not_missing = np.array(X_train_not_missing)
+    X_unlabeled = np.array(X_unlabeled)
+    X_test_labeled= np.array(X_test_labeled)
+
+
     X_train_labeled_v1 = X_train_not_missing[:, :int(X_train_not_missing.shape[1]/2)]  # Primeira metade das características
     X_train_labeled_v2 = X_train_not_missing[:, int(X_train_not_missing.shape[1]/2):]  # Segunda metade das características
         # Agora, aplique a máscara para filtrar X_train_not_missing e X_view2
@@ -155,10 +187,10 @@ for i in range (number_of_pools):
     y_pred_combined = (y_pred_v1 + y_pred_v2) / 2
 
     # Avaliação do desempenho semissupervisionado
-    for j in range(y_test_labeled.shape[1]):  # Iterando por cada target
-            r2 = r2_score(y_test_labeled[:, j], y_pred_combined[:, j])
-            mae = mean_absolute_error(y_test_labeled[:, j], y_pred_combined[:, j])
-            ca = custom_accuracy(y_test_labeled[:, j], y_pred_combined[:, j])
+    for j in range(len(y_test_labeled[0])):  # Iterando por cada target
+            r2 = r2_score([row[j] for row in y_test_labeled], [row[j] for row in y_pred_combined])
+            mae = mean_absolute_error([row[j] for row in y_test_labeled], [row[j] for row in y_pred_combined])
+            ca = custom_accuracy([row[j] for row in y_test_labeled], [row[j] for row in y_pred_combined])
             print(f"Target {i+1}: R²={r2:.3f}, MAE={mae:.3f}, CA={ca:.3f}")
 
     print(f"Tempo de execução: {execution_time:.2f} segundos\n")
