@@ -292,34 +292,30 @@ class InstanceCoTraining(CoTraining):
 
         return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, top_combined_mask, True
 
-class TargetCoTraining(InstanceCoTraining):
-    def confidence_computation(self, preds1, preds2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled):
+class OldTargetCoTraining(InstanceCoTraining):
+    def confidence_computation(self, preds1, preds2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled, y_pool):
+        original_indices = np.arange(len(X_unlabeled_v1)) 
         print(" Calculating prediction confidence for (instance, target) pairs...")
 
-        # Compute masks separately for preds1 and preds2
-        confident_mask1 = np.zeros(preds1.shape, dtype=bool)
-        confident_mask2 = np.zeros(preds2.shape, dtype=bool)
+        # Convert y_pool to a NumPy array if it is not already
+        y_pool = np.array(y_pool)
 
-        for i in range(preds1.shape[0]):
-            for j in range(preds1.shape[1]):
-                if np.std([preds1[i, j]]) <= self.threshold:
-                    confident_mask1[i, j] = True
-                if np.std([preds2[i, j]]) <= self.threshold:
-                    confident_mask2[i, j] = True
+        confident_mask1 = np.std(preds1, axis=0) <= self.threshold
+        confident_mask2 = np.std(preds2, axis=0) <= self.threshold
 
         # Combine the masks
         combined_mask = confident_mask1 | confident_mask2
 
         if not combined_mask.any():
             print(" No confident predictions found.")
-            return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, [], False
+            return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, y_pool, [], [], False
 
         # Calculate variances for confident pairs
         confident_pairs = []
         for i in range(preds1.shape[0]):
             for j in range(preds1.shape[1]):
                 if combined_mask[i, j]:
-                    variance_sum = np.std([preds1[i, j]]) + np.std([preds2[i, j]])
+                    variance_sum = np.std(preds1[i, j]) + np.std(preds2[i, j])
                     confident_pairs.append((i, j, preds1[i, j], preds2[i, j], variance_sum))
 
         # Sort by variance sum and select top-k
@@ -327,12 +323,17 @@ class TargetCoTraining(InstanceCoTraining):
         confident_pairs.sort(key=lambda x: x[4])
         confident_pairs = confident_pairs[:k]
 
+        print(confident_pairs)
+
         # Generate top_confident_mask1 and top_confident_mask2
         top_confident_mask1 = np.zeros(preds1.shape, dtype=bool)
         top_confident_mask2 = np.zeros(preds2.shape, dtype=bool)
 
         # Save the pairs of (instance, target) along with their variances and predictions
         top_confident_pairs = []
+
+        # Map instance indices to original indices
+        mapped_indices = [original_indices[i] for i, _, _, _, _ in confident_pairs]
 
         for i, j, pred1, pred2, _ in confident_pairs:
             top_confident_mask1[i, j] = True
@@ -344,21 +345,30 @@ class TargetCoTraining(InstanceCoTraining):
             y_labeled = np.vstack([y_labeled, y_labeled_instance])
             top_confident_pairs.append((i, j))
 
-        # Remove instances with all targets added to y_labeled
-        confident_indices = list(set([i for i, _, _, _, _ in confident_pairs]))
-        X_unlabeled_v1 = np.delete(X_unlabeled_v1, confident_indices, axis=0)
-        X_unlabeled_v2 = np.delete(X_unlabeled_v2, confident_indices, axis=0)
+        # Remove the selected targets from the pool
+        for i, j in top_confident_pairs:
+            y_pool[i, j] = np.nan  # Mark the target as removed
+
+        # Remove rows with all targets removed
+        mask = ~np.isnan(y_pool).all(axis=1)
+        X_unlabeled_v1 = X_unlabeled_v1[mask]
+        X_unlabeled_v2 = X_unlabeled_v2[mask]
+        y_pool = y_pool[mask]
+        original_indices = original_indices[mask]
 
         print(f"{len(top_confident_pairs)} (instance, target) pairs added in this iteration.")
         
         assert X_train_labeled_v1.shape[0] == X_train_labeled_v2.shape[0], "Mismatch in sizes of X_train_labeled_v1 and X_train_labeled_v2"
 
-        return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, top_confident_pairs, True
+        return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, y_pool, top_confident_pairs, mapped_indices, True
 
     def training(self, model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled, fold_index):
         execution_times = []
         added_pairs_per_iteration = []
         original_indices = np.arange(len(X_unlabeled_v1))  # Track original indices
+
+        # Ensure y_pool is defined
+        _, _, y_pool, _, _, _, _, _, _ = self.read_data(fold_index + 1)
 
         for j in range(self.iterations):
             print(f"    Training model in epoch {j}...")
@@ -385,31 +395,8 @@ class TargetCoTraining(InstanceCoTraining):
                 break
 
             # Define the most confident pairs
-            confident_pairs, continue_training = self.confidence_computation(preds1, preds2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled)
-                
-            if len(X_train_labeled_v1) == len(y_labeled):
-                model_view1.fit(X_train_labeled_v1, y_labeled)
-            else:
-                print(f"    Inconsistent number of samples: {len(X_train_labeled_v1)} in X_train_labeled_v1, {len(y_labeled)} in y_labeled")
-                break
-
-            if len(X_train_labeled_v2) == len(y_labeled):
-                model_view2.fit(X_train_labeled_v2, y_labeled)
-            else:
-                print(f"    Inconsistent number of samples: {len(X_train_labeled_v2)} in X_train_labeled_v2, {len(y_labeled)} in y_labeled")
-                break
-
-            # Predict using model_view1 and model_view2
-            preds1 = model_view1.predict(X_unlabeled_v1) if len(X_unlabeled_v1) > 0 else np.array([])
-            preds2 = model_view2.predict(X_unlabeled_v2) if len(X_unlabeled_v2) > 0 else np.array([])
-
-            if self.stop_criterion(preds1, preds2):
-                print(" No more unlabeled examples.")
-                break
-
-            # Define the most confident pairs
-            X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, confident_pairs, continue_training = self.confidence_computation(
-                preds1, preds2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled
+            X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, y_pool, confident_pairs, mapped_indices, continue_training = self.confidence_computation(
+                preds1, preds2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled, y_pool
             )
 
             if not continue_training:
@@ -418,51 +405,8 @@ class TargetCoTraining(InstanceCoTraining):
             # Store the most confident pairs of the iteration
             added_pairs = []
             for i, j in confident_pairs:
-                added_pairs.append((original_indices[i], j))
+                added_pairs.append((mapped_indices[i], j))
             added_pairs_per_iteration.append(added_pairs)
-
-            # Map instance indices to original indices
-            mapped_indices = [original_indices[i] for i, _, _, _ in confident_pairs]
-
-            # Sort indices in descending order (largest index first)
-            sorted_indices = sorted(zip(mapped_indices, [j for _, j, _, _ in confident_pairs]), key=lambda x: x[0], reverse=True)
-
-            # Collect instances and targets to be removed after the epoch
-            targets_to_remove = []
-
-            # Reverse iterate through the sorted indices
-            for idx, target_idx in sorted_indices:
-                
-                # Validate the index against current pool size
-                if idx >= len(X_unlabeled_v1):
-                    print(f"Skipping invalid index: {idx} (current pool size: {len(X_unlabeled_v1)})")
-                    continue
-
-                # Check if the pair (instance, target) has already been selected
-                if (idx, target_idx) in added_pairs:
-                    continue
-
-                # Append the selected instance and target value to respective lists
-                X_train_labeled_v1 = np.vstack([X_train_labeled_v1, X_unlabeled_v1[idx]])
-                X_train_labeled_v2 = np.vstack([X_train_labeled_v2, X_unlabeled_v2[idx]])
-                y_labeled_instance = y_labeled[-1].copy() if len(y_labeled) > 0 else np.full(preds1.shape[1], np.nan)
-                y_labeled_instance[target_idx] = preds1[idx, target_idx] if np.std([preds1[idx, target_idx], preds2[idx, target_idx]]) <= self.threshold else preds2[idx, target_idx]
-                y_labeled = np.vstack([y_labeled, y_labeled_instance])
-
-                # Collect the target indices for removal
-                targets_to_remove.append((idx, target_idx))
-
-            # Remove the selected targets from the pool after the epoch
-            for idx, target_idx in targets_to_remove:
-                y_pool[idx, target_idx] = np.nan  # Mark the target as removed
-
-            # Remove rows with all targets removed
-            mask = ~np.isnan(y_pool).all(axis=1)
-            X_unlabeled_v1 = X_unlabeled_v1[mask]
-            X_unlabeled_v2 = X_unlabeled_v2[mask]
-
-            # Update original_indices after removal
-            original_indices = original_indices[mask]
 
             execution_time = time.time() - start_time
             execution_times.append(execution_time)
@@ -577,7 +521,7 @@ if __name__ == "__main__":
     X_train, y_train, X_pool, y_pool, X_rest, y_rest, X_test, y_test, target_length = cotraining_model.read_data(1)
     batch_size = round((batch_percentage / 100) * len(X_pool))
 
-    target_cotraining_model = TargetCoTraining(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees, batch_size)
+    target_cotraining_model = OldTargetCoTraining(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees, batch_size)
     
     for i in range(k_folds):
         R2, MSE, MAE, CA, ARRMSE, added_pairs_per_iteration = target_cotraining_model.train_and_evaluate(i)
