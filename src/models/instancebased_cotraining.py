@@ -96,7 +96,7 @@ class CoTraining:
         arrmse = np.round(arrmse_metric(np.asarray(y_test_labeled), y_pred), 4)
 
         print(f"Original Performance: R²={r2:.3f}, MSE={mse:.3f}, MAE={mae:.3f}, CA={ca:.3f}, ARRMSE={arrmse:.3f}")
-        print(f"Execution time (with original data): {execution_time:.2f} seconds\n")
+        print(f"    Execution time (with original data): {execution_time:.2f} seconds\n")
         return model
 
     def initialize_models(self):
@@ -111,15 +111,15 @@ class CoTraining:
         return X_v1, X_v2
 
     def confidence_computation(self, preds1, preds2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled):
-        print("Calculating prediction confidence...")
+        print(" Calculating prediction confidence...")
         confident_mask1 = np.std(preds1, axis=1) <= self.threshold
         confident_mask2 = np.std(preds2, axis=1) <= self.threshold
 
         combined_mask = confident_mask1 | confident_mask2
 
         if not combined_mask.any():
-            print("No confident predictions found.")
-            return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, False
+            print(" No confident predictions found.")
+            return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, combined_mask, False
 
         if confident_mask1.any():
             X_train_labeled_v1 = np.vstack([X_train_labeled_v1, X_unlabeled_v1[confident_mask1]])
@@ -134,47 +134,61 @@ class CoTraining:
         X_unlabeled_v1 = X_unlabeled_v1[~combined_mask]
         X_unlabeled_v2 = X_unlabeled_v2[~combined_mask]
 
-        print(f"{confident_mask1.sum() + confident_mask2.sum()} examples added in this iteration.")
+        print(f"    {confident_mask1.sum() + confident_mask2.sum()} examples added in this iteration.")
         
-        assert X_train_labeled_v1.shape[0] == X_train_labeled_v2.shape[0], "Mismatch in sizes of X_train_labeled_v1 and X_train_labeled_v2"
+        assert X_train_labeled_v1.shape[0] == X_train_labeled_v2.shape[0], "    Mismatch in sizes of X_train_labeled_v1 and X_train_labeled_v2"
 
-        return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, True
-
+        return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, combined_mask, True
+    
     def stop_criterion(self, preds1, preds2):
         return len(preds1) == 0 or len(preds2) == 0
 
     def training(self, model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled, fold_index):
         execution_times = []
+        added_pairs_per_iteration = []
+        original_indices = np.arange(len(X_unlabeled_v1))  # Track original indices
 
         for j in range(self.iterations):
-            print(f"Training model in epoch {j}...")
+            print(f"    Training model in epoch {j}...")
             start_time = time.time()
 
             if len(X_train_labeled_v1) == len(y_labeled):
                 model_view1.fit(X_train_labeled_v1, y_labeled)
             else:
-                print(f"Inconsistent number of samples: {len(X_train_labeled_v1)} in X_train_labeled_v1, {len(y_labeled)} in y_labeled")
+                print(f"    Inconsistent number of samples: {len(X_train_labeled_v1)} in X_train_labeled_v1, {len(y_labeled)} in y_labeled")
                 break
 
             if len(X_train_labeled_v2) == len(y_labeled):
                 model_view2.fit(X_train_labeled_v2, y_labeled)
             else:
-                print(f"Inconsistent number of samples: {len(X_train_labeled_v2)} in X_train_labeled_v2, {len(y_labeled)} in y_labeled")
+                print(f"    Inconsistent number of samples: {len(X_train_labeled_v2)} in X_train_labeled_v2, {len(y_labeled)} in y_labeled")
                 break
 
             preds1 = model_view1.predict(X_unlabeled_v1) if len(X_unlabeled_v1) > 0 else np.array([])
             preds2 = model_view2.predict(X_unlabeled_v2) if len(X_unlabeled_v2) > 0 else np.array([])
 
             if self.stop_criterion(preds1, preds2):
-                print("No more unlabeled examples.")
+                print(" No more unlabeled examples.")
                 break
 
-            X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, continue_training = self.confidence_computation(
+            X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, combined_mask, continue_training = self.confidence_computation(
                 preds1, preds2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled
             )
 
             if not continue_training:
                 break
+
+            # Track added pairs (original_instance_index, target_number)
+            added_pairs = []
+            confident_indices = np.where(combined_mask)[0]
+            for idx in confident_indices:
+                original_idx = original_indices[idx]
+                for target_idx in range(y_labeled.shape[1]):
+                    added_pairs.append((original_idx, target_idx))
+            added_pairs_per_iteration.append(added_pairs)
+
+            # Update original indices after removing confident examples
+            original_indices = original_indices[~combined_mask]
 
             execution_time = time.time() - start_time
             execution_times.append(execution_time)
@@ -186,10 +200,10 @@ class CoTraining:
             self.CA[fold_index, j] = ca
             self.ARRMSE[fold_index, j] = arrmse
 
-        return model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, y_labeled, execution_times
+        return model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, y_labeled, execution_times, added_pairs_per_iteration
 
     def evaluate_model(self, model_view1, model_view2, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled):
-        print("Making predictions on test data...")
+        print(" Making predictions on test data...")
         y_pred_v1 = model_view1.predict(X_test_labeled_v1)
         y_pred_v2 = model_view2.predict(X_test_labeled_v2)
         y_pred_combined = (y_pred_v1 + y_pred_v2) / 2
@@ -200,12 +214,12 @@ class CoTraining:
         ca = np.round(custom_accuracy(np.asarray(y_test_labeled), y_pred_combined, self.threshold), 4)
         arrmse = np.round(arrmse_metric(np.asarray(y_test_labeled), y_pred_combined), 4)
 
-        print(f"Overall: R²={r2:.3f}, MSE={mse:.3f}, MAE={mae:.3f}, CA={ca:.3f}, ARRMSE={arrmse:.3f}")
+        print(f"    Overall: R²={r2:.3f}, MSE={mse:.3f}, MAE={mae:.3f}, CA={ca:.3f}, ARRMSE={arrmse:.3f}")
 
         return r2, mse, mae, ca, arrmse
 
     def train_and_evaluate(self, fold_index):
-        print(f"Training model in pool {fold_index}...")
+        print(f"\n    Training model in pool {fold_index}...")
         X_train_not_missing, Y_train_not_missing, X_unlabeled, Y_train_missing, X_rest, y_rest, X_test_labeled, y_test_labeled, target_length = self.read_data(fold_index+1)
 
         self.train_original_model(X_train_not_missing, Y_train_not_missing, X_test_labeled, y_test_labeled)
@@ -217,7 +231,7 @@ class CoTraining:
 
         y_labeled = Y_train_not_missing
 
-        model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, y_labeled, execution_times = self.training(
+        model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, y_labeled, execution_times, added_pairs_per_iteration = self.training(
             model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled, fold_index
         )
 
@@ -228,7 +242,7 @@ class CoTraining:
         self.CA[fold_index, -1] = ca
         self.ARRMSE[fold_index, -1] = arrmse
 
-        return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE
+        return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE, added_pairs_per_iteration
 
 class InstanceCoTraining(CoTraining):
     def __init__(self, data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees, batch_size):
@@ -236,15 +250,15 @@ class InstanceCoTraining(CoTraining):
         self.batch_size = batch_size
 
     def confidence_computation(self, preds1, preds2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled):
-        print("Calculating prediction confidence...")
+        print(" Calculating prediction confidence...")
         confident_mask1 = np.std(preds1, axis=1) <= self.threshold
         confident_mask2 = np.std(preds2, axis=1) <= self.threshold
 
         combined_mask = confident_mask1 | confident_mask2
 
         if not combined_mask.any():
-            print("No confident predictions found.")
-            return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, False
+            print(" No confident predictions found.")
+            return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, combined_mask, False
 
         confident_indices = np.where(combined_mask)[0]
         if len(confident_indices) > self.batch_size:
@@ -270,11 +284,13 @@ class InstanceCoTraining(CoTraining):
         X_unlabeled_v1 = np.delete(X_unlabeled_v1, confident_indices, axis=0)
         X_unlabeled_v2 = np.delete(X_unlabeled_v2, confident_indices, axis=0)
 
+        top_combined_mask = top_confident_mask1 | top_confident_mask2
+
         print(f"{len(confident_indices)} examples added in this iteration.")
         
         assert X_train_labeled_v1.shape[0] == X_train_labeled_v2.shape[0], "Mismatch in sizes of X_train_labeled_v1 and X_train_labeled_v2"
 
-        return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, True
+        return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, top_combined_mask, True
 
 if __name__ == "__main__":
     data_dir = config.DATA_DIR
@@ -285,15 +301,44 @@ if __name__ == "__main__":
     cotraining_model = CoTraining(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees)
     
     for i in range(k_folds):
-        cotraining_model.train_and_evaluate(i)
-    
-    R2, MSE, MAE, CA, ARRMSE = cotraining_model.R2, cotraining_model.MSE, cotraining_model.MAE, cotraining_model.CA, cotraining_model.ARRMSE
-    #print("Final Metrics:")
-    #print("R2:", R2)
-    #print("MSE:", MSE)
-    #print("MAE:", MAE)
-    #print("CA:", CA)
-    #print("ARRMSE:", ARRMSE)
+        R2, MSE, MAE, CA, ARRMSE, added_pairs_per_iteration = cotraining_model.train_and_evaluate(i)
+        for j, added_pairs in enumerate(added_pairs_per_iteration):
+            print(f"        Added pairs in fold {i}, iteration {j}: {added_pairs}")
+        
+        R2_flat = R2[i, :].flatten()
+        MSE_flat = MSE[i, :].flatten()
+        MAE_flat = MAE[i, :].flatten()
+        CA_flat = CA[i, :].flatten()
+        ARRMSE_flat = ARRMSE[i, :].flatten()
+        added_pairs_flat = added_pairs_per_iteration
+        num_entries = max(R2[i, :].size, MSE[i, :].size, MAE[i, :].size, CA[i, :].size, ARRMSE[i, :].size)
+
+        if len(added_pairs_flat) < num_entries:
+            added_pairs_flat.extend([[]] * (num_entries - len(added_pairs_flat)))
+        if len(R2_flat) < num_entries:
+            R2_flat = np.append(R2_flat, [None] * (num_entries - len(R2_flat)))
+        if len(MSE_flat) < num_entries:
+            MSE_flat = np.append(MSE_flat, [None] * (num_entries - len(MSE_flat)))
+        if len(MAE_flat) < num_entries:
+            MAE_flat = np.append(MAE_flat, [None] * (num_entries - len(MAE_flat)))
+        if len(CA_flat) < num_entries:
+            CA_flat = np.append(CA_flat, [None] * (num_entries - len(CA_flat)))
+        if len(ARRMSE_flat) < num_entries:
+            ARRMSE_flat = np.append(ARRMSE_flat, [None] * (num_entries - len(ARRMSE_flat)))
+
+        results_df = pd.DataFrame({
+            'Fold_Index': [i for _ in range(num_entries)],
+            'Iterations': list(range(num_entries)),
+            'R2': R2_flat,
+            'MSE': MSE_flat,
+            'MAE': MAE_flat,
+            'CA': CA_flat,
+            'ARRMSE': ARRMSE_flat,
+            'Added_Pairs': added_pairs_flat
+        })
+        results_path = Path(f'reports/semi_supervised_learning/{dataset_name}')
+        results_path.mkdir(parents=True, exist_ok=True)
+        results_df.to_csv(results_path / f'original_cotraining_results_fold_{i}.csv', index=False)
 
     # Instance-based co-training model
     print('Co-Training with Top-k Confidence...')
@@ -304,12 +349,40 @@ if __name__ == "__main__":
     instance_cotraining_model = InstanceCoTraining(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees, batch_size)
     
     for i in range(k_folds):
-        instance_cotraining_model.train_and_evaluate(i)
-    
-    R2, MSE, MAE, CA, ARRMSE = instance_cotraining_model.R2, instance_cotraining_model.MSE, instance_cotraining_model.MAE, instance_cotraining_model.CA, instance_cotraining_model.ARRMSE
-    #print("Final Metrics for Instance-based Co-Training:")
-    #print("R2:", R2)
-    #print("MSE:", MSE)
-    #print("MAE:", MAE)
-    #print("CA:", CA)
-    #print("ARRMSE:", ARRMSE)
+        R2, MSE, MAE, CA, ARRMSE, added_pairs_per_iteration = instance_cotraining_model.train_and_evaluate(i)
+        
+        # Save results for each fold to DataFrame and CSV
+        R2_flat = R2[i, :].flatten()
+        MSE_flat = MSE[i, :].flatten()
+        MAE_flat = MAE[i, :].flatten()
+        CA_flat = CA[i, :].flatten()
+        ARRMSE_flat = ARRMSE[i, :].flatten()
+        added_pairs_flat = added_pairs_per_iteration
+        num_entries = max(R2[i, :].size, MSE[i, :].size, MAE[i, :].size, CA[i, :].size, ARRMSE[i, :].size)
+
+        if len(added_pairs_flat) < num_entries:
+            added_pairs_flat.extend([[]] * (num_entries - len(added_pairs_flat)))
+        if len(R2_flat) < num_entries:
+            R2_flat = np.append(R2_flat, [None] * (num_entries - len(R2_flat)))
+        if len(MSE_flat) < num_entries:
+            MSE_flat = np.append(MSE_flat, [None] * (num_entries - len(MSE_flat)))
+        if len(MAE_flat) < num_entries:
+            MAE_flat = np.append(MAE_flat, [None] * (num_entries - len(MAE_flat)))
+        if len(CA_flat) < num_entries:
+            CA_flat = np.append(CA_flat, [None] * (num_entries - len(CA_flat)))
+        if len(ARRMSE_flat) < num_entries:
+            ARRMSE_flat = np.append(ARRMSE_flat, [None] * (num_entries - len(ARRMSE_flat)))
+
+        results_df = pd.DataFrame({
+            'Fold_Index': [i for _ in range(num_entries)],
+            'Iterations': list(range(num_entries)),
+            'R2': R2_flat,
+            'MSE': MSE_flat,
+            'MAE': MAE_flat,
+            'CA': CA_flat,
+            'ARRMSE': ARRMSE_flat,
+            'Added_Pairs': added_pairs_flat
+        })
+        results_path = Path(f'reports/semi_supervised_learning/{dataset_name}')
+        results_path.mkdir(parents=True, exist_ok=True)
+        results_df.to_csv(results_path / f'instance_cotraining_results_fold_{i}.csv', index=False)
