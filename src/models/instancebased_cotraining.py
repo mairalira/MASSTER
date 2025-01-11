@@ -362,34 +362,51 @@ class TargetCoTraining(CoTraining):
 
             for idx, target_idx, _ in top_confident_pairs1:
                 original_idx = original_indices[idx]
-                X_train_v1 = np.vstack([X_train_v1, X_unlabeled_v1[idx]])
-                X_train_v2 = np.vstack([X_train_v2, X_unlabeled_v2[idx]])
-                
-                new_label = np.full((1, target_length), np.nan)
-                new_label[0, target_idx] = preds1[idx, target_idx]
-                y_labeled = np.vstack([y_labeled, new_label])
+                if original_idx not in original_indices: 
+                    X_train_v1 = np.vstack([X_train_v1, X_unlabeled_v1[idx]])
+                    X_train_v2 = np.vstack([X_train_v2, X_unlabeled_v2[idx]])
+
+                    new_label = np.full((1, target_length), np.nan)
+                    new_label[0, target_idx] = preds1[idx, target_idx]
+                    y_labeled = np.vstack([y_labeled, new_label])
+                    original_indices = np.append(original_indices, original_idx) 
+
+                else:  
+                    existing_row = np.where(original_indices == original_idx)[0][0]
+                    y_labeled[existing_row, target_idx] = preds1[idx, target_idx]
 
                 targets_to_remove.append((original_idx, target_idx))
                 added_pairs.append((original_idx, target_idx))
 
             for idx, target_idx, _ in top_confident_pairs2:
                 original_idx = original_indices[idx]
-                X_train_v1 = np.vstack([X_train_v1, X_unlabeled_v1[idx]])
-                X_train_v2 = np.vstack([X_train_v2, X_unlabeled_v2[idx]])
+                if original_idx not in original_indices: 
+                    X_train_v1 = np.vstack([X_train_v1, X_unlabeled_v1[idx]])
+                    X_train_v2 = np.vstack([X_train_v2, X_unlabeled_v2[idx]])
 
-                new_label = np.full((1, target_length), np.nan)
-                new_label[0, target_idx] = preds2[idx, target_idx]
-                y_labeled = np.vstack([y_labeled, new_label])
+                    new_label = np.full((1, target_length), np.nan)
+                    new_label[0, target_idx] = preds2[idx, target_idx]
+                    y_labeled = np.vstack([y_labeled, new_label])
+                    original_indices = np.append(original_indices, original_idx) 
+
+                else:  
+                    existing_row = np.where(original_indices == original_idx)[0][0]
+                    y_labeled[existing_row, target_idx] = preds2[idx, target_idx]
 
                 targets_to_remove.append((original_idx, target_idx))
                 added_pairs.append((original_idx, target_idx))
 
             added_pairs_per_iteration.append(added_pairs)
 
-            for idx, target_idx in targets_to_remove:
-                y_labeled[idx, target_idx] = np.nan  # Mark the target as removed
+            print(y_labeled)
+
+            #for idx, target_idx in targets_to_remove:
+            #    y_labeled[idx, target_idx] = np.nan  # Mark the target as removed
 
             mask = ~np.isnan(y_labeled).all(axis=1)
+
+            print(mask)
+            
             X_unlabeled_v1 = X_unlabeled_v1[mask]
             X_unlabeled_v2 = X_unlabeled_v2[mask]
             y_labeled = y_labeled[mask]
