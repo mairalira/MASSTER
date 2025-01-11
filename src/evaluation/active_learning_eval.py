@@ -104,8 +104,8 @@ class ActiveLearningEvaluator:
             'rtal': 'RT-AL',
             'upperbound': 'Upper-bound'
         }
-        fig, axes = plt.subplots(len(dataset_names), len(metric_names), figsize=(20, 20), sharex=True)
-        fig.subplots_adjust(hspace=0.4, wspace=0.4, top=0.95, bottom=0.05, left=0.05, right=0.95)
+        fig, axes = plt.subplots(len(dataset_names), len(metric_names), figsize=(5*len(metric_names), 2.5*len(dataset_names)), sharex=True)
+        fig.subplots_adjust(bottom=0.05, top = 0.99)
     
         for i, dataset in enumerate(dataset_names):
             for j, metric in enumerate(metric_names):
@@ -128,7 +128,7 @@ class ActiveLearningEvaluator:
                     ax.set_xlabel('Epoch')
         
         handles, labels = ax.get_legend_handles_labels()
-        fig.legend(handles, labels, loc='lower center', ncol=len(self.methods))
+        fig.legend(handles, labels, loc='lower center', ncol=len(self.methods)/2)
         plt.savefig('reports/active_learning/summary_subplot_image.png')
         plt.close(fig)
 
@@ -173,6 +173,7 @@ n_epochs = N_EPOCHS
 iterations = ITERATIONS
 considered_epochs = [int(n_epochs/3), int(n_epochs*(2/3)), N_EPOCHS]
 dataset_names = ['atp7d', 'friedman', 'mp5spec', 'musicOrigin2', 'rf2', 'oes97', 'enb', 'osales', 'wq']
-metric_names = ['arrmse', 'ca', 'mae', 'mse', 'r2'] 
+metric_names = ['arrmse', 'r2']
+#metric_names = ['arrmse', 'ca', 'mae', 'mse', 'r2'] 
 method_names = ['greedy', 'instance', 'qbcrf', 'random', 'rtal', 'upperbound']
 run_reports(dataset_names, metric_names, considered_epochs, method_names)

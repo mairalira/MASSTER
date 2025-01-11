@@ -25,8 +25,9 @@ iterations = ITERATIONS
 threshold = THRESHOLD
 random_state = RANDOM_STATE
 n_trees = N_TREES
+batch_percentage = BATCH_PERCENTAGE
 
-class InstanceCoTrainingModel:
+class CoTraining:
     def __init__(self, data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees):
         self.data_dir = data_dir
         self.dataset_name = dataset_name
@@ -43,7 +44,7 @@ class InstanceCoTrainingModel:
         self.ARRMSE = np.zeros([self.k_folds, self.iterations+1])
 
     def data_read(self, dataset):
-        # split the csv file in the input and target values
+        # split the csv file into input and target values
         folder_dir = data_dir / 'processed' / f'{self.dataset_name}'
         data_path = folder_dir / f'{dataset}'
         df = pd.read_csv(data_path)
@@ -229,18 +230,86 @@ class InstanceCoTrainingModel:
 
         return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE
 
+class InstanceCoTraining(CoTraining):
+    def __init__(self, data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees, batch_size):
+        super().__init__(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees)
+        self.batch_size = batch_size
+
+    def confidence_computation(self, preds1, preds2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled):
+        print("Calculating prediction confidence...")
+        confident_mask1 = np.std(preds1, axis=1) <= self.threshold
+        confident_mask2 = np.std(preds2, axis=1) <= self.threshold
+
+        combined_mask = confident_mask1 | confident_mask2
+
+        if not combined_mask.any():
+            print("No confident predictions found.")
+            return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, False
+
+        confident_indices = np.where(combined_mask)[0]
+        if len(confident_indices) > self.batch_size:
+            # Select the top batch_size indices based on the highest confidence
+            variances = np.std(preds1[confident_indices], axis=1) + np.std(preds2[confident_indices], axis=1)
+            top_indices = np.argsort(variances)[:self.batch_size]
+            confident_indices = confident_indices[top_indices]
+
+        # Generate top_confident_mask1 and top_confident_mask2
+        top_confident_mask1 = np.isin(np.arange(len(confident_mask1)), confident_indices) & confident_mask1
+        top_confident_mask2 = np.isin(np.arange(len(confident_mask2)), confident_indices) & confident_mask2
+
+        if top_confident_mask1.any():
+            X_train_labeled_v1 = np.vstack([X_train_labeled_v1, X_unlabeled_v1[top_confident_mask1]])
+            X_train_labeled_v2 = np.vstack([X_train_labeled_v2, X_unlabeled_v2[top_confident_mask1]])
+            y_labeled = np.vstack([y_labeled, preds1[top_confident_mask1]])
+
+        if top_confident_mask2.any():
+            X_train_labeled_v1 = np.vstack([X_train_labeled_v1, X_unlabeled_v1[top_confident_mask2]])
+            X_train_labeled_v2 = np.vstack([X_train_labeled_v2, X_unlabeled_v2[top_confident_mask2]])
+            y_labeled = np.vstack([y_labeled, preds2[top_confident_mask2]])
+
+        X_unlabeled_v1 = np.delete(X_unlabeled_v1, confident_indices, axis=0)
+        X_unlabeled_v2 = np.delete(X_unlabeled_v2, confident_indices, axis=0)
+
+        print(f"{len(confident_indices)} examples added in this iteration.")
+        
+        assert X_train_labeled_v1.shape[0] == X_train_labeled_v2.shape[0], "Mismatch in sizes of X_train_labeled_v1 and X_train_labeled_v2"
+
+        return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, True
+
 if __name__ == "__main__":
     data_dir = config.DATA_DIR
     dataset_name = config.DATASET_NAME
-    cotraining_model = InstanceCoTrainingModel(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees)
+
+    # Original co-training model
+    print('Original Co-Training...')
+    cotraining_model = CoTraining(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees)
     
     for i in range(k_folds):
         cotraining_model.train_and_evaluate(i)
     
     R2, MSE, MAE, CA, ARRMSE = cotraining_model.R2, cotraining_model.MSE, cotraining_model.MAE, cotraining_model.CA, cotraining_model.ARRMSE
-    print("Final Metrics:")
-    print("R2:", R2)
-    print("MSE:", MSE)
-    print("MAE:", MAE)
-    print("CA:", CA)
-    print("ARRMSE:", ARRMSE)
+    #print("Final Metrics:")
+    #print("R2:", R2)
+    #print("MSE:", MSE)
+    #print("MAE:", MAE)
+    #print("CA:", CA)
+    #print("ARRMSE:", ARRMSE)
+
+    # Instance-based co-training model
+    print('Co-Training with Top-k Confidence...')
+    cotraining_model = CoTraining(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees)
+    X_train, y_train, X_pool, y_pool, X_rest, y_rest, X_test, y_test, target_length = cotraining_model.read_data(1)
+    batch_size = round((batch_percentage / 100) * len(X_pool))
+
+    instance_cotraining_model = InstanceCoTraining(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees, batch_size)
+    
+    for i in range(k_folds):
+        instance_cotraining_model.train_and_evaluate(i)
+    
+    R2, MSE, MAE, CA, ARRMSE = instance_cotraining_model.R2, instance_cotraining_model.MSE, instance_cotraining_model.MAE, instance_cotraining_model.CA, instance_cotraining_model.ARRMSE
+    #print("Final Metrics for Instance-based Co-Training:")
+    #print("R2:", R2)
+    #print("MSE:", MSE)
+    #print("MAE:", MAE)
+    #print("CA:", CA)
+    #print("ARRMSE:", ARRMSE)
