@@ -300,26 +300,31 @@ class TargetCoTraining(CoTraining):
 
     def calculate_variances(self, model, X_pool, target_length):
         variances = np.zeros((len(X_pool), target_length))
+        preds = np.zeros((len(X_pool), target_length))
         for i in range(target_length):
             pool_preds = np.zeros((len(X_pool), len(model.estimators_)))
             for j, estimator in enumerate(model.estimators_):
                 pool_preds[:, j] = estimator.predict(X_pool)
-            for k, preds in enumerate(pool_preds):
-                variances[k, i] = variance(preds)
-        return variances
+            for k, preds_k in enumerate(pool_preds):
+                variances[k, i] = variance(preds_k)
+                preds[k, i] = np.mean(preds_k)
+        return variances, preds
     
-    def select_confident_pairs(self, variances):
+    def select_confident_pairs(self, variances, preds1, preds2):
         confident_pairs = []
         for i in range(variances.shape[0]):
             for j in range(variances.shape[1]):
                 if variances[i, j] <= self.threshold:
-                    confident_pairs.append((i, j, variances[i, j]))
+                    confident_pairs.append((i, j, preds1[i, j], preds2[i, j], variances[i, j]))
         return confident_pairs
     
-    def training(self, model_view1, model_view2, X_train_v1, X_train_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled, X_test_v1, X_test_v2, y_test, target_length):
+    def training(self, model_view1, model_view2, X_train_v1, X_train_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled, X_test_v1, X_test_v2, y_test, target_length, fold_index):
         execution_times = []
         added_pairs_per_iteration = []
-        original_indices = np.arange(len(X_unlabeled_v1))  # Track original indices
+        original_indices = list(range(len(X_unlabeled_v1)))
+        instance_target_count = {i: 0 for i in range(len(X_unlabeled_v1))}
+        instance_mapping = {i: original_indices[i] for i in range(len(original_indices))}
+        selected_pairs_set = set()
 
         for iteration in range(self.iterations):
             print(f"Iteration {iteration + 1}/{self.iterations}")
@@ -332,94 +337,70 @@ class TargetCoTraining(CoTraining):
             preds1 = model_view1.predict(X_unlabeled_v1)
             preds2 = model_view2.predict(X_unlabeled_v2)
 
-            variances1 = self.calculate_variances(model_view1, X_unlabeled_v1, target_length)
-            variances2 = self.calculate_variances(model_view2, X_unlabeled_v2, target_length)
+            variances1, preds1 = self.calculate_variances(model_view1, X_unlabeled_v1, target_length)
+            variances2, preds2 = self.calculate_variances(model_view2, X_unlabeled_v2, target_length)
 
             print('Confident pairs eval')
-            confident_pairs1 = self.select_confident_pairs(variances1)
-            confident_pairs2 = self.select_confident_pairs(variances2)
+            confident_pairs1 = self.select_confident_pairs(variances1, preds1, preds2)
+            confident_pairs2 = self.select_confident_pairs(variances2, preds2, preds1)
 
-            confident_pairs1 = list(confident_pairs1)
-            confident_pairs2 = list(confident_pairs2)
+            combined_pairs = list(set(confident_pairs1).union(confident_pairs2))
+            combined_pairs = sorted(combined_pairs, key=lambda x: x[4])
 
-            confident_pairs1.sort(key=lambda x: x[2])
-            confident_pairs2.sort(key=lambda x: x[2])
-
-            combined_pairs = list(set(confident_pairs1).union(confident_pairs2)) 
-            combined_pairs = sorted(combined_pairs, key=lambda x: x[2])
-
-            selected_pairs = combined_pairs[:(self.batch_size*target_length)]
-
-            top_confident_pairs1 = [pair for pair in confident_pairs1 if pair in selected_pairs]
-            top_confident_pairs2 = [pair for pair in confident_pairs2 if pair in selected_pairs]
-
-            print(f'{len(selected_pairs)} instances selected')
-
-            targets_to_remove = []
+            selected_pairs = combined_pairs[:(self.batch_size * target_length)]
             added_pairs = []
 
-            y_labeled = np.array(y_labeled)
+            if not selected_pairs:
+                print(" No confident predictions found.")
+                return model_view1, model_view2, X_train_v1, X_train_v2, y_labeled, execution_times, added_pairs_per_iteration
 
-            for idx, target_idx, _ in top_confident_pairs1:
-                original_idx = original_indices[idx]
-                if original_idx not in original_indices: 
-                    X_train_v1 = np.vstack([X_train_v1, X_unlabeled_v1[idx]])
-                    X_train_v2 = np.vstack([X_train_v2, X_unlabeled_v2[idx]])
+            top_confident_mask1 = np.zeros(preds1.shape, dtype=bool)
+            top_confident_mask2 = np.zeros(preds2.shape, dtype=bool)
 
-                    new_label = np.full((1, target_length), np.nan)
-                    new_label[0, target_idx] = preds1[idx, target_idx]
-                    y_labeled = np.vstack([y_labeled, new_label])
-                    original_indices = np.append(original_indices, original_idx) 
+            # Save the pairs of (instance, target) along with their variances and predictions
+            for i, j, pred1, pred2, _ in selected_pairs:
+                if (i, j) in selected_pairs_set:
+                    continue
 
-                else:  
-                    existing_row = np.where(original_indices == original_idx)[0][0]
-                    y_labeled[existing_row, target_idx] = preds1[idx, target_idx]
+                top_confident_mask1[i, j] = True
+                top_confident_mask2[i, j] = True
+                X_train_v1 = np.vstack([X_train_v1, X_unlabeled_v1[i]])
+                X_train_v2 = np.vstack([X_train_v2, X_unlabeled_v2[i]])
 
-                targets_to_remove.append((original_idx, target_idx))
-                added_pairs.append((original_idx, target_idx))
+                y_labeled_instance_v1 = model_view1.predict(X_unlabeled_v1[i].reshape(1, -1))
+                y_labeled_instance_v2 = model_view2.predict(X_unlabeled_v2[i].reshape(1, -1))
 
-            for idx, target_idx, _ in top_confident_pairs2:
-                original_idx = original_indices[idx]
-                if original_idx not in original_indices: 
-                    X_train_v1 = np.vstack([X_train_v1, X_unlabeled_v1[idx]])
-                    X_train_v2 = np.vstack([X_train_v2, X_unlabeled_v2[idx]])
+                y_labeled_instance = (y_labeled_instance_v1 + y_labeled_instance_v2) / 2
 
-                    new_label = np.full((1, target_length), np.nan)
-                    new_label[0, target_idx] = preds2[idx, target_idx]
-                    y_labeled = np.vstack([y_labeled, new_label])
-                    original_indices = np.append(original_indices, original_idx) 
+                if y_labeled_instance.ndim == 1:
+                    y_labeled_instance = y_labeled_instance.reshape(1, -1)
 
-                else:  
-                    existing_row = np.where(original_indices == original_idx)[0][0]
-                    y_labeled[existing_row, target_idx] = preds2[idx, target_idx]
-
-                targets_to_remove.append((original_idx, target_idx))
-                added_pairs.append((original_idx, target_idx))
+                y_labeled = np.vstack([y_labeled, y_labeled_instance])
+                added_pairs.append((i, j))
+                instance_target_count[i] += 1
+                selected_pairs_set.add((i, j))
 
             added_pairs_per_iteration.append(added_pairs)
 
-            print(y_labeled)
-
-            #for idx, target_idx in targets_to_remove:
-            #    y_labeled[idx, target_idx] = np.nan  # Mark the target as removed
-
-            mask = ~np.isnan(y_labeled).all(axis=1)
-
-            print(mask)
+            # Remove instances with all targets added to y_labeled
+            remove_confident_indices = [i for i, count in instance_target_count.items() if count == target_length]
+            X_unlabeled_v1 = np.delete(X_unlabeled_v1, remove_confident_indices, axis=0)
+            X_unlabeled_v2 = np.delete(X_unlabeled_v2, remove_confident_indices, axis=0)
             
-            X_unlabeled_v1 = X_unlabeled_v1[mask]
-            X_unlabeled_v2 = X_unlabeled_v2[mask]
-            y_labeled = y_labeled[mask]
+            # Update instance_mapping and instance_target_count
+            instance_mapping = {new_idx: instance_mapping[old_idx] for new_idx, old_idx in enumerate(range(len(X_unlabeled_v1)))}
+            instance_target_count = {new_idx: instance_target_count[old_idx] for new_idx, old_idx in enumerate(range(len(X_unlabeled_v1)))}
 
-            original_indices = original_indices[mask]
-
-            valid_indices = ~np.isnan(y_labeled).any(axis=1)
-            X_train_v1 = X_train_v1[valid_indices]
-            X_train_v2 = X_train_v2[valid_indices]
-            y_labeled = y_labeled[valid_indices]
-
+            print(f"{len(added_pairs)} (instance, target) pairs added in this iteration.")
             execution_time = time.time() - start_time
             execution_times.append(execution_time)
+
+            r2, mse, mae, ca, arrmse = self.evaluate_model(model_view1, model_view2, X_test_v1, X_test_v2, y_test)
+            self.R2[fold_index, iteration] = r2
+            self.MSE[fold_index, iteration] = mse
+            self.MAE[fold_index, iteration] = mae
+            self.CA[fold_index, iteration] = ca
+            self.ARRMSE[fold_index, iteration] = arrmse
 
             if self.stop_criterion(preds1, preds2):
                 break
@@ -440,7 +421,7 @@ class TargetCoTraining(CoTraining):
         y_labeled = Y_train_not_missing
 
         model_view1, model_view2, X_train_v1, X_train_v2, y_labeled, execution_times, added_pairs_per_iteration = self.training(
-            model_view1, model_view2, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_labeled, X_test_v1, X_test_v2, y_test_labeled, target_length
+            model_view1, model_view2, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_labeled, X_test_v1, X_test_v2, y_test_labeled, target_length, fold_index
         )
 
         # Avaliação do modelo após o treinamento
