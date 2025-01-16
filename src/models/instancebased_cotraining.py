@@ -298,18 +298,26 @@ class TargetCoTraining(CoTraining):
         super().__init__(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees)
         self.batch_size = batch_size
 
+    # TODO: check
     def calculate_variances(self, model, X_pool, target_length):
         variances = np.zeros((len(X_pool), target_length))
         preds = np.zeros((len(X_pool), target_length))
         for i in range(target_length):
             pool_preds = np.zeros((len(X_pool), len(model.estimators_)))
             for j, estimator in enumerate(model.estimators_):
-                pool_preds[:, j] = estimator.predict(X_pool)
-            for k, preds_k in enumerate(pool_preds):
-                variances[k, i] = variance(preds_k)
-                preds[k, i] = np.mean(preds_k)
+                predictions = estimator.predict(X_pool)
+                if predictions.ndim == 1:
+                    predictions = predictions[:, np.newaxis]
+                if predictions.shape[1] > i:
+                    pool_preds[:, j] = predictions[:, i]
+                else:
+                    pool_preds[:, j] = predictions[:, 0] 
+            for k in range(len(X_pool)):
+                variances[k, i] = variance(pool_preds[k, :])
+                preds[k, i] = np.mean(pool_preds[k, :])
         return variances, preds
-    
+
+    # TODO: use only one preds in this method
     def select_confident_pairs(self, variances, preds1, preds2):
         confident_pairs = []
         for i in range(variances.shape[0]):
@@ -323,8 +331,9 @@ class TargetCoTraining(CoTraining):
         added_pairs_per_iteration = []
         original_indices = list(range(len(X_unlabeled_v1)))
         instance_target_count = {i: 0 for i in range(len(X_unlabeled_v1))}
-        instance_mapping = {i: original_indices[i] for i in range(len(original_indices))}
+        instance_mapping = list(range(len(y_labeled)))
         selected_pairs_set = set()
+        y_labeled = np.array(y_labeled)
 
         for iteration in range(self.iterations):
             print(f"Iteration {iteration + 1}/{self.iterations}")
@@ -341,6 +350,7 @@ class TargetCoTraining(CoTraining):
             variances2, preds2 = self.calculate_variances(model_view2, X_unlabeled_v2, target_length)
 
             print('Confident pairs eval')
+            # TODO: Update
             confident_pairs1 = self.select_confident_pairs(variances1, preds1, preds2)
             confident_pairs2 = self.select_confident_pairs(variances2, preds2, preds1)
 
@@ -354,42 +364,72 @@ class TargetCoTraining(CoTraining):
                 print(" No confident predictions found.")
                 return model_view1, model_view2, X_train_v1, X_train_v2, y_labeled, execution_times, added_pairs_per_iteration
 
-            top_confident_mask1 = np.zeros(preds1.shape, dtype=bool)
-            top_confident_mask2 = np.zeros(preds2.shape, dtype=bool)
-
-            # Save the pairs of (instance, target) along with their variances and predictions
             for i, j, pred1, pred2, _ in selected_pairs:
                 if (i, j) in selected_pairs_set:
                     continue
 
-                top_confident_mask1[i, j] = True
-                top_confident_mask2[i, j] = True
-                X_train_v1 = np.vstack([X_train_v1, X_unlabeled_v1[i]])
-                X_train_v2 = np.vstack([X_train_v2, X_unlabeled_v2[i]])
+                y_labeled_instance = (pred1 + pred2) / 2
 
-                y_labeled_instance_v1 = model_view1.predict(X_unlabeled_v1[i].reshape(1, -1))
-                y_labeled_instance_v2 = model_view2.predict(X_unlabeled_v2[i].reshape(1, -1))
+                if i < len(y_labeled):  # Verificação para garantir que o índice está dentro do limite de y_labeled
+                    mask = np.array(instance_mapping) == i
+                    if np.any(mask):
+                        idx = np.where(mask)[0][0]
+                        y_labeled[idx, j] = y_labeled_instance
+                    else:
+                        # Adicionar instância a X_train_v1, X_train_v2 e y_labeled
+                        new_instance_v1 = X_unlabeled_v1[i].reshape(1, -1)  # Dados de X_train_v1 para i
+                        new_instance_v2 = X_unlabeled_v2[i].reshape(1, -1)  # Dados de X_train_v2 para i
 
-                y_labeled_instance = (y_labeled_instance_v1 + y_labeled_instance_v2) / 2
+                        X_train_v1 = np.vstack([X_train_v1, new_instance_v1])
+                        X_train_v2 = np.vstack([X_train_v2, new_instance_v2])
 
-                if y_labeled_instance.ndim == 1:
-                    y_labeled_instance = y_labeled_instance.reshape(1, -1)
+                        new_instance = np.full((1, target_length), np.nan)
+                        new_instance[0, j] = y_labeled_instance
+                        y_labeled = np.vstack([y_labeled, new_instance])
 
-                y_labeled = np.vstack([y_labeled, y_labeled_instance])
+                        instance_mapping.append(i)
+
                 added_pairs.append((i, j))
                 instance_target_count[i] += 1
                 selected_pairs_set.add((i, j))
+                print(i, j)
 
             added_pairs_per_iteration.append(added_pairs)
 
-            # Remove instances with all targets added to y_labeled
-            remove_confident_indices = [i for i, count in instance_target_count.items() if count == target_length]
-            X_unlabeled_v1 = np.delete(X_unlabeled_v1, remove_confident_indices, axis=0)
-            X_unlabeled_v2 = np.delete(X_unlabeled_v2, remove_confident_indices, axis=0)
-            
-            # Update instance_mapping and instance_target_count
-            instance_mapping = {new_idx: instance_mapping[old_idx] for new_idx, old_idx in enumerate(range(len(X_unlabeled_v1)))}
-            instance_target_count = {new_idx: instance_target_count[old_idx] for new_idx, old_idx in enumerate(range(len(X_unlabeled_v1)))}
+            confident_indices = [i for i, count in instance_target_count.items() if count == target_length]
+
+            if confident_indices:
+                # Criar as máscaras para instâncias confiantes
+                confident_mask_v1 = np.isin(np.arange(X_unlabeled_v1.shape[0]), confident_indices)
+                confident_mask_v2 = np.isin(np.arange(X_unlabeled_v2.shape[0]), confident_indices)
+                
+                # Selecionar as instâncias confiantes
+                X_confident_v1 = X_unlabeled_v1[confident_mask_v1]
+                X_confident_v2 = X_unlabeled_v2[confident_mask_v2]
+                y_confident = np.zeros((len(confident_indices), target_length))
+
+                for idx, confident_idx in enumerate(confident_indices):
+                    mask = np.array(instance_mapping) == confident_idx
+                    confident_values = y_labeled[mask, :]
+
+                    if confident_values.shape[0] > 0:
+                        y_confident[idx, :] = confident_values[0, :]
+                    else:
+                        print(f"Warning: No data found for confident_idx {confident_idx}")
+
+                # Adicionar as instâncias confiantes aos dados de treinamento
+                X_train_v1 = np.vstack([X_train_v1, X_confident_v1])
+                X_train_v2 = np.vstack([X_train_v2, X_confident_v2])
+                y_labeled = np.vstack([y_labeled, y_confident])
+
+                # Remover as instâncias confiantes dos dados não rotulados utilizando máscaras
+                X_unlabeled_v1 = X_unlabeled_v1[~confident_mask_v1]
+                X_unlabeled_v2 = X_unlabeled_v2[~confident_mask_v2]
+
+                # Atualizar mapeamento e contagens
+                instance_mapping = [i for idx, i in enumerate(instance_mapping) if idx not in confident_indices]
+                instance_target_count = {i: instance_target_count[i] for i in instance_mapping}
+
 
             print(f"{len(added_pairs)} (instance, target) pairs added in this iteration.")
             execution_time = time.time() - start_time
@@ -404,6 +444,14 @@ class TargetCoTraining(CoTraining):
 
             if self.stop_criterion(preds1, preds2):
                 break
+            
+            if X_train_v1.shape[0] != y_labeled.shape[0]:
+                print(f"Misalignment detected: X_train_v1.shape[0]={X_train_v1.shape[0]}, y_labeled.shape[0]={y_labeled.shape[0]}")
+                print(f"Instance mapping: {instance_mapping}")
+                print(f"Instance target count: {instance_target_count}")
+                raise AssertionError("Misalignment")
+
+            assert X_train_v1.shape[0] == y_labeled.shape[0],  'Misalignment'
 
         return model_view1, model_view2, X_train_v1, X_train_v2, y_labeled, execution_times, added_pairs_per_iteration
 
