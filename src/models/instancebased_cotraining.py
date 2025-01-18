@@ -111,7 +111,7 @@ class CoTraining:
         X_v2 = X[:, int(X.shape[1]/2):]
         return X_v1, X_v2
 
-    def confidence_computation(self, preds1, preds2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled):
+    def confidence_computation(self, preds1, preds2, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_labeled):
         print(" Calculating prediction confidence...")
         confident_mask1 = np.std(preds1, axis=1) <= self.threshold
         confident_mask2 = np.std(preds2, axis=1) <= self.threshold
@@ -120,60 +120,60 @@ class CoTraining:
 
         if not combined_mask.any():
             print(" No confident predictions found.")
-            return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, combined_mask, False
+            return X_train_v1, X_train_v2, y_labeled, X_pool_v1, X_pool_v2, combined_mask, False
 
         if confident_mask1.any():
-            X_train_labeled_v1 = np.vstack([X_train_labeled_v1, X_unlabeled_v1[confident_mask1]])
-            X_train_labeled_v2 = np.vstack([X_train_labeled_v2, X_unlabeled_v2[confident_mask1]])
+            X_train_v1 = np.vstack([X_train_v1, X_pool_v1[confident_mask1]])
+            X_train_v2 = np.vstack([X_train_v2, X_pool_v2[confident_mask1]])
             y_labeled = np.vstack([y_labeled, preds1[confident_mask1]])
 
         if confident_mask2.any():
-            X_train_labeled_v1 = np.vstack([X_train_labeled_v1, X_unlabeled_v1[confident_mask2]])
-            X_train_labeled_v2 = np.vstack([X_train_labeled_v2, X_unlabeled_v2[confident_mask2]])
+            X_train_v1 = np.vstack([X_train_v1, X_pool_v1[confident_mask2]])
+            X_train_v2 = np.vstack([X_train_v2, X_pool_v2[confident_mask2]])
             y_labeled = np.vstack([y_labeled, preds2[confident_mask2]])
 
-        X_unlabeled_v1 = X_unlabeled_v1[~combined_mask]
-        X_unlabeled_v2 = X_unlabeled_v2[~combined_mask]
+        X_pool_v1 = X_pool_v1[~combined_mask]
+        X_pool_v2 = X_pool_v2[~combined_mask]
 
         print(f"    {confident_mask1.sum() + confident_mask2.sum()} examples added in this iteration.")
         
-        assert X_train_labeled_v1.shape[0] == X_train_labeled_v2.shape[0], "    Mismatch in sizes of X_train_labeled_v1 and X_train_labeled_v2"
+        assert X_train_v1.shape[0] == X_train_v2.shape[0], "    Mismatch in sizes of X_train_v1 and X_train_v2"
 
-        return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, combined_mask, True
+        return X_train_v1, X_train_v2, y_labeled, X_pool_v1, X_pool_v2, combined_mask, True
     
     def stop_criterion(self, preds1, preds2):
         return len(preds1) == 0 or len(preds2) == 0
 
-    def training(self, model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled, fold_index):
+    def training(self, model_view1, model_view2, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_labeled, X_test_v1, X_test_v2, y_test_labeled, fold_index):
         execution_times = []
         added_pairs_per_iteration = []
-        original_indices = np.arange(len(X_unlabeled_v1))  # Track original indices
+        original_indices = np.arange(len(X_pool_v1))  # Track original indices
 
         for j in range(self.iterations):
             print(f"    Training model in epoch {j}...")
             start_time = time.time()
 
-            if len(X_train_labeled_v1) == len(y_labeled):
-                model_view1.fit(X_train_labeled_v1, y_labeled)
+            if len(X_train_v1) == len(y_labeled):
+                model_view1.fit(X_train_v1, y_labeled)
             else:
-                print(f"    Inconsistent number of samples: {len(X_train_labeled_v1)} in X_train_labeled_v1, {len(y_labeled)} in y_labeled")
+                print(f"    Inconsistent number of samples: {len(X_train_v1)} in X_train_v1, {len(y_labeled)} in y_labeled")
                 break
 
-            if len(X_train_labeled_v2) == len(y_labeled):
-                model_view2.fit(X_train_labeled_v2, y_labeled)
+            if len(X_train_v2) == len(y_labeled):
+                model_view2.fit(X_train_v2, y_labeled)
             else:
-                print(f"    Inconsistent number of samples: {len(X_train_labeled_v2)} in X_train_labeled_v2, {len(y_labeled)} in y_labeled")
+                print(f"    Inconsistent number of samples: {len(X_train_v2)} in X_train_v2, {len(y_labeled)} in y_labeled")
                 break
 
-            preds1 = model_view1.predict(X_unlabeled_v1) if len(X_unlabeled_v1) > 0 else np.array([])
-            preds2 = model_view2.predict(X_unlabeled_v2) if len(X_unlabeled_v2) > 0 else np.array([])
+            preds1 = model_view1.predict(X_pool_v1) if len(X_pool_v1) > 0 else np.array([])
+            preds2 = model_view2.predict(X_pool_v2) if len(X_pool_v2) > 0 else np.array([])
 
             if self.stop_criterion(preds1, preds2):
                 print(" No more unlabeled examples.")
                 break
 
-            X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, combined_mask, continue_training = self.confidence_computation(
-                preds1, preds2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled
+            X_train_v1, X_train_v2, y_labeled, X_pool_v1, X_pool_v2, combined_mask, continue_training = self.confidence_computation(
+                preds1, preds2, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_labeled
             )
 
             if not continue_training:
@@ -194,19 +194,19 @@ class CoTraining:
             execution_time = time.time() - start_time
             execution_times.append(execution_time)
 
-            r2, mse, mae, ca, arrmse = self.evaluate_model(model_view1, model_view2, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled)
+            r2, mse, mae, ca, arrmse = self.evaluate_model(model_view1, model_view2, X_test_v1, X_test_v2, y_test_labeled)
             self.R2[fold_index, j] = r2
             self.MSE[fold_index, j] = mse
             self.MAE[fold_index, j] = mae
             self.CA[fold_index, j] = ca
             self.ARRMSE[fold_index, j] = arrmse
 
-        return model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, y_labeled, execution_times, added_pairs_per_iteration
+        return model_view1, model_view2, X_train_v1, X_train_v2, y_labeled, execution_times, added_pairs_per_iteration
 
-    def evaluate_model(self, model_view1, model_view2, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled):
+    def evaluate_model(self, model_view1, model_view2, X_test_v1, X_test_v2, y_test_labeled):
         print(" Making predictions on test data...")
-        y_pred_v1 = model_view1.predict(X_test_labeled_v1)
-        y_pred_v2 = model_view2.predict(X_test_labeled_v2)
+        y_pred_v1 = model_view1.predict(X_test_v1)
+        y_pred_v2 = model_view2.predict(X_test_v2)
         y_pred_combined = (y_pred_v1 + y_pred_v2) / 2
 
         r2 = np.round(r2_score(np.asarray(y_test_labeled), y_pred_combined), 4)
@@ -226,17 +226,17 @@ class CoTraining:
         self.train_original_model(X_train_not_missing, Y_train_not_missing, X_test_labeled, y_test_labeled)
 
         model_view1, model_view2 = self.initialize_models()
-        X_train_labeled_v1, X_train_labeled_v2 = self.split_features(X_train_not_missing)
-        X_unlabeled_v1, X_unlabeled_v2 = self.split_features(X_unlabeled)
-        X_test_labeled_v1, X_test_labeled_v2 = self.split_features(X_test_labeled)
+        X_train_v1, X_train_v2 = self.split_features(X_train_not_missing)
+        X_pool_v1, X_pool_v2 = self.split_features(X_unlabeled)
+        X_test_v1, X_test_v2 = self.split_features(X_test_labeled)
 
         y_labeled = Y_train_not_missing
 
-        model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, y_labeled, execution_times, added_pairs_per_iteration = self.training(
-            model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled, fold_index
+        model_view1, model_view2, X_train_v1, X_train_v2, y_labeled, execution_times, added_pairs_per_iteration = self.training(
+            model_view1, model_view2, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_labeled, X_test_v1, X_test_v2, y_test_labeled, fold_index
         )
 
-        r2, mse, mae, ca, arrmse = self.evaluate_model(model_view1, model_view2, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled)
+        r2, mse, mae, ca, arrmse = self.evaluate_model(model_view1, model_view2, X_test_v1, X_test_v2, y_test_labeled)
         self.R2[fold_index, -1] = r2
         self.MSE[fold_index, -1] = mse
         self.MAE[fold_index, -1] = mae
@@ -250,7 +250,7 @@ class InstanceCoTraining(CoTraining):
         super().__init__(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees)
         self.batch_size = batch_size
 
-    def confidence_computation(self, preds1, preds2, X_train_labeled_v1, X_train_labeled_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled):
+    def confidence_computation(self, preds1, preds2, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_labeled):
         print(" Calculating prediction confidence...")
         confident_mask1 = np.std(preds1, axis=1) <= self.threshold
         confident_mask2 = np.std(preds2, axis=1) <= self.threshold
@@ -259,7 +259,7 @@ class InstanceCoTraining(CoTraining):
 
         if not combined_mask.any():
             print(" No confident predictions found.")
-            return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, combined_mask, False
+            return X_train_v1, X_train_v2, y_labeled, X_pool_v1, X_pool_v2, combined_mask, False
 
         confident_indices = np.where(combined_mask)[0]
         if len(confident_indices) > self.batch_size:
@@ -273,64 +273,69 @@ class InstanceCoTraining(CoTraining):
         top_confident_mask2 = np.isin(np.arange(len(confident_mask2)), confident_indices) & confident_mask2
 
         if top_confident_mask1.any():
-            X_train_labeled_v1 = np.vstack([X_train_labeled_v1, X_unlabeled_v1[top_confident_mask1]])
-            X_train_labeled_v2 = np.vstack([X_train_labeled_v2, X_unlabeled_v2[top_confident_mask1]])
+            X_train_v1 = np.vstack([X_train_v1, X_pool_v1[top_confident_mask1]])
+            X_train_v2 = np.vstack([X_train_v2, X_pool_v2[top_confident_mask1]])
             y_labeled = np.vstack([y_labeled, preds1[top_confident_mask1]])
 
         if top_confident_mask2.any():
-            X_train_labeled_v1 = np.vstack([X_train_labeled_v1, X_unlabeled_v1[top_confident_mask2]])
-            X_train_labeled_v2 = np.vstack([X_train_labeled_v2, X_unlabeled_v2[top_confident_mask2]])
+            X_train_v1 = np.vstack([X_train_v1, X_pool_v1[top_confident_mask2]])
+            X_train_v2 = np.vstack([X_train_v2, X_pool_v2[top_confident_mask2]])
             y_labeled = np.vstack([y_labeled, preds2[top_confident_mask2]])
 
-        X_unlabeled_v1 = np.delete(X_unlabeled_v1, confident_indices, axis=0)
-        X_unlabeled_v2 = np.delete(X_unlabeled_v2, confident_indices, axis=0)
+        X_pool_v1 = np.delete(X_pool_v1, confident_indices, axis=0)
+        X_pool_v2 = np.delete(X_pool_v2, confident_indices, axis=0)
 
         top_combined_mask = top_confident_mask1 | top_confident_mask2
 
         print(f"{len(confident_indices)} examples added in this iteration.")
         
-        assert X_train_labeled_v1.shape[0] == X_train_labeled_v2.shape[0], "Mismatch in sizes of X_train_labeled_v1 and X_train_labeled_v2"
+        assert X_train_v1.shape[0] == X_train_v2.shape[0], "Mismatch in sizes of X_train_v1 and X_train_v2"
 
-        return X_train_labeled_v1, X_train_labeled_v2, y_labeled, X_unlabeled_v1, X_unlabeled_v2, top_combined_mask, True
+        return X_train_v1, X_train_v2, y_labeled, X_pool_v1, X_pool_v2, top_combined_mask, True
 
 class TargetCoTraining(CoTraining):
     def __init__(self, data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees, batch_size):
         super().__init__(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees)
         self.batch_size = batch_size
 
-    # TODO: check
     def calculate_variances(self, model, X_pool, target_length):
         variances = np.zeros((len(X_pool), target_length))
         preds = np.zeros((len(X_pool), target_length))
+
         for i in range(target_length):
-            pool_preds = np.zeros((len(X_pool), len(model.estimators_)))
-            for j, estimator in enumerate(model.estimators_):
+            pool_preds = np.zeros((len(X_pool), self.n_trees))
+            # consult each rf_model for target from multioutputregressor
+            rf_model = model.estimators_[i]
+            for j, estimator in enumerate(rf_model.estimators_):
+                # j stands for estimator index
+                # estimator is each tree from the RF
                 predictions = estimator.predict(X_pool)
-                if predictions.ndim == 1:
-                    predictions = predictions[:, np.newaxis]
-                if predictions.shape[1] > i:
-                    pool_preds[:, j] = predictions[:, i]
-                else:
-                    pool_preds[:, j] = predictions[:, 0] 
+                pool_preds[:, j] = predictions
+
             for k in range(len(X_pool)):
                 variances[k, i] = variance(pool_preds[k, :])
-                preds[k, i] = np.mean(pool_preds[k, :])
-        return variances, preds
+
+        return variances
 
     # TODO: use only one preds in this method
     def select_confident_pairs(self, variances, preds1, preds2):
-        confident_pairs = []
+        confident_pairs, confident_indices = [], []
+
         for i in range(variances.shape[0]):
             for j in range(variances.shape[1]):
                 if variances[i, j] <= self.threshold:
                     confident_pairs.append((i, j, preds1[i, j], preds2[i, j], variances[i, j]))
-        return confident_pairs
+                    confident_indices.append(i)
+        print(f"Number of confident pairs: {len(confident_pairs)}")
+        print(f"Confident indices: {confident_indices}")
+
+        return confident_pairs, confident_indices
     
-    def training(self, model_view1, model_view2, X_train_v1, X_train_v2, X_unlabeled_v1, X_unlabeled_v2, y_labeled, X_test_v1, X_test_v2, y_test, target_length, fold_index):
+    def training(self, model_view1, model_view2, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_labeled, X_test_v1, X_test_v2, y_test, target_length, fold_index):
         execution_times = []
         added_pairs_per_iteration = []
-        original_indices = list(range(len(X_unlabeled_v1)))
-        instance_target_count = {i: 0 for i in range(len(X_unlabeled_v1))}
+        original_indices = list(range(len(X_pool_v1)))
+        instance_target_count = {i: 0 for i in range(len(X_pool_v1))}
         instance_mapping = list(range(len(y_labeled)))
         selected_pairs_set = set()
         y_labeled = np.array(y_labeled)
@@ -343,19 +348,21 @@ class TargetCoTraining(CoTraining):
             model_view1.fit(X_train_v1, y_labeled)
             model_view2.fit(X_train_v2, y_labeled)
 
-            preds1 = model_view1.predict(X_unlabeled_v1)
-            preds2 = model_view2.predict(X_unlabeled_v2)
+            preds1 = model_view1.predict(X_pool_v1)
+            preds2 = model_view2.predict(X_pool_v2)
 
-            variances1, preds1 = self.calculate_variances(model_view1, X_unlabeled_v1, target_length)
-            variances2, preds2 = self.calculate_variances(model_view2, X_unlabeled_v2, target_length)
+            variances1 = self.calculate_variances(model_view1, X_pool_v1, target_length)
+            variances2 = self.calculate_variances(model_view2, X_pool_v2, target_length)
 
             print('Confident pairs eval')
             # TODO: Update
-            confident_pairs1 = self.select_confident_pairs(variances1, preds1, preds2)
-            confident_pairs2 = self.select_confident_pairs(variances2, preds2, preds1)
+            confident_pairs1, confident_indices_1 = self.select_confident_pairs(variances1, preds1, preds2)
+            confident_pairs2, confident_indices_2 = self.select_confident_pairs(variances2, preds1, preds2)
 
             combined_pairs = list(set(confident_pairs1).union(confident_pairs2))
             combined_pairs = sorted(combined_pairs, key=lambda x: x[4])
+
+            combined_indices = list(set(confident_indices_1).union(confident_indices_2))
 
             selected_pairs = combined_pairs[:(self.batch_size * target_length)]
             added_pairs = []
@@ -377,8 +384,8 @@ class TargetCoTraining(CoTraining):
                         y_labeled[idx, j] = y_labeled_instance
                     else:
                         # Adicionar instância a X_train_v1, X_train_v2 e y_labeled
-                        new_instance_v1 = X_unlabeled_v1[i].reshape(1, -1)  # Dados de X_train_v1 para i
-                        new_instance_v2 = X_unlabeled_v2[i].reshape(1, -1)  # Dados de X_train_v2 para i
+                        new_instance_v1 = X_pool_v1[i].reshape(1, -1)  # Dados de X_train_v1 para i
+                        new_instance_v2 = X_pool_v2[i].reshape(1, -1)  # Dados de X_train_v2 para i
 
                         X_train_v1 = np.vstack([X_train_v1, new_instance_v1])
                         X_train_v2 = np.vstack([X_train_v2, new_instance_v2])
@@ -392,20 +399,23 @@ class TargetCoTraining(CoTraining):
                 added_pairs.append((i, j))
                 instance_target_count[i] += 1
                 selected_pairs_set.add((i, j))
-                print(i, j)
 
             added_pairs_per_iteration.append(added_pairs)
 
+            # DEBUG: essa lista é vazia
+            # ela deveria considerar todos os índices que foram adicionados 
             confident_indices = [i for i, count in instance_target_count.items() if count == target_length]
-
+            print(f'Confident Indices {confident_indices}')
+            
+            # DEBUG: não está entrando nesta condição
             if confident_indices:
                 # Criar as máscaras para instâncias confiantes
-                confident_mask_v1 = np.isin(np.arange(X_unlabeled_v1.shape[0]), confident_indices)
-                confident_mask_v2 = np.isin(np.arange(X_unlabeled_v2.shape[0]), confident_indices)
+                confident_mask_v1 = np.isin(np.arange(X_pool_v1.shape[0]), confident_indices)
+                confident_mask_v2 = np.isin(np.arange(X_pool_v2.shape[0]), confident_indices)
                 
                 # Selecionar as instâncias confiantes
-                X_confident_v1 = X_unlabeled_v1[confident_mask_v1]
-                X_confident_v2 = X_unlabeled_v2[confident_mask_v2]
+                X_confident_v1 = X_pool_v1[confident_mask_v1]
+                X_confident_v2 = X_pool_v2[confident_mask_v2]
                 y_confident = np.zeros((len(confident_indices), target_length))
 
                 for idx, confident_idx in enumerate(confident_indices):
@@ -416,18 +426,28 @@ class TargetCoTraining(CoTraining):
                         y_confident[idx, :] = confident_values[0, :]
                     else:
                         print(f"Warning: No data found for confident_idx {confident_idx}")
+                        continue
 
                 # Adicionar as instâncias confiantes aos dados de treinamento
+                # TODO: checar porque não está sendo apresentado essa parte... suspeito que não está sendo atualizado.
+                print(f"Before inclusion: {X_train_v1.shape[0]} unlabeled instances for v1")
+                print(f"Before inclusion: {X_train_v2.shape[0]} unlabeled instances for v2")
+                print(f"Before inclusion: {y_labeled.shape[0]} for y")
                 X_train_v1 = np.vstack([X_train_v1, X_confident_v1])
                 X_train_v2 = np.vstack([X_train_v2, X_confident_v2])
                 y_labeled = np.vstack([y_labeled, y_confident])
+                print(f"After inclusion: {X_train_v1.shape[0]} unlabeled instances for v1")
+                print(f"After inclusion: {X_train_v2.shape[0]} unlabeled instances for v2")
+                print(f"After inclusion: {y_labeled.shape[0]} for y")
 
-                # Remover as instâncias confiantes dos dados não rotulados utilizando máscaras
-                X_unlabeled_v1 = X_unlabeled_v1[~confident_mask_v1]
-                X_unlabeled_v2 = X_unlabeled_v2[~confident_mask_v2]
+                print(f"Before removal: {X_pool_v1.shape[0]} unlabeled instances")
+                # Remover instâncias confiantes
+                X_pool_v1 = X_pool_v1[~confident_mask_v1]
+                X_pool_v2 = X_pool_v2[~confident_mask_v2]
+                print(f"After removal: {X_pool_v1.shape[0]} unlabeled instances")
 
                 # Atualizar mapeamento e contagens
-                instance_mapping = [i for idx, i in enumerate(instance_mapping) if idx not in confident_indices]
+                instance_mapping = [idx for idx in instance_mapping if idx not in confident_indices]
                 instance_target_count = {i: instance_target_count[i] for i in instance_mapping}
 
 
