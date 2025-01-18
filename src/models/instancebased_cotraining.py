@@ -382,19 +382,15 @@ class TargetCoTraining(CoTraining):
 
         return variances
 
-    # TODO: use only one preds in this method
-    def select_confident_pairs(self, variances, preds1, preds2):
-        confident_pairs, confident_indices = [], []
+    def select_confident_pairs(self, variances):
+        confident_pairs = []
 
         for i in range(variances.shape[0]):
             for j in range(variances.shape[1]):
                 if variances[i, j] <= self.threshold:
-                    confident_pairs.append((i, j, preds1[i, j], preds2[i, j], variances[i, j]))
-                    confident_indices.append(i)
-        print(f"Number of confident pairs: {len(confident_pairs)}")
-        print(f"Confident indices: {confident_indices}")
+                    confident_pairs.append((i, j, variances[i, j]))
 
-        return confident_pairs, confident_indices
+        return confident_pairs
     
     def training(self, model_view1, model_view2, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_labeled, X_test_v1, X_test_v2, y_test, target_length, fold_index):
         execution_times = []
@@ -405,6 +401,7 @@ class TargetCoTraining(CoTraining):
         instance_target_count = {i: 0 for i in range(len(X_pool_v1))}
         instance_mapping = list(range(len(y_labeled)))
         selected_pairs_set = set()
+        selected_pairs_filled = set()
         y_labeled = np.array(y_labeled)
 
         for iteration in range(self.iterations):
@@ -417,36 +414,45 @@ class TargetCoTraining(CoTraining):
 
             preds1 = model_view1.predict(X_pool_v1)
             preds2 = model_view2.predict(X_pool_v2)
-            preds1 = model_view1.predict(X_pool_v1)
-            preds2 = model_view2.predict(X_pool_v2)
 
             variances1 = self.calculate_variances(model_view1, X_pool_v1, target_length)
             variances2 = self.calculate_variances(model_view2, X_pool_v2, target_length)
 
             print('Confident pairs eval')
-            # TODO: Update
-            confident_pairs1, confident_indices_1 = self.select_confident_pairs(variances1, preds1, preds2)
-            confident_pairs2, confident_indices_2 = self.select_confident_pairs(variances2, preds1, preds2)
 
-            combined_pairs = list(set(confident_pairs1).union(confident_pairs2))
-            combined_pairs = sorted(combined_pairs, key=lambda x: x[4])
+            confident_pairs1 = self.select_confident_pairs(variances1)
+            confident_pairs2 = self.select_confident_pairs(variances2)
 
-            combined_indices = list(set(confident_indices_1).union(confident_indices_2))
+            # TODO: i and j union only
+            combined_pairs = list(set(confident_pairs1).union(set(confident_pairs2)))
+            # puxar as variâncias de cada par
+
+            # garantir que (i, j) são únicos, se não forem, tire a média das variâncias
+            ## uma variancia apenas por cada par i, j
+
+            combined_pairs = sorted(combined_pairs, key=lambda x: x[2])
+
+           
 
             selected_pairs = combined_pairs[:(self.batch_size * target_length)]
+
+            print(f'Selected pairs size: {len(selected_pairs)}')
+
             added_pairs = []
 
             if not selected_pairs:
                 print(" No confident predictions found.")
                 return model_view1, model_view2, X_train_v1, X_train_v2,X_pool_v1,X_pool_v2, y_labeled, execution_times, added_pairs_per_iteration
-                    
-            for i, j, pred1, pred2, _ in selected_pairs:
-                if (i, j) in selected_pairs_set:
-                    continue
 
-                y_labeled_instance = (pred1 + pred2) / 2
+            new_selected_pairs = []
 
-                if i < len(y_labeled):  # Verificação para garantir que o índice está dentro do limite de y_labeled
+            for i, j, variance in selected_pairs:
+                y_labeled_instance = (preds1[i,j] + preds2[i,j]) / 2
+                new_selected_pairs.append((i,j,variance, y_labeled_instance)) 
+
+
+                '''if i < len(y_labeled):  # Verificação para garantir que o índice está dentro do limite de y_labeled
+                    print('yeeeey')
                     mask = np.array(instance_mapping) == i
                     if np.any(mask):
                         idx = np.where(mask)[0][0]
@@ -466,11 +472,14 @@ class TargetCoTraining(CoTraining):
                         y_labeled = np.vstack([y_labeled, new_instance])
 
                         instance_mapping.append(i)
-
+                else:
+                    print('nooooo')
+                '''
                 added_pairs.append((i, j))
                 instance_target_count[i] += 1
                 selected_pairs_set.add((i, j))
-
+            
+            print(new_selected_pairs)
             added_pairs_per_iteration.append(added_pairs)
 
             # DEBUG: essa lista é vazia
