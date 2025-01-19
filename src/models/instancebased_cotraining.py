@@ -420,122 +420,84 @@ class TargetCoTraining(CoTraining):
             variances2 = self.calculate_variances(model_view2, X_pool_v2, target_length)
 
             confident_pairs1 = self.select_confident_pairs(variances1)
-            print(confident_pairs1)
+            #print(confident_pairs1)
             confident_pairs2 = self.select_confident_pairs(variances2)
-            print(confident_pairs2)
+            #print(confident_pairs2)
 
             union_set = set(pair for pair in confident_pairs1).union(
                 set(pair for pair in confident_pairs2)
             )
             combined_pairs = [list(item) for item in union_set]
-            print(combined_pairs)
+            #print(combined_pairs)
             confident_pairs_combined = {}
+             # garantir que (i, j) são únicos, se não forem, tire a média das variâncias
             for combined_pair in combined_pairs:
+                #print(combined_pair)
                 if((tuple(combined_pair) in confident_pairs1.keys()) and (tuple(combined_pair) in confident_pairs2.keys()) ):
-                    print(str(tuple(combined_pair) ) + " in in confident_pairs1 and in in confident_pairs2")
-                    print(confident_pairs1[tuple(combined_pair)])
-                    print(confident_pairs2[tuple(combined_pair)])
+                   # print(str(tuple(combined_pair) ) + " in in confident_pairs1 and in in confident_pairs2")
+                   # print(confident_pairs1[tuple(combined_pair)])
+                   # print(confident_pairs2[tuple(combined_pair)])
+                    ## uma variancia apenas por cada par i, j
                     confident_pairs_combined[tuple(combined_pair)] = (confident_pairs1[tuple(combined_pair)] + confident_pairs2[tuple(combined_pair)])/2  # Adiciona ao dicionário
                 else:
                     if((tuple(combined_pair) in confident_pairs1.keys())):
-                        print(str(tuple(combined_pair) ) + "in confident_pairs1")
-                        print(confident_pairs1[tuple(combined_pair)])
+                        #print(str(tuple(combined_pair) ) + "in confident_pairs1")
+                        #print(confident_pairs1[tuple(combined_pair)])
                         confident_pairs_combined[tuple(combined_pair)] = confident_pairs1[tuple(combined_pair)]
                     else:
                         if((tuple(combined_pair) in confident_pairs2.keys())):
-                            print(str(tuple(combined_pair) ) + "in confident_pairs2")
-                            print(confident_pairs2[tuple(combined_pair)])
+                            #print(str(tuple(combined_pair) ) + "in confident_pairs2")
+                            #print(confident_pairs2[tuple(combined_pair)])
                             confident_pairs_combined[tuple(combined_pair)] = confident_pairs2[tuple(combined_pair)]
                         else:
                             print("error")
-            print(confident_pairs_combined)
-            '''
-            union_set = set((pair.keys()[0], pair.keys()[1]) for pair in confident_pairs1).union(
-                set((pair.keys()[0], pair.keys()[1]) for pair in confident_pairs2)
-            )
-            combined_pairs = [list(item) for item in union_set]
-            print('Combined pairs')
-            print(combined_pairs)
-            for pair in combined_pairs:
-                print(pair)
-            '''
-            #ok!
-            # puxar as variâncias de cada par
-            '''
-            # garantir que (i, j) são únicos, se não forem, tire a média das variâncias
-            ## uma variancia apenas por cada par i, j
+            #print(confident_pairs_combined)
+            variances_sorted = sorted(list(confident_pairs_combined.values()))
+            print(f'Variances confident size: {len(variances_sorted)}')
+            #print(variances_sorted)
+            #selected_pairs = variances_sorted[:(self.batch_size * target_length)]
+            #print(f'Selected pairs size: {len(selected_pairs)}')
+            sorted_confident_pairs = sorted(confident_pairs_combined.items(), key=lambda item: item[1])
+            #print(sorted_confident_pairs)
+            ordered_selected_pairs = dict(sorted_confident_pairs[:self.batch_size  * target_length])
+            print(f'Top k size: {len(ordered_selected_pairs)}')
 
-            combined_pairs = sorted(combined_pairs, key=lambda x: x[2])
-
-           
-
-            selected_pairs = combined_pairs[:(self.batch_size * target_length)]
-
-            print(f'Selected pairs size: {len(selected_pairs)}')
-
-            added_pairs = []
-
-            if not selected_pairs:
+            # pegar as predições dos pares selecionados 
+            pred_selected_pairs = {}
+            
+            for selected_pair in ordered_selected_pairs.keys():
+                i = selected_pair[0]
+                j = selected_pair[1]
+                y_labeled_instance = (preds1[i,j] + preds2[i,j]) / 2
+                pred_selected_pairs[tuple(selected_pair)] = y_labeled_instance
+            print(pred_selected_pairs)
+            print()
+            
+            if len(pred_selected_pairs) == 0 :
                 print(" No confident predictions found.")
                 return model_view1, model_view2, X_train_v1, X_train_v2,X_pool_v1,X_pool_v2, y_labeled, execution_times, added_pairs_per_iteration
-
-            new_selected_pairs = []
-
-            for i, j, variance in selected_pairs:
-                y_labeled_instance = (preds1[i,j] + preds2[i,j]) / 2
-                new_selected_pairs.append((i,j,variance, y_labeled_instance)) 
-
-
-                if i < len(y_labeled):  # Verificação para garantir que o índice está dentro do limite de y_labeled
-                    print('yeeeey')
-                    mask = np.array(instance_mapping) == i
-                    if np.any(mask):
-                        idx = np.where(mask)[0][0]
-                        y_labeled[idx, j] = y_labeled_instance
-                    else:
-                        # Adicionar instância a X_train_v1, X_train_v2 e y_labeled
-                        new_instance_v1 = X_pool_v1[i].reshape(1, -1)  # Dados de X_train_v1 para i
-                        new_instance_v2 = X_pool_v2[i].reshape(1, -1)  # Dados de X_train_v2 para i
-                        new_instance_v1 = X_pool_v1[i].reshape(1, -1)  # Dados de X_train_v1 para i
-                        new_instance_v2 = X_pool_v2[i].reshape(1, -1)  # Dados de X_train_v2 para i
-
-                        X_train_v1 = np.vstack([X_train_v1, new_instance_v1])
-                        X_train_v2 = np.vstack([X_train_v2, new_instance_v2])
-
-                        new_instance = np.full((1, target_length), np.nan)
-                        new_instance[0, j] = y_labeled_instance
-                        y_labeled = np.vstack([y_labeled, new_instance])
-
-                        instance_mapping.append(i)
-                else:
-                    print('nooooo')
-                
-                added_pairs.append((i, j))
-                instance_target_count[i] += 1
-                selected_pairs_set.add((i, j))
             
-            print(new_selected_pairs)
-            added_pairs_per_iteration.append(added_pairs)
+            else:
+                confident_indices = []
+                for (i,j) in pred_selected_pairs.keys():
+                    print(i)
+                    confident_indices.append(i)
+                confident_indices = list(set(confident_indices))
+                print(confident_indices)
+                print(len(confident_indices))
+
+                #até aqui ok)
+                print(f"Before inclusion: {X_train_v1.shape[0]} unlabeled instances for v1")
+                print(f"Before inclusion: {X_train_v2.shape[0]} unlabeled instances for v2")
+                X_train_v1 = np.vstack([X_train_v1, X_pool_v1[confident_indices]])
+                X_train_v2 = np.vstack([X_train_v2, X_pool_v2[confident_indices]])
+                print(f"After inclusion: {X_train_v1.shape[0]} unlabeled instances for v1")
+                print(f"After inclusion: {X_train_v2.shape[0]} unlabeled instances for v2")
+
             '''
-            '''
-            # DEBUG: essa lista é vazia
-            # ela deveria considerar todos os índices que foram adicionados 
-            confident_indices = [i for i, count in instance_target_count.items() if count == target_length]
-            print(f'Confident Indices {confident_indices}')
-            
             # DEBUG: não está entrando nesta condição
             if confident_indices:
-                # Criar as máscaras para instâncias confiantes
-                confident_mask_v1 = np.isin(np.arange(X_pool_v1.shape[0]), confident_indices)
-                confident_mask_v2 = np.isin(np.arange(X_pool_v2.shape[0]), confident_indices)
-                confident_mask_v1 = np.isin(np.arange(X_pool_v1.shape[0]), confident_indices)
-                confident_mask_v2 = np.isin(np.arange(X_pool_v2.shape[0]), confident_indices)
-                
-                # Selecionar as instâncias confiantes
-                X_confident_v1 = X_pool_v1[confident_mask_v1]
-                X_confident_v2 = X_pool_v2[confident_mask_v2]
-                X_confident_v1 = X_pool_v1[confident_mask_v1]
-                X_confident_v2 = X_pool_v2[confident_mask_v2]
+
                 y_confident = np.zeros((len(confident_indices), target_length))
 
                 for idx, confident_idx in enumerate(confident_indices):
@@ -568,8 +530,7 @@ class TargetCoTraining(CoTraining):
                 instance_mapping = [idx for idx in instance_mapping if idx not in confident_indices]
                 instance_mapping = [idx for idx in instance_mapping if idx not in confident_indices]
                 instance_target_count = {i: instance_target_count[i] for i in instance_mapping}
-            '''
-            '''
+
             print(f"{len(added_pairs)} (instance, target) pairs added in this iteration.")
             execution_time = time.time() - start_time
             execution_times.append(execution_time)
