@@ -292,8 +292,8 @@ class CoTraining:
         self.train_original_model(X_train_labeled, y_labeled, X_test_labeled, y_test_labeled)
 
         model_view1, model_view2 = self.initialize_models()
-        X_train_v1, X_train_v2 = self.split_features(X_train_not_missing)
-        X_pool_v1, X_pool_v2 = self.split_features(X_unlabeled)
+        X_train_v1, X_train_v2 = self.split_features(X_train_labeled)
+        X_pool_v1, X_pool_v2 = self.split_features(X_pool)
         X_test_v1, X_test_v2 = self.split_features(X_test_labeled)
 
 
@@ -383,15 +383,16 @@ class TargetCoTraining(CoTraining):
         return variances
 
     def select_confident_pairs(self, variances):
-        confident_pairs = []
+        confident_pairs = {}
 
         for i in range(variances.shape[0]):
             for j in range(variances.shape[1]):
                 if variances[i, j] <= self.threshold:
-                    confident_pairs.append((i, j, variances[i, j]))
+                    confident_pairs[(i, j)] = variances[i, j]  # Adiciona ao dicionário
 
         return confident_pairs
-    
+
+
     def training(self, model_view1, model_view2, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_labeled, X_test_v1, X_test_v2, y_test, target_length, fold_index):
         execution_times = []
         added_pairs_per_iteration = []
@@ -418,15 +419,49 @@ class TargetCoTraining(CoTraining):
             variances1 = self.calculate_variances(model_view1, X_pool_v1, target_length)
             variances2 = self.calculate_variances(model_view2, X_pool_v2, target_length)
 
-            print('Confident pairs eval')
-
             confident_pairs1 = self.select_confident_pairs(variances1)
+            print(confident_pairs1)
             confident_pairs2 = self.select_confident_pairs(variances2)
+            print(confident_pairs2)
 
-            # TODO: i and j union only
-            combined_pairs = list(set(confident_pairs1).union(set(confident_pairs2)))
+            union_set = set(pair for pair in confident_pairs1).union(
+                set(pair for pair in confident_pairs2)
+            )
+            combined_pairs = [list(item) for item in union_set]
+            print(combined_pairs)
+            confident_pairs_combined = {}
+            for combined_pair in combined_pairs:
+                if((tuple(combined_pair) in confident_pairs1.keys()) and (tuple(combined_pair) in confident_pairs2.keys()) ):
+                    print(str(tuple(combined_pair) ) + " in in confident_pairs1 and in in confident_pairs2")
+                    print(confident_pairs1[tuple(combined_pair)])
+                    print(confident_pairs2[tuple(combined_pair)])
+                    confident_pairs_combined[tuple(combined_pair)] = (confident_pairs1[tuple(combined_pair)] + confident_pairs2[tuple(combined_pair)])/2  # Adiciona ao dicionário
+                else:
+                    if((tuple(combined_pair) in confident_pairs1.keys())):
+                        print(str(tuple(combined_pair) ) + "in confident_pairs1")
+                        print(confident_pairs1[tuple(combined_pair)])
+                        confident_pairs_combined[tuple(combined_pair)] = confident_pairs1[tuple(combined_pair)]
+                    else:
+                        if((tuple(combined_pair) in confident_pairs2.keys())):
+                            print(str(tuple(combined_pair) ) + "in confident_pairs2")
+                            print(confident_pairs2[tuple(combined_pair)])
+                            confident_pairs_combined[tuple(combined_pair)] = confident_pairs2[tuple(combined_pair)]
+                        else:
+                            print("error")
+            print(confident_pairs_combined)
+            '''
+            union_set = set((pair.keys()[0], pair.keys()[1]) for pair in confident_pairs1).union(
+                set((pair.keys()[0], pair.keys()[1]) for pair in confident_pairs2)
+            )
+            combined_pairs = [list(item) for item in union_set]
+            print('Combined pairs')
+            print(combined_pairs)
+            for pair in combined_pairs:
+                print(pair)
+            '''
+            #ok!
             # puxar as variâncias de cada par
-
+            '''
             # garantir que (i, j) são únicos, se não forem, tire a média das variâncias
             ## uma variancia apenas por cada par i, j
 
@@ -451,7 +486,7 @@ class TargetCoTraining(CoTraining):
                 new_selected_pairs.append((i,j,variance, y_labeled_instance)) 
 
 
-                '''if i < len(y_labeled):  # Verificação para garantir que o índice está dentro do limite de y_labeled
+                if i < len(y_labeled):  # Verificação para garantir que o índice está dentro do limite de y_labeled
                     print('yeeeey')
                     mask = np.array(instance_mapping) == i
                     if np.any(mask):
@@ -474,14 +509,15 @@ class TargetCoTraining(CoTraining):
                         instance_mapping.append(i)
                 else:
                     print('nooooo')
-                '''
+                
                 added_pairs.append((i, j))
                 instance_target_count[i] += 1
                 selected_pairs_set.add((i, j))
             
             print(new_selected_pairs)
             added_pairs_per_iteration.append(added_pairs)
-
+            '''
+            '''
             # DEBUG: essa lista é vazia
             # ela deveria considerar todos os índices que foram adicionados 
             confident_indices = [i for i, count in instance_target_count.items() if count == target_length]
@@ -532,8 +568,8 @@ class TargetCoTraining(CoTraining):
                 instance_mapping = [idx for idx in instance_mapping if idx not in confident_indices]
                 instance_mapping = [idx for idx in instance_mapping if idx not in confident_indices]
                 instance_target_count = {i: instance_target_count[i] for i in instance_mapping}
-
-
+            '''
+            '''
             print(f"{len(added_pairs)} (instance, target) pairs added in this iteration.")
             execution_time = time.time() - start_time
             execution_times.append(execution_time)
@@ -555,7 +591,7 @@ class TargetCoTraining(CoTraining):
                 raise AssertionError("Misalignment")
 
             assert X_train_v1.shape[0] == y_labeled.shape[0],  'Misalignment'
-
+            '''
         return model_view1, model_view2, X_train_v1, X_train_v2,X_pool_v1,X_pool_v2, y_labeled, execution_times, added_pairs_per_iteration
 
     def train_and_evaluate(self, fold_index):
@@ -728,4 +764,3 @@ if __name__ == "__main__":
         results_path.mkdir(parents=True, exist_ok=True)
         results_df.to_csv(results_path / f'target_cotraining_results_fold_{i}.csv', index=False)
         print('Saved data...')
-
