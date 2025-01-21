@@ -104,12 +104,12 @@ class ActiveLearningEvaluator:
             'rtal': 'RT-AL',
             'upperbound': 'Upper-bound'
         }
-        fig, axes = plt.subplots(len(dataset_names), len(metric_names), figsize=(5*len(metric_names), 2.5*len(dataset_names)), sharex=True)
-        fig.subplots_adjust(bottom=0.05, top = 0.99)
+        fig, axes = plt.subplots(len(metric_names), len(dataset_names), figsize=(5*len(dataset_names), 4*len(metric_names)), sharex=True)
+        fig.subplots_adjust(bottom=0.15, top = 0.95)
     
         for i, dataset in enumerate(dataset_names):
             for j, metric in enumerate(metric_names):
-                ax = axes[i, j]
+                ax = axes[j, i]
                 for method in self.methods:
                     file_path = Path(f'reports/active_learning/{dataset}/{metric}/{method}_{metric}.csv')
                     if file_path.exists():
@@ -121,14 +121,14 @@ class ActiveLearningEvaluator:
                             ax.plot(range(1, len(mean_values) + 1), mean_values, label=legend_labels[method])
                     
                 if i == 0:
-                    ax.set_title(metric)
+                    ax.set_ylabel(metric, fontsize = 18)
                 if j == 0:
-                    ax.set_ylabel(dataset)
-                if i == len(dataset_names) - 1:
-                    ax.set_xlabel('Epoch')
+                    ax.set_title(dataset, fontsize = 18)
+                if j == 1:
+                    ax.set_xlabel('Epoch', fontsize = 14)
         
         handles, labels = ax.get_legend_handles_labels()
-        fig.legend(handles, labels, loc='lower center', ncol=len(self.methods)/2)
+        fig.legend(handles, labels, loc='lower center', ncol=len(self.methods), fontsize = 18)
         plt.savefig('reports/active_learning/summary_subplot_image.png')
         plt.close(fig)
 
@@ -159,9 +159,9 @@ def run_reports(dataset_names, metric_names, considered_epochs, method_names):
             for metric in metric_names:
                 evaluator = ActiveLearningEvaluator(dataset, metric, n_epochs, considered_epoch)
                 auc_df = evaluator.assemble_auc()
-                evaluator.save_reports()
-                evaluator.run_autorank()
-                evaluator.save_summary_metrics()
+                #evaluator.save_reports()
+                #evaluator.run_autorank()
+                #evaluator.save_summary_metrics()
 
     for metric in metric_names:
         compile_summary_reports(considered_epochs, metric)
@@ -172,7 +172,8 @@ def run_reports(dataset_names, metric_names, considered_epochs, method_names):
 n_epochs = N_EPOCHS
 iterations = ITERATIONS
 considered_epochs = [int(n_epochs/3), int(n_epochs*(2/3)), N_EPOCHS]
-dataset_names = ['atp7d', 'friedman', 'mp5spec', 'musicOrigin2', 'rf2', 'oes97', 'enb', 'osales', 'wq']
+#dataset_names = ['atp7d', 'friedman', 'mp5spec', 'musicOrigin2', 'rf2', 'oes97', 'enb', 'osales', 'wq', 'scm1d', 'jura']
+dataset_names = ['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'scm1d', 'wq']
 metric_names = ['arrmse', 'r2']
 #metric_names = ['arrmse', 'ca', 'mae', 'mse', 'r2'] 
 method_names = ['greedy', 'instance', 'qbcrf', 'random', 'rtal', 'upperbound']
