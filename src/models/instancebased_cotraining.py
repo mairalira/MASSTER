@@ -43,45 +43,34 @@ class CoTraining:
         self.MAE = np.zeros([self.k_folds, self.iterations+1])
         self.CA = np.zeros([self.k_folds, self.iterations+1])
         self.ARRMSE = np.zeros([self.k_folds, self.iterations+1])
-
     def data_read(self, dataset):
-        # split the csv file into input and target values
+        # Caminho do dataset
         folder_dir = data_dir / 'processed' / f'{self.dataset_name}'
         data_path = folder_dir / f'{dataset}'
         df = pd.read_csv(data_path)
 
-        # obtain the column names
+        # Identificar colunas de entrada e de alvo
         col_names = list(df.columns)
-        target_length = 0
+        target_names = [col for col in col_names if 'target' in col]
+        feature_names = [col for col in col_names if col not in target_names]
 
-        for name in col_names: 
-            if 'target' in name:
-                target_length += 1
+        # Separar entradas e alvos como DataFrames
+        inputs = df[feature_names]
+        targets = df[target_names]
 
-        target_names = col_names[-target_length:]
-
-        inputs = list()
-        targets = list()
-        for i in range(len(df)):
-            input_val = list()
-            target_val = list()
-            for col in col_names:
-                if col in target_names:
-                    target_val.append(df.loc[i, col])
-                else:
-                    input_val.append(df.loc[i, col])
-            inputs.append(input_val)
-            targets.append(target_val)
-
+        # Número de instâncias e comprimento do alvo
         n_instances = len(targets)
-        return inputs, targets, n_instances, target_length
-    
+        target_length = len(target_names)
+
+        return inputs, targets, n_instances, target_length, target_names, feature_names
     def read_data(self, iteration):
-        X_train, y_train, _, _ = self.data_read(f'train_{iteration}')
-        X_pool, y_pool, n_pool, target_length = self.data_read(f'pool_{iteration}')
-        X_rest, y_rest, _, _ = self.data_read(f'train+pool_{iteration}')
-        X_test, y_test, _, _ = self.data_read(f'test_{iteration}')
-        return X_train, y_train, X_pool, y_pool, X_rest, y_rest, X_test, y_test, target_length
+        X_train, y_train, _, target_length, target_names, feature_names = self.data_read(f'train_{iteration}')
+        X_pool, y_pool, n_pool, target_length, target_names, feature_names = self.data_read(f'pool_{iteration}')
+        X_rest, y_rest, _, target_length, target_names, feature_names = self.data_read(f'train+pool_{iteration}')
+        X_test, y_test, _, target_length, target_names, feature_names = self.data_read(f'test_{iteration}')
+        y_pool_nan = pd.DataFrame(np.nan, index=y_pool.index, columns=y_pool.columns)
+  
+        return X_train, y_train, X_pool, y_pool_nan, X_rest, y_rest, X_test, y_test,target_length, target_names, feature_names
 
     def train_original_model(self, X_train_labeled, y_train_labeled, X_test_labeled, y_test_labeled):
         start_time = time.time()
@@ -105,11 +94,26 @@ class CoTraining:
         model_view2 = MultiOutputRegressor(RandomForestRegressor(n_estimators=self.n_trees, random_state=self.random_state))
         return model_view1, model_view2
 
-    def split_features(self, X):
-        X = np.array(X)
-        X_v1 = X[:, :int(X.shape[1]/2)]
-        X_v2 = X[:, int(X.shape[1]/2):]
-        return X_v1, X_v2
+    def split_features(self, X, feature_names):
+        print("type split features:" + str(type(X)))
+        
+        # Verificar se X já é um DataFrame, se não, convertê-lo
+        if not isinstance(X, pd.DataFrame):
+            raise ValueError("X deve ser um DataFrame.")
+        
+        # Calcular a divisão no meio das colunas
+        mid_idx = len(feature_names) // 2
+        
+        # Separar os dados em duas partes
+        X_v1 = X.iloc[:, :mid_idx]  # Primeira metade das colunas
+        X_v2 = X.iloc[:, mid_idx:]  # Segunda metade das colunas
+        
+        # Separar os nomes das features correspondentes
+        feature_names_v1 = feature_names[:mid_idx]
+        feature_names_v2 = feature_names[mid_idx:]
+        
+        return X_v1, X_v2, feature_names_v1, feature_names_v2
+
 
     def confidence_computation(self, preds1, preds2, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_labeled):
         print(" Calculating prediction confidence...")
@@ -147,8 +151,7 @@ class CoTraining:
     def training(self, model_view1, model_view2, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_labeled, X_test_v1, X_test_v2, y_test_labeled, fold_index):
         execution_times = []
         added_pairs_per_iteration = []
-        original_indices = np.arange(len(X_pool_v1))  # Track original indices
-
+        
         for iteration in range(self.iterations):
             print(f"Iteration {iteration + 1}/{self.iterations}")
 
@@ -287,14 +290,14 @@ class CoTraining:
 
     def train_and_evaluate(self, fold_index):
         print(f"\n    Training model in pool {fold_index}...")
-        X_train_labeled, y_labeled, X_pool, y_pool, X_rest, y_rest, X_test_labeled, y_test_labeled, target_length = self.read_data(fold_index+1)
+        X_train_labeled, y_labeled, X_pool, y_pool, X_rest, y_rest, X_test_labeled, y_test_labeled, target_length,target_names,feature_names = self.read_data(fold_index+1)
 
         self.train_original_model(X_train_labeled, y_labeled, X_test_labeled, y_test_labeled)
 
         model_view1, model_view2 = self.initialize_models()
-        X_train_v1, X_train_v2 = self.split_features(X_train_labeled)
-        X_pool_v1, X_pool_v2 = self.split_features(X_pool)
-        X_test_v1, X_test_v2 = self.split_features(X_test_labeled)
+        X_train_v1, X_train_v2,feature_names_v1,feature_names_v2 = self.split_features(X_train_labeled,feature_names)
+        X_pool_v1, X_pool_v2,feature_names_v1,feature_names_v2 = self.split_features(X_pool,feature_names)
+        X_test_v1, X_test_v2,feature_names_v1,feature_names_v2 = self.split_features(X_test_labeled,feature_names)
 
 
         model_view1, model_view2, X_train_v1, X_train_v2, y_labeled, execution_times, added_pairs_per_iteration = self.training(
@@ -364,212 +367,174 @@ class TargetCoTraining(CoTraining):
         self.batch_size = batch_size
 
     def calculate_variances(self, model, X_pool, target_length):
-        variances = np.zeros((len(X_pool), target_length))
-        preds = np.zeros((len(X_pool), target_length))
+        # Initialize variances and predictions arrays with proper shape
+        variances = pd.DataFrame(index=X_pool.index, columns=range(target_length))
+        preds = pd.DataFrame(index=X_pool.index, columns=range(target_length))
 
         for i in range(target_length):
+            # Initialize an array for predictions from all trees for the current target
             pool_preds = np.zeros((len(X_pool), self.n_trees))
-            # consult each rf_model for target from multioutputregressor
+            
+            # Access the random forest model for the current target
             rf_model = model.estimators_[i]
             for j, estimator in enumerate(rf_model.estimators_):
-                # j stands for estimator index
-                # estimator is each tree from the RF
-                predictions = estimator.predict(X_pool)
+                # Make predictions for the current tree
+                predictions = estimator.predict(X_pool.values)  # Ensure no column names passed
                 pool_preds[:, j] = predictions
 
-            for k in range(len(X_pool)):
-                variances[k, i] = variance(pool_preds[k, :])
+            # Calculate variance for each instance in X_pool
+            for idx, row_idx in enumerate(X_pool.index):
+                variances.loc[idx, i] = variance(pool_preds[idx, :])
 
         return variances
-
     def select_confident_pairs(self, variances):
         confident_pairs = {}
+        print('oi confident')
+        
+        # Iterating over the DataFrame rows and columns using iterrows() for index compatibility
+        for idx, row in variances.iterrows():  # iterrows() gives (index, Series)
 
-        for i in range(variances.shape[0]):
-            for j in range(variances.shape[1]):
-                if variances[i, j] <= self.threshold:
-                    confident_pairs[(i, j)] = variances[i, j]  # Adiciona ao dicionário
+            for col, value in row.items():  # Iterating over each column in the row
+                if value <= self.threshold:
+                    confident_pairs[(int(idx), col)] = value  # Add (index, column) pair to the dictionary
 
         return confident_pairs
 
 
-    def training(self, model_view1, model_view2, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_labeled, X_test_v1, X_test_v2, y_test, target_length, fold_index):
+    def training(self, model_view1, model_view2, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_labeled_df, X_test_v1, X_test_v2, y_test, target_length, fold_index,target_names,feature_names_v1,feature_names_v2,y_pool):
         execution_times = []
         added_pairs_per_iteration = []
-        original_indices = list(range(len(X_pool_v1)))
-        instance_target_count = {i: 0 for i in range(len(X_pool_v1))}
-        original_indices = list(range(len(X_pool_v1)))
-        instance_target_count = {i: 0 for i in range(len(X_pool_v1))}
-        instance_mapping = list(range(len(y_labeled)))
-        selected_pairs_set = set()
-        selected_pairs_filled = set()
-        y_labeled = np.array(y_labeled)
+        print(y_pool.head())
+        print(y_pool.shape)
+        print(y_pool.columns)
 
         for iteration in range(self.iterations):
             print(f"Iteration {iteration + 1}/{self.iterations}")
 
             start_time = time.time()
 
-            model_view1.fit(X_train_v1, y_labeled)
-            model_view2.fit(X_train_v2, y_labeled)
+            model_view1.fit(X_train_v1_df, y_labeled_df)
+            model_view2.fit(X_train_v2_df, y_labeled_df)
 
-            preds1 = model_view1.predict(X_pool_v1)
-            preds2 = model_view2.predict(X_pool_v2)
+            preds1 = model_view1.predict(X_pool_v1_df)
+            preds2 = model_view2.predict(X_pool_v2_df)
 
-            variances1 = self.calculate_variances(model_view1, X_pool_v1, target_length)
-            variances2 = self.calculate_variances(model_view2, X_pool_v2, target_length)
+            variances1 = self.calculate_variances(model_view1, X_pool_v1_df, target_length)
+            variances2 = self.calculate_variances(model_view2, X_pool_v2_df, target_length)
+            
+
 
             confident_pairs1 = self.select_confident_pairs(variances1)
-            #print(confident_pairs1)
             confident_pairs2 = self.select_confident_pairs(variances2)
-            #print(confident_pairs2)
-
-            union_set = set(pair for pair in confident_pairs1).union(
-                set(pair for pair in confident_pairs2)
-            )
-            combined_pairs = [list(item) for item in union_set]
-            #print(combined_pairs)
+            # o original não usa união
+            union_set = set(confident_pairs1.keys()).union(set(confident_pairs2.keys()))
+            
             confident_pairs_combined = {}
-             # garantir que (i, j) são únicos, se não forem, tire a média das variâncias
-            for combined_pair in combined_pairs:
-                #print(combined_pair)
-                if((tuple(combined_pair) in confident_pairs1.keys()) and (tuple(combined_pair) in confident_pairs2.keys()) ):
-                   # print(str(tuple(combined_pair) ) + " in in confident_pairs1 and in in confident_pairs2")
-                   # print(confident_pairs1[tuple(combined_pair)])
-                   # print(confident_pairs2[tuple(combined_pair)])
-                    ## uma variancia apenas por cada par i, j
-                    confident_pairs_combined[tuple(combined_pair)] = (confident_pairs1[tuple(combined_pair)] + confident_pairs2[tuple(combined_pair)])/2  # Adiciona ao dicionário
-                else:
-                    if((tuple(combined_pair) in confident_pairs1.keys())):
-                        #print(str(tuple(combined_pair) ) + "in confident_pairs1")
-                        #print(confident_pairs1[tuple(combined_pair)])
-                        confident_pairs_combined[tuple(combined_pair)] = confident_pairs1[tuple(combined_pair)]
-                    else:
-                        if((tuple(combined_pair) in confident_pairs2.keys())):
-                            #print(str(tuple(combined_pair) ) + "in confident_pairs2")
-                            #print(confident_pairs2[tuple(combined_pair)])
-                            confident_pairs_combined[tuple(combined_pair)] = confident_pairs2[tuple(combined_pair)]
-                        else:
-                            print("error")
+
+            for pair in union_set:
+                if pair in confident_pairs1 and pair in confident_pairs2:
+                    confident_pairs_combined[pair] = (confident_pairs1[pair] + confident_pairs2[pair]) / 2
+                elif pair in confident_pairs1:
+                    confident_pairs_combined[pair] = confident_pairs1[pair]
+                elif pair in confident_pairs2:
+                    confident_pairs_combined[pair] = confident_pairs2[pair]
             #print(confident_pairs_combined)
-            variances_sorted = sorted(list(confident_pairs_combined.values()))
-            print(f'Variances confident size: {len(variances_sorted)}')
-            #print(variances_sorted)
-            #selected_pairs = variances_sorted[:(self.batch_size * target_length)]
-            #print(f'Selected pairs size: {len(selected_pairs)}')
+            #dicionario (index, posição y) -> variancia
             sorted_confident_pairs = sorted(confident_pairs_combined.items(), key=lambda item: item[1])
-            #print(sorted_confident_pairs)
-            ordered_selected_pairs = dict(sorted_confident_pairs[:self.batch_size  * target_length])
-            print(f'Top k size: {len(ordered_selected_pairs)}')
 
-            # pegar as predições dos pares selecionados 
-            pred_selected_pairs = {}
-            
-            for selected_pair in ordered_selected_pairs.keys():
-                i = selected_pair[0]
-                j = selected_pair[1]
-                y_labeled_instance = (preds1[i,j] + preds2[i,j]) / 2
-                pred_selected_pairs[tuple(selected_pair)] = y_labeled_instance
-            print(pred_selected_pairs)
-            print()
-            
-            if len(pred_selected_pairs) == 0 :
-                print(" No confident predictions found.")
-                return model_view1, model_view2, X_train_v1, X_train_v2,X_pool_v1,X_pool_v2, y_labeled, execution_times, added_pairs_per_iteration
-            
-            else:
-                confident_indices = []
-                for (i,j) in pred_selected_pairs.keys():
-                    print(i)
-                    confident_indices.append(i)
-                confident_indices = list(set(confident_indices))
-                print(confident_indices)
-                print(len(confident_indices))
+            pred_selected_pairs = {pair: (preds1[pair] + preds2[pair]) / 2 for pair, _ in sorted_confident_pairs[:self.batch_size * target_length]}
+            #print(pred_selected_pairs)
 
-                #até aqui ok)
-                print(f"Before inclusion: {X_train_v1.shape[0]} unlabeled instances for v1")
-                print(f"Before inclusion: {X_train_v2.shape[0]} unlabeled instances for v2")
-                X_train_v1 = np.vstack([X_train_v1, X_pool_v1[confident_indices]])
-                X_train_v2 = np.vstack([X_train_v2, X_pool_v2[confident_indices]])
-                print(f"After inclusion: {X_train_v1.shape[0]} unlabeled instances for v1")
-                print(f"After inclusion: {X_train_v2.shape[0]} unlabeled instances for v2")
-
-            '''
-            # DEBUG: não está entrando nesta condição
-            if confident_indices:
-
-                y_confident = np.zeros((len(confident_indices), target_length))
-
-                for idx, confident_idx in enumerate(confident_indices):
-                    if confident_idx in instance_mapping:
-                        idx = instance_mapping.index(confident_idx)
-                        confident_values = y_labeled[idx, :].reshape(1, -1)
-                    else:
-                        print(f"Warning: No data found for confident_idx {confident_idx}")
-                        continue
-
-                # Adicionar as instâncias confiantes aos dados de treinamento
-                # TODO: checar porque não está sendo apresentado essa parte... suspeito que não está sendo atualizado.
-                print(f"Before inclusion: {X_train_v1.shape[0]} unlabeled instances for v1")
-                print(f"Before inclusion: {X_train_v2.shape[0]} unlabeled instances for v2")
-                print(f"Before inclusion: {y_labeled.shape[0]} for y")
-                X_train_v1 = np.vstack([X_train_v1, X_confident_v1])
-                X_train_v2 = np.vstack([X_train_v2, X_confident_v2])
-                y_labeled = np.vstack([y_labeled, y_confident])
-                print(f"After inclusion: {X_train_v1.shape[0]} unlabeled instances for v1")
-                print(f"After inclusion: {X_train_v2.shape[0]} unlabeled instances for v2")
-                print(f"After inclusion: {y_labeled.shape[0]} for y")
-
-                print(f"Before removal: {X_pool_v1.shape[0]} unlabeled instances")
-                # Remover instâncias confiantes
-                X_pool_v1 = X_pool_v1[~confident_mask_v1]
-                X_pool_v2 = X_pool_v2[~confident_mask_v2]
-                print(f"After removal: {X_pool_v1.shape[0]} unlabeled instances")
-
-                # Atualizar mapeamento e contagens
-                instance_mapping = [idx for idx in instance_mapping if idx not in confident_indices]
-                instance_mapping = [idx for idx in instance_mapping if idx not in confident_indices]
-                instance_target_count = {i: instance_target_count[i] for i in instance_mapping}
-
-            print(f"{len(added_pairs)} (instance, target) pairs added in this iteration.")
-            execution_time = time.time() - start_time
-            execution_times.append(execution_time)
-
-            r2, mse, mae, ca, arrmse = self.evaluate_model(model_view1, model_view2, X_test_v1, X_test_v2, y_test)
-            self.R2[fold_index, iteration] = r2
-            self.MSE[fold_index, iteration] = mse
-            self.MAE[fold_index, iteration] = mae
-            self.CA[fold_index, iteration] = ca
-            self.ARRMSE[fold_index, iteration] = arrmse
-
-            if self.stop_criterion(preds1, preds2):
+            if not pred_selected_pairs:
+                print("No confident predictions found.")
                 break
+
+            # Tentar subir isso pra pegar o indice ao selecionar a variancia 
+
             
-            if X_train_v1.shape[0] != y_labeled.shape[0]:
-                print(f"Misalignment detected: X_train_v1.shape[0]={X_train_v1.shape[0]}, y_labeled.shape[0]={y_labeled.shape[0]}")
-                print(f"Instance mapping: {instance_mapping}")
-                print(f"Instance target count: {instance_target_count}")
-                raise AssertionError("Misalignment")
-
-            assert X_train_v1.shape[0] == y_labeled.shape[0],  'Misalignment'
+            print(f"Before inclusion: {X_train_v1_df.shape} labeled instances for X_train_v1")
+            print("type X_train_v1"+ str(type(X_train_v1_df)))
+            print(f"Before inclusion: {X_train_v2_df.shape} labeled instances for X_train_v2")
+            print("type X_train_v2"+ str(type(X_train_v2_df)))
+            print(f"Before inclusion: {len(y_labeled_df)} labeled instances for y_labeled")
+                        
+            print(f"Before inclusion: {X_pool_v1_df.shape} labeled instances for X_pool_v1_df")
+            print("type X_pool_v1"+ str(type(X_pool_v1_df)))
+            print(f"Before inclusion: {X_pool_v2_df.shape} labeled instances for X_pool_v2_df")
+            print("type X_train_v2"+ str(type(X_pool_v2_df)))
+            print(f"Before inclusion: {len(y_labeled_df)} labeled instances for y_labeled")
+            
+            filled_targets_per_instance = {}
+            selected_pairs_filled = []
+            print(len(pred_selected_pairs))
+            indices = set()
+            count = 0 
             '''
-        return model_view1, model_view2, X_train_v1, X_train_v2,X_pool_v1,X_pool_v2, y_labeled, execution_times, added_pairs_per_iteration
+            for idx, j in pred_selected_pairs.keys():
+                if(count == 0):
+                else:
+                count = count + 1
+                indices.add(idx)
 
+                filled_targets_per_instance[idx] = j
+                if idx not in selected_pairs_filled:
+                        X_train_v1_df = pd.concat([X_train_v1_df,X_pool_v1_df.iloc[[idx]]], ignore_index=False)
+                        X_train_v2_df = pd.concat([X_train_v2_df, X_pool_v2_df.iloc[[idx]]], ignore_index=False)
+        
+                        selected_pairs_filled.append(idx)
+            '''
+            print("tamanho indices:"+str(len(indices)))
+            print(f"After X inclusion: {len(X_train_v1_df)} labeled instances for v1")
+            print(X_train_v1_df.head())
+            print(f"After X inclusion: {len(X_train_v2_df)} labeled instances for v2")
+            print(X_train_v2_df.head())
+            #até aqui ok
+
+            #retornar a quantidade de pares que está sendo selecionado 
+            #vamos agora pegar os dados das predições pred_selected_pairs e salvar em y_labeled_df
+            #salvaria realmente no y_labeled ou em outro vetor inicial?
+            for idx, j in pred_selected_pairs.keys():
+                y_labeled_df 
+            '''
+
+            if len(y_labeled) != len(X_train_v1):
+                    # Caso y_labeled tenha menos amostras, vamos expandi-lo com valores padrões (por exemplo, 0 ou -1)
+                    # ou você pode inicializá-lo com algum valor adequado para o seu caso
+                    new_labels = np.zeros((len(X_train_v1), target_length))  # Ou outro valor padrão
+                    y_labeled = np.concatenate([y_labeled, new_labels[len(y_labeled):]])
+            print(y_labeled.shape)
+            for target in filled_targets_per_instance[idx]:
+                    print(pred_selected_pairs[(idx, target)])
+                    y_labeled[idx, target] = pred_selected_pairs[(idx, target)]
+                    selected_pairs_set.update((idx, target) for target in filled_targets_per_instance[idx])
+            
+            if len(filled_targets_per_instance[idx]) == target_length:
+
+                    print(filled_targets_per_instance)
+
+                    # Aqui, a instância será removida de X_pool apenas após todos os rótulos estarem preenchidos
+                    remaining_indices = [i for i in range(len(X_pool_v1)) if i not in selected_pairs_filled or len(filled_targets_per_instance[i]) < target_length]
+                    X_pool_v1 = X_pool_v1[remaining_indices]
+                    X_pool_v2 = X_pool_v2[remaining_indices]
+
+            execution_times.append(time.time() - start_time)
+            added_pairs_per_iteration.append(len(pred_selected_pairs))
+            '''
+
+        return model_view1, model_view2, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_labeled, execution_times, added_pairs_per_iteration
     def train_and_evaluate(self, fold_index):
         print(f"\nTraining model in fold {fold_index}...")
-        X_train_labeled, y_labeled, X_pool, y_pool, X_rest, y_rest, X_test_labeled, y_test_labeled, target_length = self.read_data(fold_index+1)
-        print(len(X_train_labeled))
-        print(len(y_labeled))
-        print()
-        self.train_original_model(X_train_labeled, y_labeled, X_test_labeled, y_test_labeled)
+        X_train_labeled, y_labeled, X_pool, y_pool, X_rest, y_rest, X_test_labeled, y_test_labeled, target_length,target_names,feature_names = self.read_data(fold_index+1)
+
+        #self.train_original_model(X_train_labeled, y_labeled, X_test_labeled, y_test_labeled)
 
         model_view1, model_view2 = self.initialize_models()
-        X_train_labeled_v1, X_train_labeled_v2 = self.split_features(X_train_labeled)
-        X_pool_v1, X_pool_v2 = self.split_features(X_pool)
-        X_test_labeled_v1, X_test_labeled_v2 = self.split_features(X_test_labeled)
+        X_train_labeled_v1, X_train_labeled_v2,feature_names_v1,feature_names_v2 = self.split_features(X_train_labeled,feature_names)
+        X_pool_v1, X_pool_v2,feature_names_v1,feature_names_v2  = self.split_features(X_pool,feature_names)
+        X_test_labeled_v1, X_test_labeled_v2,feature_names_v1,feature_names_v2  = self.split_features(X_test_labeled,feature_names)
 
         model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2,X_pool_v1,X_pool_v2, y_labeled, execution_times, added_pairs_per_iteration = self.training(
-            model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, X_pool_v1, X_pool_v2, y_labeled, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled, target_length, fold_index
+            model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, X_pool_v1, X_pool_v2, y_labeled, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled, target_length, fold_index,target_names,feature_names_v1,feature_names_v2,y_pool
         )
 
         # Avaliação do modelo após o treinamento
@@ -579,7 +544,7 @@ class TargetCoTraining(CoTraining):
         self.MAE[fold_index, -1] = mae
         self.CA[fold_index, -1] = ca
         self.ARRMSE[fold_index, -1] = arrmse
-
+    
         return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE, added_pairs_per_iteration
     
 if __name__ == "__main__":
@@ -680,7 +645,8 @@ if __name__ == "__main__":
     # Target-based co-training model
     print('Target-based Co-Training...')
     cotraining_model = CoTraining(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees)
-    X_train, y_labeled, X_pool, y_pool, X_rest, y_rest, X_test, y_test, target_length = cotraining_model.read_data(1)
+    X_train, y_labeled, X_pool, y_pool, X_rest, y_rest, X_test, y_test, target_length,target_names,feature_names = cotraining_model.read_data(1)
+
     batch_size = round((batch_percentage / 100) * len(X_pool))
 
     target_cotraining_model = TargetCoTraining(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees, batch_size)
