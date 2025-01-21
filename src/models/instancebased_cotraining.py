@@ -401,7 +401,7 @@ class TargetCoTraining(CoTraining):
         return confident_pairs
 
 
-    def training(self, model_view1, model_view2, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_labeled_df, X_test_v1, X_test_v2, y_test, target_length, fold_index,target_names,feature_names_v1,feature_names_v2,y_pool):
+    def training(self, model_view1, model_view2, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_train_df, X_test_v1, X_test_v2, y_test, target_length, fold_index,target_names,feature_names_v1,feature_names_v2,y_pool):
         execution_times = []
         added_pairs_per_iteration = []
         print(y_pool.head())
@@ -413,8 +413,8 @@ class TargetCoTraining(CoTraining):
 
             start_time = time.time()
 
-            model_view1.fit(X_train_v1_df, y_labeled_df)
-            model_view2.fit(X_train_v2_df, y_labeled_df)
+            model_view1.fit(X_train_v1_df, y_train_df)
+            model_view2.fit(X_train_v2_df, y_train_df)
 
             preds1 = model_view1.predict(X_pool_v1_df)
             preds2 = model_view2.predict(X_pool_v2_df)
@@ -452,74 +452,85 @@ class TargetCoTraining(CoTraining):
             # Tentar subir isso pra pegar o indice ao selecionar a variancia 
 
             
-            print(f"Before inclusion: {X_train_v1_df.shape} labeled instances for X_train_v1")
-            print("type X_train_v1"+ str(type(X_train_v1_df)))
-            print(f"Before inclusion: {X_train_v2_df.shape} labeled instances for X_train_v2")
-            print("type X_train_v2"+ str(type(X_train_v2_df)))
-            print(f"Before inclusion: {len(y_labeled_df)} labeled instances for y_labeled")
-                        
-            print(f"Before inclusion: {X_pool_v1_df.shape} labeled instances for X_pool_v1_df")
-            print("type X_pool_v1"+ str(type(X_pool_v1_df)))
-            print(f"Before inclusion: {X_pool_v2_df.shape} labeled instances for X_pool_v2_df")
-            print("type X_train_v2"+ str(type(X_pool_v2_df)))
-            print(f"Before inclusion: {len(y_labeled_df)} labeled instances for y_labeled")
+            print(f"Before inclusion: {X_train_v1_df.shape}  X_train_v1")
+            print(f"Before inclusion: {X_train_v2_df.shape}  X_train_v2")
+            print(f"Before inclusion: {y_train_df.shape}  y_train_df")
+            print(f"Before inclusion: {X_pool_v1_df.shape}  X_pool_v1_df")
+            print(f"Before inclusion: {X_pool_v2_df.shape}  X_pool_v2_df")
+            print(f"Before inclusion: {y_pool.shape}  y_pool")
+
+           
             
-            filled_targets_per_instance = {}
-            selected_pairs_filled = []
-            print(len(pred_selected_pairs))
-            indices = set()
+            
             count = 0 
-            '''
-            for idx, j in pred_selected_pairs.keys():
+            dict_index = {} # {chave:valor} -> {index_train:index_pool}
+            for idx_pool, j in pred_selected_pairs.keys():
+                
                 if(count == 0):
-                else:
-                count = count + 1
-                indices.add(idx)
+                    #preenche x_train (adicionar novo) 
 
-                filled_targets_per_instance[idx] = j
-                if idx not in selected_pairs_filled:
-                        X_train_v1_df = pd.concat([X_train_v1_df,X_pool_v1_df.iloc[[idx]]], ignore_index=False)
-                        X_train_v2_df = pd.concat([X_train_v2_df, X_pool_v2_df.iloc[[idx]]], ignore_index=False)
+                    #x_train_v1, x_train_v2 e y_train_df vão ter o mesmo tamanho 
+                    X_train_v1_df = pd.concat([X_train_v1_df,X_pool_v1_df.iloc[[idx_pool]]], ignore_index=False)
+                    X_train_v2_df = pd.concat([X_train_v2_df, X_pool_v2_df.iloc[[idx_pool]]], ignore_index=False)
+                    linha_vazia = pd.DataFrame([[np.nan] * y_train_df.shape[1]], columns=y_train_df.columns)
+                    y_train_df = pd.concat([y_train_df, linha_vazia], ignore_index=True)
+                    
+                   #preenche y_pool (antigo y_labeled) (preencher)
+
+                    columns = list(y_pool.columns)
+                    # como pegar os indices de pool e de labeled direito?
+                    #preenche y_pool 
+                    y_pool.loc[idx_pool, columns[j]] = pred_selected_pairs[(idx_pool,j)]
+                    #{índice train:índice pool}
+                    idx_train = X_train_v1_df.index[-1]
+                    dict_index[idx_train] = idx_pool
+                    print(f"Dicionário de dataframes")
+                    #OBS por enquanto ele não está dando reset no index: talvez seja importante em algum momento 
+                    count = count + 1
         
-                        selected_pairs_filled.append(idx)
-            '''
-            print("tamanho indices:"+str(len(indices)))
-            print(f"After X inclusion: {len(X_train_v1_df)} labeled instances for v1")
-            print(X_train_v1_df.head())
-            print(f"After X inclusion: {len(X_train_v2_df)} labeled instances for v2")
-            print(X_train_v2_df.head())
+                else:
+                    #{índice train:índice pool}
+                    if idx_pool in dict_index.values():
+                        keys = [k for k, v in dict_index.items() if v == idx_pool]
+                        
+                        print(f"O índice {idx_pool} está presente em X_train com id {keys}")
+                        
+                        y_train_df.loc[keys[0], columns[j]] = pred_selected_pairs[(idx_pool,j)]
+                        y_pool.loc[idx_pool, columns[j]] = pred_selected_pairs[(idx_pool,j)]
+                    else:
+                        #preenche x_train (adicionar novo) 
+
+                        #x_train_v1, x_train_v2 e y_train_df vão ter o mesmo tamanho 
+                        X_train_v1_df = pd.concat([X_train_v1_df,X_pool_v1_df.iloc[[idx_pool]]], ignore_index=False)
+                        X_train_v2_df = pd.concat([X_train_v2_df, X_pool_v2_df.iloc[[idx_pool]]], ignore_index=False)
+                        linha_vazia = pd.DataFrame([[np.nan] * y_train_df.shape[1]], columns=y_train_df.columns)
+                        y_train_df = pd.concat([y_train_df, linha_vazia], ignore_index=True)                        
+                        #preenche y_pool (antigo y_labeled) (preencher)
+                        columns = list(y_pool.columns)
+                        # como pegar os indices de pool e de labeled direito?
+                        #preenche y_pool 
+                        y_pool.loc[idx_pool, columns[j]] = pred_selected_pairs[(idx_pool,j)]
+                        #(criar par índice pool e índice train)
+                        ultimo_index = X_train_v1_df.index[-1]
+                        dict_index[ultimo_index] = idx_pool
+                        print(f"Dicionário de dataframes")
+                        #OBS por enquanto ele não está dando reset no index: talvez seja importante em algum momento 
+                        print(dict_index)
+
+                        count = count + 1
+                    
+               
+                    
+            print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
+            print(f"After inclusion: {X_train_v2_df.shape}  X_train_v2")
+            print(f"After inclusion: {y_train_df.shape}  y_train_df")
+            print(f"After inclusion: {y_pool.shape}  y_pool")
+
             #até aqui ok
-
-            #retornar a quantidade de pares que está sendo selecionado 
-            #vamos agora pegar os dados das predições pred_selected_pairs e salvar em y_labeled_df
-            #salvaria realmente no y_labeled ou em outro vetor inicial?
-            for idx, j in pred_selected_pairs.keys():
-                y_labeled_df 
-            '''
-
-            if len(y_labeled) != len(X_train_v1):
-                    # Caso y_labeled tenha menos amostras, vamos expandi-lo com valores padrões (por exemplo, 0 ou -1)
-                    # ou você pode inicializá-lo com algum valor adequado para o seu caso
-                    new_labels = np.zeros((len(X_train_v1), target_length))  # Ou outro valor padrão
-                    y_labeled = np.concatenate([y_labeled, new_labels[len(y_labeled):]])
-            print(y_labeled.shape)
-            for target in filled_targets_per_instance[idx]:
-                    print(pred_selected_pairs[(idx, target)])
-                    y_labeled[idx, target] = pred_selected_pairs[(idx, target)]
-                    selected_pairs_set.update((idx, target) for target in filled_targets_per_instance[idx])
-            
-            if len(filled_targets_per_instance[idx]) == target_length:
-
-                    print(filled_targets_per_instance)
-
-                    # Aqui, a instância será removida de X_pool apenas após todos os rótulos estarem preenchidos
-                    remaining_indices = [i for i in range(len(X_pool_v1)) if i not in selected_pairs_filled or len(filled_targets_per_instance[i]) < target_length]
-                    X_pool_v1 = X_pool_v1[remaining_indices]
-                    X_pool_v2 = X_pool_v2[remaining_indices]
-
-            execution_times.append(time.time() - start_time)
-            added_pairs_per_iteration.append(len(pred_selected_pairs))
-            '''
+            #checar se o y_pool está todo completo 
+            indices_linhas_completas = y_pool[y_pool.notna().all(axis=1)].index
+            if not indices_linhas_completas.empty:
+                y_pool = y_pool.drop(indices_linhas_completas, axis=0)
 
         return model_view1, model_view2, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_labeled, execution_times, added_pairs_per_iteration
     def train_and_evaluate(self, fold_index):
