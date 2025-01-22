@@ -43,6 +43,7 @@ class CoTraining:
         self.MAE = np.zeros([self.k_folds, self.iterations+1])
         self.CA = np.zeros([self.k_folds, self.iterations+1])
         self.ARRMSE = np.zeros([self.k_folds, self.iterations+1])
+
     def data_read(self, dataset):
         # Caminho do dataset
         folder_dir = data_dir / 'processed' / f'{self.dataset_name}'
@@ -63,12 +64,15 @@ class CoTraining:
         target_length = len(target_names)
 
         return inputs, targets, n_instances, target_length, target_names, feature_names
+    
     def read_data(self, iteration):
         X_train, y_train, _, target_length, target_names, feature_names = self.data_read(f'train_{iteration}')
         X_pool, y_pool, n_pool, target_length, target_names, feature_names = self.data_read(f'pool_{iteration}')
         X_rest, y_rest, _, target_length, target_names, feature_names = self.data_read(f'train+pool_{iteration}')
         X_test, y_test, _, target_length, target_names, feature_names = self.data_read(f'test_{iteration}')
         y_pool_nan = pd.DataFrame(np.nan, index=y_pool.index, columns=y_pool.columns)
+
+        X_pool.index = pd.RangeIndex(start = len(X_train), stop = len(X_train) + len(X_pool), step = 1)
   
         return X_train, y_train, X_pool, y_pool_nan, X_rest, y_rest, X_test, y_test,target_length, target_names, feature_names
 
@@ -387,6 +391,7 @@ class TargetCoTraining(CoTraining):
                 variances.loc[idx, i] = variance(pool_preds[idx, :])
 
         return variances
+    
     def select_confident_pairs(self, variances):
         confident_pairs = {}
         print('oi confident')
@@ -399,7 +404,6 @@ class TargetCoTraining(CoTraining):
                     confident_pairs[(int(idx), col)] = value  # Add (index, column) pair to the dictionary
 
         return confident_pairs
-
 
     def training(self, model_view1, model_view2, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_train_df, X_test_v1, X_test_v2, y_test, target_length, fold_index,target_names,feature_names_v1,feature_names_v2,y_pool):
         execution_times = []
@@ -422,8 +426,6 @@ class TargetCoTraining(CoTraining):
             variances1 = self.calculate_variances(model_view1, X_pool_v1_df, target_length)
             variances2 = self.calculate_variances(model_view2, X_pool_v2_df, target_length)
             
-
-
             confident_pairs1 = self.select_confident_pairs(variances1)
             confident_pairs2 = self.select_confident_pairs(variances2)
             # o original não usa união
@@ -459,64 +461,82 @@ class TargetCoTraining(CoTraining):
             print(f"Before inclusion: {X_pool_v2_df.shape}  X_pool_v2_df")
             print(f"Before inclusion: {y_pool.shape}  y_pool")
 
-           
-            
-            
+            print()
+
             count = 0 
             dict_index = {} # {chave:valor} -> {index_train:index_pool}
             for idx_pool, j in pred_selected_pairs.keys():
-                
+                print()
+                print(count)
+                print('par')
+                print(idx_pool, j)
+
                 if(count == 0):
                     #preenche x_train (adicionar novo) 
-
+                    
                     #x_train_v1, x_train_v2 e y_train_df vão ter o mesmo tamanho 
                     X_train_v1_df = pd.concat([X_train_v1_df,X_pool_v1_df.iloc[[idx_pool]]], ignore_index=False)
                     X_train_v2_df = pd.concat([X_train_v2_df, X_pool_v2_df.iloc[[idx_pool]]], ignore_index=False)
-                    linha_vazia = pd.DataFrame([[np.nan] * y_train_df.shape[1]], columns=y_train_df.columns)
-                    y_train_df = pd.concat([y_train_df, linha_vazia], ignore_index=True)
+                    #linha_vazia = pd.DataFrame([[np.nan] * y_train_df.shape[1]], columns=y_train_df.columns)
+                    #y_train_df = pd.concat([y_train_df, linha_vazia], ignore_index=True) 
                     
                    #preenche y_pool (antigo y_labeled) (preencher)
 
                     columns = list(y_pool.columns)
-                    # como pegar os indices de pool e de labeled direito?
-                    #preenche y_pool 
-                    y_pool.loc[idx_pool, columns[j]] = pred_selected_pairs[(idx_pool,j)]
+                    
                     #{índice train:índice pool}
                     idx_train = X_train_v1_df.index[-1]
                     dict_index[idx_train] = idx_pool
-                    print(f"Dicionário de dataframes")
+
+                    # como pegar os indices de pool e de labeled direito?
+                    #preenche y_pool 
+                    y_pool.loc[idx_pool, columns[j]] = pred_selected_pairs[(idx_pool,j)]
+                    # preenche y_train
+                    y_train_df.loc[idx_train, columns[j]] = pred_selected_pairs[(idx_pool,j)]
+
                     #OBS por enquanto ele não está dando reset no index: talvez seja importante em algum momento 
                     count = count + 1
-        
+                    
                 else:
+                    
                     #{índice train:índice pool}
                     if idx_pool in dict_index.values():
+                        print('vai campeao')
+                        
                         keys = [k for k, v in dict_index.items() if v == idx_pool]
                         
                         print(f"O índice {idx_pool} está presente em X_train com id {keys}")
                         
-                        y_train_df.loc[keys[0], columns[j]] = pred_selected_pairs[(idx_pool,j)]
                         y_pool.loc[idx_pool, columns[j]] = pred_selected_pairs[(idx_pool,j)]
+                        y_train_df.loc[keys[0], columns[j]] = pred_selected_pairs[(idx_pool,j)]
+                        print(y_train_df.loc[keys[0]])
+
+                        print()
+                        count = count + 1
+
                     else:
                         #preenche x_train (adicionar novo) 
-
+                        print('     deeeeebug')
                         #x_train_v1, x_train_v2 e y_train_df vão ter o mesmo tamanho 
                         X_train_v1_df = pd.concat([X_train_v1_df,X_pool_v1_df.iloc[[idx_pool]]], ignore_index=False)
                         X_train_v2_df = pd.concat([X_train_v2_df, X_pool_v2_df.iloc[[idx_pool]]], ignore_index=False)
-                        linha_vazia = pd.DataFrame([[np.nan] * y_train_df.shape[1]], columns=y_train_df.columns)
-                        y_train_df = pd.concat([y_train_df, linha_vazia], ignore_index=True)                        
+                        #linha_vazia = pd.DataFrame([[np.nan] * y_train_df.shape[1]], columns=y_train_df.columns)
+                        
+                        #y_train_df = pd.concat([y_train_df, linha_vazia], ignore_index=True)                        
                         #preenche y_pool (antigo y_labeled) (preencher)
                         columns = list(y_pool.columns)
-                        # como pegar os indices de pool e de labeled direito?
-                        #preenche y_pool 
-                        y_pool.loc[idx_pool, columns[j]] = pred_selected_pairs[(idx_pool,j)]
+                        
                         #(criar par índice pool e índice train)
                         ultimo_index = X_train_v1_df.index[-1]
                         dict_index[ultimo_index] = idx_pool
-                        print(f"Dicionário de dataframes")
-                        #OBS por enquanto ele não está dando reset no index: talvez seja importante em algum momento 
-                        print(dict_index)
 
+                        # como pegar os indices de pool e de labeled direito?
+                        #preenche y_pool 
+                        y_pool.loc[idx_pool, columns[j]] = pred_selected_pairs[(idx_pool,j)]
+                        y_train_df.loc[ultimo_index, columns[j]] = pred_selected_pairs[(idx_pool,j)]
+                        print(y_train_df.loc[ultimo_index])
+
+                        print()
                         count = count + 1
                     
                
@@ -533,6 +553,7 @@ class TargetCoTraining(CoTraining):
                 y_pool = y_pool.drop(indices_linhas_completas, axis=0)
 
         return model_view1, model_view2, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_labeled, execution_times, added_pairs_per_iteration
+    
     def train_and_evaluate(self, fold_index):
         print(f"\nTraining model in fold {fold_index}...")
         X_train_labeled, y_labeled, X_pool, y_pool, X_rest, y_rest, X_test_labeled, y_test_labeled, target_length,target_names,feature_names = self.read_data(fold_index+1)
