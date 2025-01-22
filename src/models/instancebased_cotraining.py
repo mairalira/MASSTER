@@ -118,7 +118,6 @@ class CoTraining:
         
         return X_v1, X_v2, feature_names_v1, feature_names_v2
 
-
     def confidence_computation(self, preds1, preds2, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_labeled):
         print(" Calculating prediction confidence...")
         confident_mask1 = np.std(preds1, axis=1) <= self.threshold
@@ -408,14 +407,16 @@ class TargetCoTraining(CoTraining):
     def training(self, model_view1, model_view2, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_train_df, X_test_v1, X_test_v2, y_test, target_length, fold_index,target_names,feature_names_v1,feature_names_v2,y_pool):
         execution_times = []
         added_pairs_per_iteration = []
-        print(y_pool.head())
-        print(y_pool.shape)
-        print(y_pool.columns)
-
+        
         for iteration in range(self.iterations):
             print(f"Iteration {iteration + 1}/{self.iterations}")
 
             start_time = time.time()
+
+            valid_indices = ~np.isnan(y_train_df).any(axis=1)
+            X_train_v1_df = X_train_v1_df[valid_indices]
+            X_train_v2_df = X_train_v2_df[valid_indices]
+            y_train_df = y_train_df[valid_indices]
 
             model_view1.fit(X_train_v1_df, y_train_df)
             model_view2.fit(X_train_v2_df, y_train_df)
@@ -454,14 +455,14 @@ class TargetCoTraining(CoTraining):
             # Tentar subir isso pra pegar o indice ao selecionar a variancia 
 
             
-            print(f"Before inclusion: {X_train_v1_df.shape}  X_train_v1")
-            print(f"Before inclusion: {X_train_v2_df.shape}  X_train_v2")
-            print(f"Before inclusion: {y_train_df.shape}  y_train_df")
-            print(f"Before inclusion: {X_pool_v1_df.shape}  X_pool_v1_df")
-            print(f"Before inclusion: {X_pool_v2_df.shape}  X_pool_v2_df")
-            print(f"Before inclusion: {y_pool.shape}  y_pool")
+            #print(f"Before inclusion: {X_train_v1_df.shape}  X_train_v1")
+            #print(f"Before inclusion: {X_train_v2_df.shape}  X_train_v2")
+            #print(f"Before inclusion: {y_train_df.shape}  y_train_df")
+            #print(f"Before inclusion: {X_pool_v1_df.shape}  X_pool_v1_df")
+            #print(f"Before inclusion: {X_pool_v2_df.shape}  X_pool_v2_df")
+            #print(f"Before inclusion: {y_pool.shape}  y_pool")
 
-            print()
+            #print()
 
             count = 0 
             dict_index = {} # {chave:valor} -> {index_train:index_pool}
@@ -501,22 +502,22 @@ class TargetCoTraining(CoTraining):
                     
                     #{índice train:índice pool}
                     if idx_pool in dict_index.values():
-                        print('vai campeao')
+                        #print('vai campeao')
                         
                         keys = [k for k, v in dict_index.items() if v == idx_pool]
                         
-                        print(f"O índice {idx_pool} está presente em X_train com id {keys}")
+                        #print(f"O índice {idx_pool} está presente em X_train com id {keys}")
                         
                         y_pool.loc[idx_pool, columns[j]] = pred_selected_pairs[(idx_pool,j)]
                         y_train_df.loc[keys[0], columns[j]] = pred_selected_pairs[(idx_pool,j)]
-                        print(y_train_df.loc[keys[0]])
+                        #print(y_train_df.loc[keys[0]])
 
-                        print()
+                        #print()
                         count = count + 1
 
                     else:
                         #preenche x_train (adicionar novo) 
-                        print('     deeeeebug')
+                        #print('     deeeeebug')
                         #x_train_v1, x_train_v2 e y_train_df vão ter o mesmo tamanho 
                         X_train_v1_df = pd.concat([X_train_v1_df,X_pool_v1_df.iloc[[idx_pool]]], ignore_index=False)
                         X_train_v2_df = pd.concat([X_train_v2_df, X_pool_v2_df.iloc[[idx_pool]]], ignore_index=False)
@@ -534,23 +535,33 @@ class TargetCoTraining(CoTraining):
                         #preenche y_pool 
                         y_pool.loc[idx_pool, columns[j]] = pred_selected_pairs[(idx_pool,j)]
                         y_train_df.loc[ultimo_index, columns[j]] = pred_selected_pairs[(idx_pool,j)]
-                        print(y_train_df.loc[ultimo_index])
+                        #print(y_train_df.loc[ultimo_index])
 
-                        print()
+                        #print()
                         count = count + 1
                     
                
                     
-            print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
-            print(f"After inclusion: {X_train_v2_df.shape}  X_train_v2")
-            print(f"After inclusion: {y_train_df.shape}  y_train_df")
-            print(f"After inclusion: {y_pool.shape}  y_pool")
+            #print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
+            #print(f"After inclusion: {X_train_v2_df.shape}  X_train_v2")
+            #print(f"After inclusion: {y_train_df.shape}  y_train_df")
+            #print(f"After inclusion: {y_pool.shape}  y_pool")
 
             #até aqui ok
             #checar se o y_pool está todo completo 
             indices_linhas_completas = y_pool[y_pool.notna().all(axis=1)].index
             if not indices_linhas_completas.empty:
                 y_pool = y_pool.drop(indices_linhas_completas, axis=0)
+                X_pool_v1_df = X_pool_v1_df.drop(indices_linhas_completas, axis=0)
+                X_pool_v2_df = X_pool_v2_df.drop(indices_linhas_completas, axis=0)
+
+            r2, mse, mae, ca, arrmse = self.evaluate_model(model_view1, model_view2, X_test_v1, X_test_v2, y_test)
+            self.R2[fold_index, j] = r2
+            self.MSE[fold_index, j] = mse
+            self.MAE[fold_index, j] = mae
+            self.CA[fold_index, j] = ca
+            self.ARRMSE[fold_index, j] = arrmse
+
 
         return model_view1, model_view2, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_labeled, execution_times, added_pairs_per_iteration
     
