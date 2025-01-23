@@ -30,52 +30,42 @@ n_trees = N_TREES
 batch_percentage = BATCH_PERCENTAGE
 
 class CoTraining:
-        def __init__(self, data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees):
-            self.data_dir = data_dir
-            self.dataset_name = dataset_name
-            self.k_folds = k_folds
-            self.iterations = iterations
-            self.threshold = threshold
-            self.random_state = random_state
-            self.n_trees = n_trees
+    def __init__(self, data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees):
+        self.data_dir = data_dir
+        self.dataset_name = dataset_name
+        self.k_folds = k_folds
+        self.iterations = iterations
+        self.threshold = threshold
+        self.random_state = random_state
+        self.n_trees = n_trees
 
-            self.R2 = np.zeros([self.k_folds, self.iterations+1])
-            self.MSE = np.zeros([self.k_folds, self.iterations+1])
-            self.MAE = np.zeros([self.k_folds, self.iterations+1])
-            self.CA = np.zeros([self.k_folds, self.iterations+1])
-            self.ARRMSE = np.zeros([self.k_folds, self.iterations+1])
+        self.R2 = np.zeros([self.k_folds, self.iterations+1])
+        self.MSE = np.zeros([self.k_folds, self.iterations+1])
+        self.MAE = np.zeros([self.k_folds, self.iterations+1])
+        self.CA = np.zeros([self.k_folds, self.iterations+1])
+        self.ARRMSE = np.zeros([self.k_folds, self.iterations+1])
 
-        def data_read(self, dataset):
-            # Caminho do dataset
-            folder_dir = data_dir / 'processed' / f'{self.dataset_name}'
-            data_path = folder_dir / f'{dataset}'
-            df = pd.read_csv(data_path)
+    def data_read(self, dataset):
+        # Caminho do dataset
+        folder_dir = data_dir / 'processed' / f'{self.dataset_name}'
+        data_path = folder_dir / f'{dataset}'
+        df = pd.read_csv(data_path)
 
-            # Identificar colunas de entrada e de alvo
-            col_names = list(df.columns)
-            target_names = [col for col in col_names if 'target' in col]
-            feature_names = [col for col in col_names if col not in target_names]
+        # Identificar colunas de entrada e de alvo
+        col_names = list(df.columns)
+        target_names = [col for col in col_names if 'target' in col]
+        feature_names = [col for col in col_names if col not in target_names]
 
-            # Separar entradas e alvos como DataFrames
-            inputs = df[feature_names]
-            targets = df[target_names]
+        # Separar entradas e alvos como DataFrames
+        inputs = df[feature_names]
+        targets = df[target_names]
 
-            # Número de instâncias e comprimento do alvo
-            n_instances = len(targets)
-            target_length = len(target_names)
+        # Número de instâncias e comprimento do alvo
+        n_instances = len(targets)
+        target_length = len(target_names)
 
-            return inputs, targets, n_instances, target_length, target_names, feature_names
+        return inputs, targets, n_instances, target_length, target_names, feature_names
         
-        def read_data(self, iteration):
-            X_train, y_train, _, target_length, target_names, feature_names = self.data_read(f'train_{iteration}')
-            X_pool, y_pool, n_pool, target_length, target_names, feature_names = self.data_read(f'pool_{iteration}')
-            X_rest, y_rest, _, target_length, target_names, feature_names = self.data_read(f'train+pool_{iteration}')
-            X_test, y_test, _, target_length, target_names, feature_names = self.data_read(f'test_{iteration}')
-            y_pool_nan = pd.DataFrame(np.nan, index=y_pool.index, columns=y_pool.columns)
-
-            X_pool.index = pd.RangeIndex(start = len(X_train), stop = len(X_train) + len(X_pool), step = 1)
-    
-<<<<<<< HEAD
     def read_data(self, iteration):
         X_train, y_train, _, target_length, target_names, feature_names = self.data_read(f'train_{iteration}')
         X_pool, y_pool, n_pool, target_length, target_names, feature_names = self.data_read(f'pool_{iteration}')
@@ -168,9 +158,6 @@ class CoTraining:
         
         for iteration in range(self.iterations):
             print(f"Iteration {iteration + 1}/{self.iterations}")
-=======
-            return X_train, y_train, X_pool, y_pool_nan, X_rest, y_rest, X_test, y_test,target_length, target_names, feature_names
->>>>>>> 43d87cd9a3d5161f500b33ffe9a4e6ee8200a359
 
         def train_original_model(self, X_train_labeled, y_train_labeled, X_test_labeled, y_test_labeled):
             start_time = time.time()
@@ -486,7 +473,7 @@ class TargetCoTraining(CoTraining):
                 for idx, row_idx in enumerate(X_pool.index):
                     variances.loc[idx, i] = variance(pool_preds[idx, :])
 
-            return variances #para cada view
+            return variances 
         
         def select_confident_pairs(self, variances):
             confident_pairs = {}        
@@ -498,17 +485,10 @@ class TargetCoTraining(CoTraining):
                         confident_pairs[(int(idx), col)] = value  # Add (index, column) pair to the dictionary
 
             return confident_pairs
+        
         def unique_fit(self, target_length, y_train_df, X_train):
 
-<<<<<<< HEAD
-    def training(self, model_view1, model_view2, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_train_df, X_test_v1, X_test_v2, y_test, target_length, fold_index,target_names,feature_names_v1,feature_names_v2,y_pool):
-        execution_times = []
-        added_pairs_per_iteration = []
-        
-        for iteration in range(self.iterations):
-            print(f"Iteration {iteration + 1}/{self.iterations}")
-=======
-        # Array para armazenar os modelos
+            # Array para armazenar os modelos
             model_array = []
             columns = list(y_train_df.columns)
             # Função para instanciar modelo
@@ -517,21 +497,9 @@ class TargetCoTraining(CoTraining):
             for i in range(target_length):
                 # 1) Avaliar índices válidos para o target (não nulos)
                 valid_indices = ~y_train_df.iloc[:, i].isna()  # Índices válidos para o target atual
->>>>>>> 43d87cd9a3d5161f500b33ffe9a4e6ee8200a359
 
-                # 2) Pegar X_train_v1 e X_train_v2 válidos
+                # 2) Pegar X_train válido
                 X_train_valid = X_train[valid_indices] 
-
-<<<<<<< HEAD
-            valid_indices = ~np.isnan(y_train_df).any(axis=1)
-            X_train_v1_df = X_train_v1_df[valid_indices]
-            X_train_v2_df = X_train_v2_df[valid_indices]
-            y_train_df = y_train_df[valid_indices]
-
-            model_view1.fit(X_train_v1_df, y_train_df)
-            model_view2.fit(X_train_v2_df, y_train_df)
-=======
->>>>>>> 43d87cd9a3d5161f500b33ffe9a4e6ee8200a359
 
                 # 3) Combinar os dados (se necessário) e pegar y_train válido para aquela coluna
                 y_train_valid = y_train_df.loc[valid_indices, columns[i]]
@@ -592,11 +560,8 @@ class TargetCoTraining(CoTraining):
                 
             return predictions
 
-
-
-
         def training(self, model_view1, model_view2, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_train_df, X_test_v1, X_test_v2, y_test, target_length, fold_index,target_names,feature_names_v1,feature_names_v2,y_pool):
-            with open(r'C:\Users\danin\Documents\lu\mestrado\artigo_ricardo\codigo_arquivo\Active-and-Self-Learning-for-Multi-target-Regression\output.txt', 'w') as f:
+            with open(r'.\output.txt', 'w') as f:
                 with redirect_stdout(f):
                     # Agora, qualquer print dentro desse bloco será registrado no arquivo
                     print("Este texto vai ser gravado no arquivo output.txt.")
@@ -606,122 +571,23 @@ class TargetCoTraining(CoTraining):
                     for iteration in range(self.iterations):
                         print(f"Iteration {iteration + 1}/{self.iterations}")
 
-<<<<<<< HEAD
-            
-            #print(f"Before inclusion: {X_train_v1_df.shape}  X_train_v1")
-            #print(f"Before inclusion: {X_train_v2_df.shape}  X_train_v2")
-            #print(f"Before inclusion: {y_train_df.shape}  y_train_df")
-            #print(f"Before inclusion: {X_pool_v1_df.shape}  X_pool_v1_df")
-            #print(f"Before inclusion: {X_pool_v2_df.shape}  X_pool_v2_df")
-            #print(f"Before inclusion: {y_pool.shape}  y_pool")
-
-            #print()
-
-            count = 0 
-            dict_index = {} # {chave:valor} -> {index_train:index_pool}
-            for idx_pool, j in pred_selected_pairs.keys():
-                print()
-                print(count)
-                print('par')
-                print(idx_pool, j)
-
-                if(count == 0):
-                    #preenche x_train (adicionar novo) 
-                    
-                    #x_train_v1, x_train_v2 e y_train_df vão ter o mesmo tamanho 
-                    X_train_v1_df = pd.concat([X_train_v1_df,X_pool_v1_df.iloc[[idx_pool]]], ignore_index=False)
-                    X_train_v2_df = pd.concat([X_train_v2_df, X_pool_v2_df.iloc[[idx_pool]]], ignore_index=False)
-                    #linha_vazia = pd.DataFrame([[np.nan] * y_train_df.shape[1]], columns=y_train_df.columns)
-                    #y_train_df = pd.concat([y_train_df, linha_vazia], ignore_index=True) 
-                    
-                   #preenche y_pool (antigo y_labeled) (preencher)
-
-                    columns = list(y_pool.columns)
-                    
-                    #{índice train:índice pool}
-                    idx_train = X_train_v1_df.index[-1]
-                    dict_index[idx_train] = idx_pool
-
-                    # como pegar os indices de pool e de labeled direito?
-                    #preenche y_pool 
-                    y_pool.loc[idx_pool, columns[j]] = pred_selected_pairs[(idx_pool,j)]
-                    # preenche y_train
-                    y_train_df.loc[idx_train, columns[j]] = pred_selected_pairs[(idx_pool,j)]
-
-                    #OBS por enquanto ele não está dando reset no index: talvez seja importante em algum momento 
-                    count = count + 1
-                    
-                else:
-                    
-                    #{índice train:índice pool}
-                    if idx_pool in dict_index.values():
-                        #print('vai campeao')
-                        
-                        keys = [k for k, v in dict_index.items() if v == idx_pool]
-                        
-                        #print(f"O índice {idx_pool} está presente em X_train com id {keys}")
-                        
-                        y_pool.loc[idx_pool, columns[j]] = pred_selected_pairs[(idx_pool,j)]
-                        y_train_df.loc[keys[0], columns[j]] = pred_selected_pairs[(idx_pool,j)]
-                        #print(y_train_df.loc[keys[0]])
-
-                        #print()
-                        count = count + 1
-
-                    else:
-                        #preenche x_train (adicionar novo) 
-                        #print('     deeeeebug')
-                        #x_train_v1, x_train_v2 e y_train_df vão ter o mesmo tamanho 
-                        X_train_v1_df = pd.concat([X_train_v1_df,X_pool_v1_df.iloc[[idx_pool]]], ignore_index=False)
-                        X_train_v2_df = pd.concat([X_train_v2_df, X_pool_v2_df.iloc[[idx_pool]]], ignore_index=False)
-                        #linha_vazia = pd.DataFrame([[np.nan] * y_train_df.shape[1]], columns=y_train_df.columns)
-                        
-                        #y_train_df = pd.concat([y_train_df, linha_vazia], ignore_index=True)                        
-                        #preenche y_pool (antigo y_labeled) (preencher)
-=======
                         start_time = time.time()
 
-                        
+                        print(f"    Before cleaning: {X_train_v1_df.shape}  X_train_v1")
+                        print(f"    Before cleaning: {X_train_v2_df.shape}  X_train_v2")
+                        print(f"    Before cleaning: {y_train_df.shape}  y_train_df")
+                        print(f"    Before cleaning: {X_pool_v1_df.shape}  X_pool_v1_df")
                         models_view1_array = self.unique_fit(target_length, y_train_df, X_train_v1_df)
                         models_view2_array = self.unique_fit(target_length, y_train_df, X_train_v2_df)
->>>>>>> 43d87cd9a3d5161f500b33ffe9a4e6ee8200a359
+                        print(f"    After cleaning: {X_train_v1_df.shape}  X_train_v1")
+                        print(f"    After cleaning: {X_train_v2_df.shape}  X_train_v2")
+                        print(f"    After cleaning: {y_train_df.shape}  y_train_df")
+                        print(f"    After cleaning: {X_pool_v1_df.shape}  X_pool_v1_df")
+
                         columns = list(y_pool.columns)
                         preds1 = self.unique_predict(models_view1_array, X_pool_v1_df,target_length,columns)
                         preds2 = self.unique_predict(models_view2_array, X_pool_v2_df,target_length, columns)    
 
-<<<<<<< HEAD
-                        # como pegar os indices de pool e de labeled direito?
-                        #preenche y_pool 
-                        y_pool.loc[idx_pool, columns[j]] = pred_selected_pairs[(idx_pool,j)]
-                        y_train_df.loc[ultimo_index, columns[j]] = pred_selected_pairs[(idx_pool,j)]
-                        #print(y_train_df.loc[ultimo_index])
-
-                        #print()
-                        count = count + 1
-                    
-               
-                    
-            #print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
-            #print(f"After inclusion: {X_train_v2_df.shape}  X_train_v2")
-            #print(f"After inclusion: {y_train_df.shape}  y_train_df")
-            #print(f"After inclusion: {y_pool.shape}  y_pool")
-
-            #até aqui ok
-            #checar se o y_pool está todo completo 
-            indices_linhas_completas = y_pool[y_pool.notna().all(axis=1)].index
-            if not indices_linhas_completas.empty:
-                y_pool = y_pool.drop(indices_linhas_completas, axis=0)
-                X_pool_v1_df = X_pool_v1_df.drop(indices_linhas_completas, axis=0)
-                X_pool_v2_df = X_pool_v2_df.drop(indices_linhas_completas, axis=0)
-
-            r2, mse, mae, ca, arrmse = self.evaluate_model(model_view1, model_view2, X_test_v1, X_test_v2, y_test)
-            self.R2[fold_index, j] = r2
-            self.MSE[fold_index, j] = mse
-            self.MAE[fold_index, j] = mae
-            self.CA[fold_index, j] = ca
-            self.ARRMSE[fold_index, j] = arrmse
-
-=======
                         variances1 = self.calculate_variances(models_view1_array, X_pool_v1_df, target_length)
                         variances2 = self.calculate_variances(models_view2_array, X_pool_v2_df, target_length)
                         
@@ -754,22 +620,19 @@ class TargetCoTraining(CoTraining):
                         else:
                             print(pred_selected_pairs)
                             
-
-                        
-                        
-                        
                         print(f"Before inclusion: {X_train_v1_df.shape}  X_train_v1")
-                        print(f"Before inclusion: {X_train_v2_df.shape}  X_train_v2")
+                        #print(f"Before inclusion: {X_train_v2_df.shape}  X_train_v2")
                         print(f"Before inclusion: {y_train_df.shape}  y_train_df")
                         print(f"Before inclusion: {X_pool_v1_df.shape}  X_pool_v1_df")
-                        print(f"Before inclusion: {X_pool_v2_df.shape}  X_pool_v2_df")
-                        print(f"Before inclusion: {y_pool.shape}  y_pool")
+                        #print(f"Before inclusion: {X_pool_v2_df.shape}  X_pool_v2_df")
+                        #print(f"Before inclusion: {y_pool.shape}  y_pool")
 
                         print()
                         print("Quantidade de pares selecionados: " + str(len(pred_selected_pairs)))
                         indices = set()
                         for idx_pool, j in pred_selected_pairs.keys():
                             indices.add(idx_pool)
+
                         print("Quantidade de linhas distintas "+str(len(indices)))
                         count = 0 
                         
@@ -778,23 +641,34 @@ class TargetCoTraining(CoTraining):
                                 print(f"A posicao ({idx_pool}, {j}) nao esta vazia.")
                                 continue
                             
-                            if(count == 0):
+                            # NOTE: added idx_pool not in indices conditions to guarantee we are not double stacking a certain X_train idx_pool
+                            if count == 0 and idx_pool not in indices:
+                                print('onde tudo começa...')
+                                print("count")
+                                print(count)
+                                print('par')
+                                print(idx_pool, j)
+                                print()
+                                print(f"Before inclusion: {X_train_v1_df.shape}  X_train_v1")
+                                #print(f"Before inclusion: {X_train_v2_df.shape}  X_train_v2")
+                                print(f"Before inclusion: {y_train_df.shape}  y_train_df")
+                                #print(f"Before inclusion: {X_pool_v1_df.shape}  X_pool_v1_df")
+                                #print(f"Before inclusion: {X_pool_v2_df.shape}  X_pool_v2_df")
+                                #print(f"Before inclusion: {y_pool.shape}  y_pool")
+                                print()
+
                                 #preenche x_train (adicionar novo) 
-                                print(y_pool.iloc[idx_pool])
+                                #
                                 #x_train_v1, x_train_v2 e y_train_df vão ter o mesmo tamanho 
                                 X_train_v1_df = pd.concat([X_train_v1_df,X_pool_v1_df.iloc[[idx_pool]]], ignore_index=False)
                                 X_train_v2_df = pd.concat([X_train_v2_df, X_pool_v2_df.iloc[[idx_pool]]], ignore_index=False)
-                                #linha_vazia = pd.DataFrame([[np.nan] * y_train_df.shape[1]], columns=y_train_df.columns)
-                                #y_train_df = pd.concat([y_train_df, linha_vazia], ignore_index=True) 
                                 
-                            #preenche y_pool (antigo y_labeled) (preencher)
-
+                                #preenche y_pool (antigo y_labeled) (preencher)
                                 columns = list(y_pool.columns)
                                 
                                 #{índice train:índice pool}
                                 idx_train = X_train_v1_df.index[-1]
                                 dict_index[idx_train] = idx_pool
->>>>>>> 43d87cd9a3d5161f500b33ffe9a4e6ee8200a359
 
                                 # como pegar os indices de pool e de labeled direito?
                                 #preenche y_pool 
@@ -807,11 +681,13 @@ class TargetCoTraining(CoTraining):
                                 print(y_pool.iloc[idx_pool])
                                 print()
                                 print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
-                                print(f"After inclusion: {X_train_v2_df.shape}  X_train_v2")
+                                #print(f"After inclusion: {X_train_v2_df.shape}  X_train_v2")
                                 print(f"After inclusion: {y_train_df.shape}  y_train_df")
-                                print(f"After inclusion: {X_pool_v1_df.shape}  X_pool_v1_df")
-                                print(f"After inclusion: {X_pool_v2_df.shape}  X_pool_v2_df")
-                                print(f"After inclusion: {y_pool.shape}  y_pool")
+                                #print(f"After inclusion: {X_pool_v1_df.shape}  X_pool_v1_df")
+                                #print(f"After inclusion: {X_pool_v2_df.shape}  X_pool_v2_df")
+                                #print(f"After inclusion: {y_pool.shape}  y_pool")
+                                print()
+
                             else:
                                 
                                 print("count")
@@ -820,6 +696,13 @@ class TargetCoTraining(CoTraining):
                                 print(idx_pool, j)
                                 print(len(y_pool))
                                 print(y_pool.iloc[idx_pool])
+                                print()
+                                print(f"Before inclusion: {X_train_v1_df.shape}  X_train_v1")
+                                #print(f"Before inclusion: {X_train_v2_df.shape}  X_train_v2")
+                                print(f"Before inclusion: {y_train_df.shape}  y_train_df")
+                                #print(f"Before inclusion: {X_pool_v1_df.shape}  X_pool_v1_df")
+                                #print(f"Before inclusion: {X_pool_v2_df.shape}  X_pool_v2_df")
+                                #print(f"Before inclusion: {y_pool.shape}  y_pool")
                                 
                                 #{índice train:índice pool}
                                 if idx_pool in dict_index.values():
@@ -836,10 +719,19 @@ class TargetCoTraining(CoTraining):
                                     #print()
                                     count = count + 1
                                     print(y_pool.iloc[idx_pool])
+                                    print()
+                                    print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
+                                    #print(f"After inclusion: {X_train_v2_df.shape}  X_train_v2")
+                                    print(f"After inclusion: {y_train_df.shape}  y_train_df")
+                                    #print(f"After inclusion: {X_pool_v1_df.shape}  X_pool_v1_df")
+                                    #print(f"After inclusion: {X_pool_v2_df.shape}  X_pool_v2_df")
+                                    #print(f"After inclusion: {y_pool.shape}  y_pool")
+                                    print()
+
 
                                 else:
                                     #preenche x_train (adicionar novo) 
-                                    print('     deeeeebug')
+                                    
                                     #x_train_v1, x_train_v2 e y_train_df vão ter o mesmo tamanho 
                                     X_train_v1_df = pd.concat([X_train_v1_df,X_pool_v1_df.iloc[[idx_pool]]], ignore_index=False)
                                     X_train_v2_df = pd.concat([X_train_v2_df, X_pool_v2_df.iloc[[idx_pool]]], ignore_index=False)
@@ -862,6 +754,16 @@ class TargetCoTraining(CoTraining):
                                     #print()
                                     print(y_pool.iloc[idx_pool])
                                     count = count + 1
+                                    print(y_pool.iloc[idx_pool])
+                                    print()
+                                    print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
+                                    #print(f"After inclusion: {X_train_v2_df.shape}  X_train_v2")
+                                    print(f"After inclusion: {y_train_df.shape}  y_train_df")
+                                    #print(f"After inclusion: {X_pool_v1_df.shape}  X_pool_v1_df")
+                                    #print(f"After inclusion: {X_pool_v2_df.shape}  X_pool_v2_df")
+                                    #print(f"After inclusion: {y_pool.shape}  y_pool")
+                                    print()
+
                                 print()
                                 print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
                                 print(f"After inclusion: {X_train_v2_df.shape}  X_train_v2")
@@ -872,33 +774,47 @@ class TargetCoTraining(CoTraining):
 
                         #checar se o y_pool está todo completo 
                         indices_linhas_completas = y_pool[y_pool.notna().all(axis=1)].index
+                        print('linhas completas')
+                        print(indices_linhas_completas)
+
                         if not indices_linhas_completas.empty:
+                            print(f"        Before pool clean: {X_train_v1_df.shape}  X_train_v1")
+                            print(f"        Before pool clean: {X_train_v2_df.shape}  X_train_v2")
+                            print(f"        Before pool clean: {y_train_df.shape}  y_train_df")
+                            print(f"        Before pool clean: {X_pool_v1_df.shape}  X_pool_v1_df")
+                            print(f"        Before pool clean: {X_pool_v2_df.shape}  X_pool_v2_df")
+                            print(f"        Before pool clean: {y_pool.shape}  y_pool")
+
                             y_pool = y_pool.drop(indices_linhas_completas, axis=0)
                             X_pool_v1_df = X_pool_v1_df.drop(indices_linhas_completas, axis=0)
                             X_pool_v2_df = X_pool_v2_df.drop(indices_linhas_completas, axis=0)
-                        print(f"After clean: {X_train_v1_df.shape}  X_train_v1")
-                        print(f"After clean: {X_train_v2_df.shape}  X_train_v2")
-                        print(f"After clean: {y_train_df.shape}  y_train_df")
-                        print(f"After clean: {X_pool_v1_df.shape}  X_pool_v1_df")
-                        print(f"After clean: {X_pool_v2_df.shape}  X_pool_v2_df")
-                        print(f"After clean: {y_pool.shape}  y_pool")
+
+                        print(f"        After pool clean: {X_train_v1_df.shape}  X_train_v1")
+                        print(f"        After pool clean: {X_train_v2_df.shape}  X_train_v2")
+                        print(f"        After pool clean: {y_train_df.shape}  y_train_df")
+                        print(f"        After pool clean: {X_pool_v1_df.shape}  X_pool_v1_df")
+                        print(f"        After pool clean: {X_pool_v2_df.shape}  X_pool_v2_df")
+                        print(f"        After pool clean: {y_pool.shape}  y_pool")
 
 
                         r2, mse, mae, ca, arrmse = self.unique_evaluate_model(models_view1_array, models_view2_array, X_test_v1, X_test_v2, y_test)
                         print("------------------------------------------------------------------------")
                         print(fold_index)
-                        print(j)
-                        self.R2[fold_index, j] = r2
-                        self.MSE[fold_index, j] = mse
-                        self.MAE[fold_index, j] = mae
-                        self.CA[fold_index, j] = ca
-                        self.ARRMSE[fold_index, j] = arrmse
+                        print(iteration)
+                        # NOTE: changed from j to iteration. j on the CoTraining code refers only to iteration, but on TargetCoTraining.training, j means target instead
+
+                        self.R2[fold_index, iteration] = r2
+                        self.MSE[fold_index, iteration] = mse
+                        self.MAE[fold_index, iteration] = mae
+                        self.CA[fold_index, iteration] = ca
+                        self.ARRMSE[fold_index, iteration] = arrmse
                         print("------------------------------------------------------------------------")
 
                     print('saindo do training')
                     return models_view1_array, models_view2_array, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_labeled, execution_times, added_pairs_per_iteration
                 
         def train_and_evaluate(self, fold_index):
+
             print(f"\nTraining model in fold {fold_index}...")
             X_train_labeled, y_labeled, X_pool, y_pool, X_rest, y_rest, X_test_labeled, y_test_labeled, target_length,target_names,feature_names = self.read_data(fold_index+1)
 
@@ -912,6 +828,7 @@ class TargetCoTraining(CoTraining):
             models_view1_array, models_view2_array, X_train_labeled_v1, X_train_labeled_v2,X_pool_v1,X_pool_v2, y_labeled, execution_times, added_pairs_per_iteration = self.training(
                 model_view1, model_view2, X_train_labeled_v1, X_train_labeled_v2, X_pool_v1, X_pool_v2, y_labeled, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled, target_length, fold_index,target_names,feature_names_v1,feature_names_v2,y_pool
             )
+
             print('SAÍ DO TRAINING')
             r2, mse, mae, ca, arrmse = self.unique_evaluate_model(models_view1_array, models_view2_array, X_test_labeled_v1, X_test_labeled_v2, y_test)
 
