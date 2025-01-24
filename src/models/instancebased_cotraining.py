@@ -486,8 +486,6 @@ with open(r'.\output.txt', 'w') as f:
                         for col, value in row.items():  # Iterating over each column in the row
                             if value <= self.threshold:
                                 confident_pairs[(int(idx), col)] = value  # Add (index, column) pair to the dictionary
-                    print("confident_pairs?")
-                    print(confident_pairs)
                     return confident_pairs
                 
                 def unique_fit(self, target_length, y_train_df, X_train):
@@ -523,13 +521,11 @@ with open(r'.\output.txt', 'w') as f:
                     print("Target Cotraining Making predictions on test data...")
                     predictions_v1 = pd.DataFrame(np.nan, index=X_test_v1.index, columns=y_test_labeled.columns)
                     predictions_v2 = pd.DataFrame(np.nan, index=X_test_v2.index, columns=y_test_labeled.columns)
-                    print('UE1')
-                    print(len(models_view1))
                     #um modelo por target 
                     for i in range(len(models_view1)):
                         rf_model_v1 = models_view1[i]
                         rf_model_v2 = models_view2[i]
-                        print('UE2')
+
                             # Make predictions for the current tree
                         predictions_v1.iloc[:, i] = rf_model_v1.predict(X_test_v1)  # Atribuindo a predição na coluna correspondente
                         predictions_v2.iloc[:, i] = rf_model_v2.predict(X_test_v2)  # Atribuindo a predição na coluna correspondente
@@ -569,7 +565,6 @@ with open(r'.\output.txt', 'w') as f:
                 def training(self, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_train_df, X_test_v1, X_test_v2, y_test, target_length, fold_index,target_names,feature_names_v1,feature_names_v2,y_pool):
                     
                             # Agora, qualquer print dentro desse bloco será registrado no arquivo
-                            print("Este texto vai ser gravado no arquivo output.txt.")
                             execution_times = []
                             added_pairs_per_iteration = []
                             dict_index = {} # {chave:valor} -> {index_train:index_pool}
@@ -579,16 +574,9 @@ with open(r'.\output.txt', 'w') as f:
 
                                 start_time = time.time()
 
-                                print(f"    Before cleaning: {X_train_v1_df.shape}  X_train_v1")
-                                print(f"    Before cleaning: {X_train_v2_df.shape}  X_train_v2")
-                                print(f"    Before cleaning: {y_train_df.shape}  y_train_df")
-                                print(f"    Before cleaning: {X_pool_v1_df.shape}  X_pool_v1_df")
+                                
                                 models_view1_array = self.unique_fit(target_length, y_train_df, X_train_v1_df)
                                 models_view2_array = self.unique_fit(target_length, y_train_df, X_train_v2_df)
-                                print(f"    After cleaning: {X_train_v1_df.shape}  X_train_v1")
-                                print(f"    After cleaning: {X_train_v2_df.shape}  X_train_v2")
-                                print(f"    After cleaning: {y_train_df.shape}  y_train_df")
-                                print(f"    After cleaning: {X_pool_v1_df.shape}  X_pool_v1_df")
 
                                 columns = list(y_pool.columns)
                                 preds1 = self.unique_predict(models_view1_array, X_pool_v1_df,target_length,columns)
@@ -611,15 +599,13 @@ with open(r'.\output.txt', 'w') as f:
                                         confident_pairs_combined[pair] = confident_pairs1[pair]
                                     elif pair in confident_pairs2:
                                         confident_pairs_combined[pair] = confident_pairs2[pair]
-                                print(all_pred_selected_pairs.keys())
-                                #AQUIII
+                                
                                 sorted_confident_pairs_filtered = {}
                                 #sorted_confident_pairs_filtered = confident_pairs_combined
                                 print(f"{iteration}: Tamanho antes do filtro: {len(confident_pairs_combined)}")
 
                                 for pair in confident_pairs_combined.keys():
-                                    #print(pair)
-                                    #print(all_pred_selected_pairs.keys())
+                                    
                                     if pair in all_pred_selected_pairs.keys():
                                         print('par'+ str(pair) + "ja apareceu")
                                     else:
@@ -630,17 +616,14 @@ with open(r'.\output.txt', 'w') as f:
                                 sorted_confident_pairs = sorted(sorted_confident_pairs_filtered.items(), key=lambda item: item[1])
 
                                 pred_selected_pairs = {}
-                                print(type(preds1))
-                                print(preds1.head())
-                                print()
-                                print(X_pool.head())
+                            
 
 
                                 for (i,j), _ in sorted_confident_pairs[:self.batch_size * target_length]:
                                     #NOTE MODIFICADO
                                     pred_selected_pairs[(i, j)]= (preds1.loc[i, columns[j]] + preds2.loc[i, columns[j]]) / 2
                                     all_pred_selected_pairs[(i, j)]= (preds1.loc[i, columns[j]] + preds2.loc[i, columns[j]]) / 2
-                                #print(pred_selected_pairs)
+                                
 
                                 if not pred_selected_pairs:
                                     print("No confident predictions found.")
@@ -649,12 +632,9 @@ with open(r'.\output.txt', 'w') as f:
                                     print(pred_selected_pairs)
                                     
                                 print(f"Before inclusion: {X_train_v1_df.shape}  X_train_v1")
-                                #print(f"Before inclusion: {X_train_v2_df.shape}  X_train_v2")
                                 print(f"Before inclusion: {y_train_df.shape}  y_train_df")
                                 print(f"Before inclusion: {X_pool_v1_df.shape}  X_pool_v1_df")
-                                #print(f"Before inclusion: {X_pool_v2_df.shape}  X_pool_v2_df")
-                                #print(f"Before inclusion: {y_pool.shape}  y_pool")
-
+                               
                                 print()
                                 print("Quantidade de pares selecionados: " + str(len(pred_selected_pairs)))
                                 indices = set()
@@ -665,7 +645,7 @@ with open(r'.\output.txt', 'w') as f:
                                 count = 0 
                                 
                                 for idx_pool, j in pred_selected_pairs.keys():
-                                    print(y_pool.head())
+                                    
                                     if pd.notna(y_pool.loc[idx_pool, columns[j]]):
                                         print(f"A posicao ({idx_pool}, {j}) nao esta vazia.")
                                         continue
@@ -807,24 +787,10 @@ with open(r'.\output.txt', 'w') as f:
                                 print(indices_linhas_completas)
 
                                 if not indices_linhas_completas.empty:
-                                    print(f"        Before pool clean: {X_train_v1_df.shape}  X_train_v1")
-                                    print(f"        Before pool clean: {X_train_v2_df.shape}  X_train_v2")
-                                    print(f"        Before pool clean: {y_train_df.shape}  y_train_df")
-                                    print(f"        Before pool clean: {X_pool_v1_df.shape}  X_pool_v1_df")
-                                    print(f"        Before pool clean: {X_pool_v2_df.shape}  X_pool_v2_df")
-                                    print(f"        Before pool clean: {y_pool.shape}  y_pool")
-
+                                    
                                     y_pool = y_pool.drop(indices_linhas_completas)
                                     X_pool_v1_df = X_pool_v1_df.drop(indices_linhas_completas)
                                     X_pool_v2_df = X_pool_v2_df.drop(indices_linhas_completas)
-
-                                    print(f"        After pool clean: {X_train_v1_df.shape}  X_train_v1")
-                                    print(f"        After pool clean: {X_train_v2_df.shape}  X_train_v2")
-                                    print(f"        After pool clean: {y_train_df.shape}  y_train_df")
-                                    print(f"        After pool clean: {X_pool_v1_df.shape}  X_pool_v1_df")
-                                    print(f"        After pool clean: {X_pool_v2_df.shape}  X_pool_v2_df")
-                                    print(f"        After pool clean: {y_pool.shape}  y_pool")
-
 
                                 r2, mse, mae, ca, arrmse = self.unique_evaluate_model(models_view1_array, models_view2_array, X_test_v1, X_test_v2, y_test)
                                 print("------------------------------------------------------------------------")
@@ -840,9 +806,14 @@ with open(r'.\output.txt', 'w') as f:
                                 print("------------------------------------------------------------------------")
                             models_view1_array = self.unique_fit(target_length, y_train_df, X_train_v1_df)
                             models_view2_array = self.unique_fit(target_length, y_train_df, X_train_v2_df)
-                            
+                            r2, mse, mae, ca, arrmse = self.unique_evaluate_model(models_view1_array, models_view2_array, X_test_v1, X_test_v2, y_test)
+                            self.R2[fold_index, -1] = r2
+                            self.MSE[fold_index, -1] = mse
+                            self.MAE[fold_index, -1] = mae
+                            self.CA[fold_index, -1] = ca
+                            self.ARRMSE[fold_index, -1] = arrmse
                             print('saindo do training')
-                            return models_view1_array, models_view2_array, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_labeled, execution_times, added_pairs_per_iteration
+                            #return models_view1_array, models_view2_array, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_labeled, execution_times, added_pairs_per_iteration
                         
                 def train_and_evaluate(self, fold_index):
 
@@ -855,23 +826,17 @@ with open(r'.\output.txt', 'w') as f:
                     X_pool_v1, X_pool_v2,feature_names_v1,feature_names_v2  = self.split_features(X_pool,feature_names)
                     X_test_labeled_v1, X_test_labeled_v2,feature_names_v1,feature_names_v2  = self.split_features(X_test_labeled,feature_names)
 
-                    models_view1_array, models_view2_array, X_train_labeled_v1, X_train_labeled_v2,X_pool_v1,X_pool_v2, y_labeled, execution_times, added_pairs_per_iteration = self.training(
+                    self.training(
                         X_train_labeled_v1, X_train_labeled_v2, X_pool_v1, X_pool_v2, y_labeled, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled, target_length, fold_index,target_names,feature_names_v1,feature_names_v2,y_pool
                     )
-
-                    print('SAÍ DO TRAINING')
                     
-                    r2, mse, mae, ca, arrmse = self.unique_evaluate_model(models_view1_array, models_view2_array, X_test_labeled_v1, X_test_labeled_v2, y_test)
 
                     # Avaliação do modelo após o treinamento
                     #r2, mse, mae, ca, arrmse = self.evaluate_model(model_view1, model_view2, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled)
-                    self.R2[fold_index, -1] = r2
-                    self.MSE[fold_index, -1] = mse
-                    self.MAE[fold_index, -1] = mae
-                    self.CA[fold_index, -1] = ca
-                    self.ARRMSE[fold_index, -1] = arrmse
+                    
                 
-                    return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE, added_pairs_per_iteration
+                    return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE
+                    #, added_pairs_per_iteration
                 
         if __name__ == "__main__":
                 data_dir = config.DATA_DIR
@@ -978,7 +943,7 @@ with open(r'.\output.txt', 'w') as f:
                 target_cotraining_model = TargetCoTraining(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees, batch_size)
                 
                 for i in range(k_folds):
-                    R2, MSE, MAE, CA, ARRMSE, added_pairs_per_iteration = target_cotraining_model.train_and_evaluate(i)
+                    R2, MSE, MAE, CA, ARRMSE = target_cotraining_model.train_and_evaluate(i)
                     
                     # Save results for each fold to DataFrame and CSV
                     R2_flat = R2[i, :].flatten()
@@ -986,11 +951,11 @@ with open(r'.\output.txt', 'w') as f:
                     MAE_flat = MAE[i, :].flatten()
                     CA_flat = CA[i, :].flatten()
                     ARRMSE_flat = ARRMSE[i, :].flatten()
-                    added_pairs_flat = added_pairs_per_iteration
+                    #added_pairs_flat = added_pairs_per_iteration
                     num_entries = max(R2[i, :].size, MSE[i, :].size, MAE[i, :].size, CA[i, :].size, ARRMSE[i, :].size)
 
-                    if len(added_pairs_flat) < num_entries:
-                        added_pairs_flat.extend([[]] * (num_entries - len(added_pairs_flat)))
+#                    if len(added_pairs_flat) < num_entries:
+#                        added_pairs_flat.extend([[]] * (num_entries - len(added_pairs_flat)))
                     if len(R2_flat) < num_entries:
                         R2_flat = np.append(R2_flat, [None] * (num_entries - len(R2_flat)))
                     if len(MSE_flat) < num_entries:
@@ -1009,8 +974,8 @@ with open(r'.\output.txt', 'w') as f:
                         'MSE': MSE_flat,
                         'MAE': MAE_flat,
                         'CA': CA_flat,
-                        'ARRMSE': ARRMSE_flat,
-                        'Added_Pairs': added_pairs_flat
+                        'ARRMSE': ARRMSE_flat
+                    #    'Added_Pairs': added_pairs_flat
                     })
 
                     results_path = Path(f'reports/semi_supervised_learning/{dataset_name}')
