@@ -453,6 +453,8 @@ with open(r'.\output.txt', 'w') as f:
                 def __init__(self, data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees, batch_size):
                     super().__init__(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees)
                     self.batch_size = batch_size
+                def stop_criterion(self, preds1, preds2):
+                    return len(preds1) == 0 or len(preds2) == 0
 
                 def calculate_variances(self, model, X_pool, target_length): 
 
@@ -573,6 +575,7 @@ with open(r'.\output.txt', 'w') as f:
                                 print(f"Iteration {iteration + 1}/{self.iterations}")
 
                                 start_time = time.time()
+                                
 
                                 
                                 models_view1_array = self.unique_fit(target_length, y_train_df, X_train_v1_df)
@@ -581,7 +584,11 @@ with open(r'.\output.txt', 'w') as f:
                                 columns = list(y_pool.columns)
                                 preds1 = self.unique_predict(models_view1_array, X_pool_v1_df,target_length,columns)
                                 preds2 = self.unique_predict(models_view2_array, X_pool_v2_df,target_length, columns)    
-
+                                
+                                if self.stop_criterion(preds1, preds2):
+                                    print(" No more unlabeled examples.")
+                                    break
+                                
                                 variances1 = self.calculate_variances(models_view1_array, X_pool_v1_df, target_length)
                                 variances2 = self.calculate_variances(models_view2_array, X_pool_v2_df, target_length)
                                 
@@ -640,7 +647,7 @@ with open(r'.\output.txt', 'w') as f:
                                 indices = set()
                                 for idx_pool, j in pred_selected_pairs.keys():
                                     indices.add(idx_pool)
-
+                                added_pairs_per_iteration.append(len(pred_selected_pairs))
                                 print("Quantidade de linhas distintas "+str(len(indices)))
                                 count = 0 
                                 
@@ -813,6 +820,7 @@ with open(r'.\output.txt', 'w') as f:
                             self.CA[fold_index, -1] = ca
                             self.ARRMSE[fold_index, -1] = arrmse
                             print('saindo do training')
+                            return added_pairs_per_iteration
                             #return models_view1_array, models_view2_array, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_labeled, execution_times, added_pairs_per_iteration
                         
                 def train_and_evaluate(self, fold_index):
@@ -826,7 +834,7 @@ with open(r'.\output.txt', 'w') as f:
                     X_pool_v1, X_pool_v2,feature_names_v1,feature_names_v2  = self.split_features(X_pool,feature_names)
                     X_test_labeled_v1, X_test_labeled_v2,feature_names_v1,feature_names_v2  = self.split_features(X_test_labeled,feature_names)
 
-                    self.training(
+                    added_pairs_per_iteration = self.training(
                         X_train_labeled_v1, X_train_labeled_v2, X_pool_v1, X_pool_v2, y_labeled, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled, target_length, fold_index,target_names,feature_names_v1,feature_names_v2,y_pool
                     )
                     
@@ -835,7 +843,7 @@ with open(r'.\output.txt', 'w') as f:
                     #r2, mse, mae, ca, arrmse = self.evaluate_model(model_view1, model_view2, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled)
                     
                 
-                    return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE
+                    return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE,added_pairs_per_iteration
                     #, added_pairs_per_iteration
                 
         if __name__ == "__main__":
@@ -943,7 +951,7 @@ with open(r'.\output.txt', 'w') as f:
                 target_cotraining_model = TargetCoTraining(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees, batch_size)
                 
                 for i in range(k_folds):
-                    R2, MSE, MAE, CA, ARRMSE = target_cotraining_model.train_and_evaluate(i)
+                    R2, MSE, MAE, CA, ARRMSE,added_pairs_per_iteration = target_cotraining_model.train_and_evaluate(i)
                     
                     # Save results for each fold to DataFrame and CSV
                     R2_flat = R2[i, :].flatten()
@@ -951,7 +959,7 @@ with open(r'.\output.txt', 'w') as f:
                     MAE_flat = MAE[i, :].flatten()
                     CA_flat = CA[i, :].flatten()
                     ARRMSE_flat = ARRMSE[i, :].flatten()
-                    #added_pairs_flat = added_pairs_per_iteration
+                    added_pairs_flat = added_pairs_per_iteration[i]
                     num_entries = max(R2[i, :].size, MSE[i, :].size, MAE[i, :].size, CA[i, :].size, ARRMSE[i, :].size)
 
 #                    if len(added_pairs_flat) < num_entries:
@@ -974,8 +982,8 @@ with open(r'.\output.txt', 'w') as f:
                         'MSE': MSE_flat,
                         'MAE': MAE_flat,
                         'CA': CA_flat,
-                        'ARRMSE': ARRMSE_flat
-                    #    'Added_Pairs': added_pairs_flat
+                        'ARRMSE': ARRMSE_flat,
+                        'Added_Pairs': added_pairs_flat
                     })
 
                     results_path = Path(f'reports/semi_supervised_learning/{dataset_name}')
