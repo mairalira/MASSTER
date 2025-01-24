@@ -694,7 +694,7 @@ with open(r'.\output.txt', 'w') as f:
 
                                         #OBS por enquanto ele não está dando reset no index: talvez seja importante em algum momento 
                                         count = count + 1
-                                        print(y_pool.loc[idx_pool])
+                                        #print(y_pool.loc[idx_pool])
                                         print()
                                         print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
                                         #print(f"After inclusion: {X_train_v2_df.shape}  X_train_v2")
@@ -734,7 +734,7 @@ with open(r'.\output.txt', 'w') as f:
 
                                             #print()
                                             count = count + 1
-                                            print(y_pool.loc[idx_pool])
+                                            #print(y_pool.loc[idx_pool])
                                             print()
                                             print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
                                             #print(f"After inclusion: {X_train_v2_df.shape}  X_train_v2")
@@ -768,9 +768,9 @@ with open(r'.\output.txt', 'w') as f:
                                             #print(y_train_df.loc[ultimo_index])
 
                                             #print()
-                                            print(y_pool.loc[idx_pool])
+                                            #print(y_pool.loc[idx_pool])
                                             count = count + 1
-                                            print(y_pool.loc[idx_pool])
+                                            #print(y_pool.loc[idx_pool])
                                             print()
                                             print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
                                             #print(f"After inclusion: {X_train_v2_df.shape}  X_train_v2")
@@ -811,6 +811,7 @@ with open(r'.\output.txt', 'w') as f:
                                 self.CA[fold_index, iteration] = ca
                                 self.ARRMSE[fold_index, iteration] = arrmse
                                 print("------------------------------------------------------------------------")
+
                             models_view1_array = self.unique_fit(target_length, y_train_df, X_train_v1_df)
                             models_view2_array = self.unique_fit(target_length, y_train_df, X_train_v2_df)
                             r2, mse, mae, ca, arrmse = self.unique_evaluate_model(models_view1_array, models_view2_array, X_test_v1, X_test_v2, y_test)
@@ -952,18 +953,24 @@ with open(r'.\output.txt', 'w') as f:
                 
                 for i in range(k_folds):
                     R2, MSE, MAE, CA, ARRMSE,added_pairs_per_iteration = target_cotraining_model.train_and_evaluate(i)
-                    
+                    print(f"Index i: {i}")
+                    print(f"Length of added_pairs_per_iteration: {len(added_pairs_per_iteration)}")
+                    print(f"added_pairs_per_iteration: {added_pairs_per_iteration}")
                     # Save results for each fold to DataFrame and CSV
                     R2_flat = R2[i, :].flatten()
                     MSE_flat = MSE[i, :].flatten()
                     MAE_flat = MAE[i, :].flatten()
                     CA_flat = CA[i, :].flatten()
                     ARRMSE_flat = ARRMSE[i, :].flatten()
-                    added_pairs_flat = added_pairs_per_iteration[i]
+                    if added_pairs_per_iteration:
+                        added_pairs_flat = [added_pairs_per_iteration[i]]
+                    else:
+                        added_pairs_flat = [0]
+                        
                     num_entries = max(R2[i, :].size, MSE[i, :].size, MAE[i, :].size, CA[i, :].size, ARRMSE[i, :].size)
 
-#                    if len(added_pairs_flat) < num_entries:
-#                        added_pairs_flat.extend([[]] * (num_entries - len(added_pairs_flat)))
+                    if len(added_pairs_flat) < num_entries:
+                        added_pairs_flat.extend([0] * (num_entries - len(added_pairs_flat)))
                     if len(R2_flat) < num_entries:
                         R2_flat = np.append(R2_flat, [None] * (num_entries - len(R2_flat)))
                     if len(MSE_flat) < num_entries:

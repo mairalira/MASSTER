@@ -1,4039 +1,1283 @@
-Este texto vai ser gravado no arquivo output.txt.
-Iteration 1/10
-    Before cleaning: (30, 205)  X_train_v1
-    Before cleaning: (30, 206)  X_train_v2
-    Before cleaning: (30, 6)  y_train_df
-    Before cleaning: (207, 205)  X_pool_v1_df
-    After cleaning: (30, 205)  X_train_v1
-    After cleaning: (30, 206)  X_train_v2
-    After cleaning: (30, 6)  y_train_df
-    After cleaning: (207, 205)  X_pool_v1_df
-{(42, 1): -0.40688452365061295, (60, 1): -0.4164527391062406, (55, 1): -0.3911119184854768, (44, 1): -0.4314030757556587, (13, 1): -0.42504918267965597, (76, 1): -0.41981656485235974, (86, 1): -0.41981656485235963, (198, 1): -0.3881966028388403, (178, 1): -0.4157052222737697, (174, 1): -0.4015024024568224, (0, 1): -0.39615765710465545, (95, 1): -0.42019032326859507, (6, 1): -0.40935132919776684, (48, 3): -0.7987825537498225, (143, 1): -0.40411871137047073, (112, 1): -0.3514187746812716, (48, 1): -0.383935756893756, (104, 1): -0.4243016658471852, (76, 3): -0.7155634719140395, (38, 1): -0.3056333686924286, (127, 1): -0.3093335770131595, (10, 3): -0.7485173940445002, (91, 1): -0.4121171414779093, (70, 1): -0.39742843571985603, (95, 4): -0.2459792958883577, (143, 2): -0.5065277176861458, (1, 3): -0.6997539320565151, (203, 2): -0.5113214414365219, (74, 0): 0.009748609758494143, (203, 1): -0.39219581789255964, (63, 3): -0.6784798810609021, (178, 2): -0.4982438266438289, (176, 1): -0.39817595255232696, (74, 3): -0.7428443137790034, (31, 3): -0.7200268512405709, (60, 2): -0.5065277176861454, (104, 2): -0.5064015670611357, (140, 3): -0.7239479508358408, (1, 4): -0.284719750279967, (0, 0): -0.09019925796748121, (80, 3): -0.667801141737614, (19, 2): -0.4209134935127605, (24, 4): -0.26538913500071826, (76, 4): -0.257625199355774, (76, 5): -0.7028665216726261, (117, 0): -0.15932576352771252, (112, 4): -0.2885224942693274, (74, 1): -0.33175908198728676, (1, 2): -0.47822792747559195, (76, 2): -0.4606509403908787, (70, 2): -0.5356685120634324, (178, 3): -0.7119760829226225, (137, 1): -0.3420748142753852, (192, 1): -0.3008492609646149, (202, 1): -0.3642760641997712, (57, 1): -0.40254892602228176, (48, 4): -0.32520312900003273, (24, 1): -0.3192007992017754, (24, 0): -0.04736445751349176, (19, 3): -0.7003379256132571}
-Before inclusion: (30, 205)  X_train_v1
-Before inclusion: (30, 6)  y_train_df
-Before inclusion: (207, 205)  X_pool_v1_df
+Target-based Co-Training...
 
-Quantidade de pares selecionados: 60
-Quantidade de linhas distintas 37
+Training model in fold 0...
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+Iteration 1/10
+0: Tamanho antes do filtro: 1
+0: Tamanho depois do filtro: 1
+{(180, 5): -0.7404946943819737}
+Before inclusion: (50, 10)  X_train_v1
+Before inclusion: (50, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
+
+Quantidade de pares selecionados: 1
+Quantidade de linhas distintas 1
 count
 0
 par
-42 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 42, dtype: float64
-
-Before inclusion: (30, 205)  X_train_v1
-Before inclusion: (30, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.406885
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 42, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.406885
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 42, dtype: float64
-
-After inclusion: (31, 205)  X_train_v1
-After inclusion: (31, 6)  y_train_df
-
-
-After inclusion: (31, 205)  X_train_v1
-After inclusion: (31, 206)  X_train_v2
-After inclusion: (31, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-1
-par
-60 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 60, dtype: float64
-
-Before inclusion: (31, 205)  X_train_v1
-Before inclusion: (31, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.416453
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 60, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.416453
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 60, dtype: float64
-
-After inclusion: (32, 205)  X_train_v1
-After inclusion: (32, 6)  y_train_df
-
-
-After inclusion: (32, 205)  X_train_v1
-After inclusion: (32, 206)  X_train_v2
-After inclusion: (32, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-2
-par
-55 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 55, dtype: float64
-
-Before inclusion: (32, 205)  X_train_v1
-Before inclusion: (32, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.391112
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 55, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.391112
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 55, dtype: float64
-
-After inclusion: (33, 205)  X_train_v1
-After inclusion: (33, 6)  y_train_df
-
-
-After inclusion: (33, 205)  X_train_v1
-After inclusion: (33, 206)  X_train_v2
-After inclusion: (33, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-3
-par
-44 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 44, dtype: float64
-
-Before inclusion: (33, 205)  X_train_v1
-Before inclusion: (33, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.431403
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 44, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.431403
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 44, dtype: float64
-
-After inclusion: (34, 205)  X_train_v1
-After inclusion: (34, 6)  y_train_df
-
-
-After inclusion: (34, 205)  X_train_v1
-After inclusion: (34, 206)  X_train_v2
-After inclusion: (34, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-4
-par
-13 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 13, dtype: float64
-
-Before inclusion: (34, 205)  X_train_v1
-Before inclusion: (34, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.425049
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 13, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.425049
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 13, dtype: float64
-
-After inclusion: (35, 205)  X_train_v1
-After inclusion: (35, 6)  y_train_df
-
-
-After inclusion: (35, 205)  X_train_v1
-After inclusion: (35, 206)  X_train_v2
-After inclusion: (35, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-5
-par
-76 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 76, dtype: float64
-
-Before inclusion: (35, 205)  X_train_v1
-Before inclusion: (35, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.419817
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 76, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.419817
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 76, dtype: float64
-
-After inclusion: (36, 205)  X_train_v1
-After inclusion: (36, 6)  y_train_df
-
-
-After inclusion: (36, 205)  X_train_v1
-After inclusion: (36, 206)  X_train_v2
-After inclusion: (36, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-6
-par
-86 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 86, dtype: float64
-
-Before inclusion: (36, 205)  X_train_v1
-Before inclusion: (36, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.419817
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 86, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.419817
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 86, dtype: float64
-
-After inclusion: (37, 205)  X_train_v1
-After inclusion: (37, 6)  y_train_df
-
-
-After inclusion: (37, 205)  X_train_v1
-After inclusion: (37, 206)  X_train_v2
-After inclusion: (37, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-7
-par
-198 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 198, dtype: float64
-
-Before inclusion: (37, 205)  X_train_v1
-Before inclusion: (37, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.388197
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 198, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.388197
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 198, dtype: float64
-
-After inclusion: (38, 205)  X_train_v1
-After inclusion: (38, 6)  y_train_df
-
-
-After inclusion: (38, 205)  X_train_v1
-After inclusion: (38, 206)  X_train_v2
-After inclusion: (38, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-8
-par
-178 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 178, dtype: float64
-
-Before inclusion: (38, 205)  X_train_v1
-Before inclusion: (38, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.415705
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 178, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.415705
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 178, dtype: float64
-
-After inclusion: (39, 205)  X_train_v1
-After inclusion: (39, 6)  y_train_df
-
-
-After inclusion: (39, 205)  X_train_v1
-After inclusion: (39, 206)  X_train_v2
-After inclusion: (39, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-9
-par
-174 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 174, dtype: float64
-
-Before inclusion: (39, 205)  X_train_v1
-Before inclusion: (39, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.401502
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 174, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.401502
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 174, dtype: float64
-
-After inclusion: (40, 205)  X_train_v1
-After inclusion: (40, 6)  y_train_df
-
-
-After inclusion: (40, 205)  X_train_v1
-After inclusion: (40, 206)  X_train_v2
-After inclusion: (40, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-10
-par
-0 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 0, dtype: float64
-
-Before inclusion: (40, 205)  X_train_v1
-Before inclusion: (40, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.396158
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 0, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.396158
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 0, dtype: float64
-
-After inclusion: (41, 205)  X_train_v1
-After inclusion: (41, 6)  y_train_df
-
-
-After inclusion: (41, 205)  X_train_v1
-After inclusion: (41, 206)  X_train_v2
-After inclusion: (41, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-11
-par
-95 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 95, dtype: float64
-
-Before inclusion: (41, 205)  X_train_v1
-Before inclusion: (41, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000        NaN
-target_LBL+ALLminp0+bt7d_000   -0.42019
-target_LBL+aDLminpA+bt7d_000        NaN
-target_LBL+aCOminpA+bt7d_000        NaN
-target_LBL+aFLminpA+bt7d_000        NaN
-target_LBL+aUAminpA+bt7d_000        NaN
-Name: 95, dtype: float64
-target_LBL+ALLminpA+bt7d_000        NaN
-target_LBL+ALLminp0+bt7d_000   -0.42019
-target_LBL+aDLminpA+bt7d_000        NaN
-target_LBL+aCOminpA+bt7d_000        NaN
-target_LBL+aFLminpA+bt7d_000        NaN
-target_LBL+aUAminpA+bt7d_000        NaN
-Name: 95, dtype: float64
-
-After inclusion: (42, 205)  X_train_v1
-After inclusion: (42, 6)  y_train_df
-
-
-After inclusion: (42, 205)  X_train_v1
-After inclusion: (42, 206)  X_train_v2
-After inclusion: (42, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-12
-par
-6 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 6, dtype: float64
-
-Before inclusion: (42, 205)  X_train_v1
-Before inclusion: (42, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.409351
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 6, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.409351
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 6, dtype: float64
-
-After inclusion: (43, 205)  X_train_v1
-After inclusion: (43, 6)  y_train_df
-
-
-After inclusion: (43, 205)  X_train_v1
-After inclusion: (43, 206)  X_train_v2
-After inclusion: (43, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-13
-par
-48 3
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 48, dtype: float64
-
-Before inclusion: (43, 205)  X_train_v1
-Before inclusion: (43, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.798783
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 48, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.798783
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 48, dtype: float64
-
-After inclusion: (44, 205)  X_train_v1
-After inclusion: (44, 6)  y_train_df
-
-
-After inclusion: (44, 205)  X_train_v1
-After inclusion: (44, 206)  X_train_v2
-After inclusion: (44, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-14
-par
-143 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 143, dtype: float64
-
-Before inclusion: (44, 205)  X_train_v1
-Before inclusion: (44, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.404119
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 143, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.404119
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 143, dtype: float64
-
-After inclusion: (45, 205)  X_train_v1
-After inclusion: (45, 6)  y_train_df
-
-
-After inclusion: (45, 205)  X_train_v1
-After inclusion: (45, 206)  X_train_v2
-After inclusion: (45, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-15
-par
-112 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 112, dtype: float64
-
-Before inclusion: (45, 205)  X_train_v1
-Before inclusion: (45, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.351419
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 112, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.351419
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 112, dtype: float64
-
-After inclusion: (46, 205)  X_train_v1
-After inclusion: (46, 6)  y_train_df
-
-
-After inclusion: (46, 205)  X_train_v1
-After inclusion: (46, 206)  X_train_v2
-After inclusion: (46, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-16
-par
-48 1
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.798783
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 48, dtype: float64
-
-Before inclusion: (46, 205)  X_train_v1
-Before inclusion: (46, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.383936
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.798783
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 48, dtype: float64
-
-After inclusion: (46, 205)  X_train_v1
-After inclusion: (46, 6)  y_train_df
-
-
-After inclusion: (46, 205)  X_train_v1
-After inclusion: (46, 206)  X_train_v2
-After inclusion: (46, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-17
-par
-104 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 104, dtype: float64
-
-Before inclusion: (46, 205)  X_train_v1
-Before inclusion: (46, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.424302
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 104, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.424302
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 104, dtype: float64
-
-After inclusion: (47, 205)  X_train_v1
-After inclusion: (47, 6)  y_train_df
-
-
-After inclusion: (47, 205)  X_train_v1
-After inclusion: (47, 206)  X_train_v2
-After inclusion: (47, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-18
-par
-76 3
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.419817
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 76, dtype: float64
-
-Before inclusion: (47, 205)  X_train_v1
-Before inclusion: (47, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.419817
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.715563
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 76, dtype: float64
-
-After inclusion: (47, 205)  X_train_v1
-After inclusion: (47, 6)  y_train_df
-
-
-After inclusion: (47, 205)  X_train_v1
-After inclusion: (47, 206)  X_train_v2
-After inclusion: (47, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-19
-par
-38 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 38, dtype: float64
-
-Before inclusion: (47, 205)  X_train_v1
-Before inclusion: (47, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.305633
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 38, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.305633
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 38, dtype: float64
-
-After inclusion: (48, 205)  X_train_v1
-After inclusion: (48, 6)  y_train_df
-
-
-After inclusion: (48, 205)  X_train_v1
-After inclusion: (48, 206)  X_train_v2
-After inclusion: (48, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-20
-par
-127 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 127, dtype: float64
-
-Before inclusion: (48, 205)  X_train_v1
-Before inclusion: (48, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.309334
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 127, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.309334
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 127, dtype: float64
-
-After inclusion: (49, 205)  X_train_v1
-After inclusion: (49, 6)  y_train_df
-
-
-After inclusion: (49, 205)  X_train_v1
-After inclusion: (49, 206)  X_train_v2
-After inclusion: (49, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-21
-par
-10 3
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 10, dtype: float64
-
-Before inclusion: (49, 205)  X_train_v1
-Before inclusion: (49, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.748517
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 10, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.748517
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 10, dtype: float64
-
-After inclusion: (50, 205)  X_train_v1
-After inclusion: (50, 6)  y_train_df
-
-
-After inclusion: (50, 205)  X_train_v1
-After inclusion: (50, 206)  X_train_v2
-After inclusion: (50, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-22
-par
-91 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 91, dtype: float64
-
-Before inclusion: (50, 205)  X_train_v1
+180 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 180, dtype: float64
+
+Before inclusion: (50, 10)  X_train_v1
 Before inclusion: (50, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.412117
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 91, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.412117
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 91, dtype: float64
 
-After inclusion: (51, 205)  X_train_v1
+After inclusion: (51, 10)  X_train_v1
 After inclusion: (51, 6)  y_train_df
 
 
-After inclusion: (51, 205)  X_train_v1
-After inclusion: (51, 206)  X_train_v2
+After inclusion: (51, 10)  X_train_v1
+After inclusion: (51, 10)  X_train_v2
 After inclusion: (51, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-23
-par
-70 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 70, dtype: float64
-
-Before inclusion: (51, 205)  X_train_v1
-Before inclusion: (51, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.397428
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 70, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.397428
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 70, dtype: float64
-
-After inclusion: (52, 205)  X_train_v1
-After inclusion: (52, 6)  y_train_df
-
-
-After inclusion: (52, 205)  X_train_v1
-After inclusion: (52, 206)  X_train_v2
-After inclusion: (52, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-24
-par
-95 4
-207
-target_LBL+ALLminpA+bt7d_000        NaN
-target_LBL+ALLminp0+bt7d_000   -0.42019
-target_LBL+aDLminpA+bt7d_000        NaN
-target_LBL+aCOminpA+bt7d_000        NaN
-target_LBL+aFLminpA+bt7d_000        NaN
-target_LBL+aUAminpA+bt7d_000        NaN
-Name: 95, dtype: float64
-
-Before inclusion: (52, 205)  X_train_v1
-Before inclusion: (52, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.420190
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.245979
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 95, dtype: float64
-
-After inclusion: (52, 205)  X_train_v1
-After inclusion: (52, 6)  y_train_df
-
-
-After inclusion: (52, 205)  X_train_v1
-After inclusion: (52, 206)  X_train_v2
-After inclusion: (52, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-25
-par
-143 2
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.404119
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 143, dtype: float64
-
-Before inclusion: (52, 205)  X_train_v1
-Before inclusion: (52, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.404119
-target_LBL+aDLminpA+bt7d_000   -0.506528
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 143, dtype: float64
-
-After inclusion: (52, 205)  X_train_v1
-After inclusion: (52, 6)  y_train_df
-
-
-After inclusion: (52, 205)  X_train_v1
-After inclusion: (52, 206)  X_train_v2
-After inclusion: (52, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-26
-par
-1 3
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 1, dtype: float64
-
-Before inclusion: (52, 205)  X_train_v1
-Before inclusion: (52, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.699754
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 1, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.699754
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 1, dtype: float64
-
-After inclusion: (53, 205)  X_train_v1
-After inclusion: (53, 6)  y_train_df
-
-
-After inclusion: (53, 205)  X_train_v1
-After inclusion: (53, 206)  X_train_v2
-After inclusion: (53, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-27
-par
-203 2
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 203, dtype: float64
-
-Before inclusion: (53, 205)  X_train_v1
-Before inclusion: (53, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000   -0.511321
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 203, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000   -0.511321
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 203, dtype: float64
-
-After inclusion: (54, 205)  X_train_v1
-After inclusion: (54, 6)  y_train_df
-
-
-After inclusion: (54, 205)  X_train_v1
-After inclusion: (54, 206)  X_train_v2
-After inclusion: (54, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-28
-par
-74 0
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 74, dtype: float64
-
-Before inclusion: (54, 205)  X_train_v1
-Before inclusion: (54, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000    0.009749
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 74, dtype: float64
-target_LBL+ALLminpA+bt7d_000    0.009749
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 74, dtype: float64
-
-After inclusion: (55, 205)  X_train_v1
-After inclusion: (55, 6)  y_train_df
-
-
-After inclusion: (55, 205)  X_train_v1
-After inclusion: (55, 206)  X_train_v2
-After inclusion: (55, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-29
-par
-203 1
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000   -0.511321
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 203, dtype: float64
-
-Before inclusion: (55, 205)  X_train_v1
-Before inclusion: (55, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.392196
-target_LBL+aDLminpA+bt7d_000   -0.511321
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 203, dtype: float64
-
-After inclusion: (55, 205)  X_train_v1
-After inclusion: (55, 6)  y_train_df
-
-
-After inclusion: (55, 205)  X_train_v1
-After inclusion: (55, 206)  X_train_v2
-After inclusion: (55, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-30
-par
-63 3
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 63, dtype: float64
-
-Before inclusion: (55, 205)  X_train_v1
-Before inclusion: (55, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000        NaN
-target_LBL+ALLminp0+bt7d_000        NaN
-target_LBL+aDLminpA+bt7d_000        NaN
-target_LBL+aCOminpA+bt7d_000   -0.67848
-target_LBL+aFLminpA+bt7d_000        NaN
-target_LBL+aUAminpA+bt7d_000        NaN
-Name: 63, dtype: float64
-target_LBL+ALLminpA+bt7d_000        NaN
-target_LBL+ALLminp0+bt7d_000        NaN
-target_LBL+aDLminpA+bt7d_000        NaN
-target_LBL+aCOminpA+bt7d_000   -0.67848
-target_LBL+aFLminpA+bt7d_000        NaN
-target_LBL+aUAminpA+bt7d_000        NaN
-Name: 63, dtype: float64
-
-After inclusion: (56, 205)  X_train_v1
-After inclusion: (56, 6)  y_train_df
-
-
-After inclusion: (56, 205)  X_train_v1
-After inclusion: (56, 206)  X_train_v2
-After inclusion: (56, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-31
-par
-178 2
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.415705
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 178, dtype: float64
-
-Before inclusion: (56, 205)  X_train_v1
-Before inclusion: (56, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.415705
-target_LBL+aDLminpA+bt7d_000   -0.498244
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 178, dtype: float64
-
-After inclusion: (56, 205)  X_train_v1
-After inclusion: (56, 6)  y_train_df
-
-
-After inclusion: (56, 205)  X_train_v1
-After inclusion: (56, 206)  X_train_v2
-After inclusion: (56, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-32
-par
-176 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 176, dtype: float64
-
-Before inclusion: (56, 205)  X_train_v1
-Before inclusion: (56, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.398176
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 176, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.398176
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 176, dtype: float64
-
-After inclusion: (57, 205)  X_train_v1
-After inclusion: (57, 6)  y_train_df
-
-
-After inclusion: (57, 205)  X_train_v1
-After inclusion: (57, 206)  X_train_v2
-After inclusion: (57, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-33
-par
-74 3
-207
-target_LBL+ALLminpA+bt7d_000    0.009749
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 74, dtype: float64
-
-Before inclusion: (57, 205)  X_train_v1
-Before inclusion: (57, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000    0.009749
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.742844
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 74, dtype: float64
-
-After inclusion: (57, 205)  X_train_v1
-After inclusion: (57, 6)  y_train_df
-
-
-After inclusion: (57, 205)  X_train_v1
-After inclusion: (57, 206)  X_train_v2
-After inclusion: (57, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-34
-par
-31 3
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 31, dtype: float64
-
-Before inclusion: (57, 205)  X_train_v1
-Before inclusion: (57, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.720027
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 31, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.720027
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 31, dtype: float64
-
-After inclusion: (58, 205)  X_train_v1
-After inclusion: (58, 6)  y_train_df
-
-
-After inclusion: (58, 205)  X_train_v1
-After inclusion: (58, 206)  X_train_v2
-After inclusion: (58, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-35
-par
-60 2
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.416453
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 60, dtype: float64
-
-Before inclusion: (58, 205)  X_train_v1
-Before inclusion: (58, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.416453
-target_LBL+aDLminpA+bt7d_000   -0.506528
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 60, dtype: float64
-
-After inclusion: (58, 205)  X_train_v1
-After inclusion: (58, 6)  y_train_df
-
-
-After inclusion: (58, 205)  X_train_v1
-After inclusion: (58, 206)  X_train_v2
-After inclusion: (58, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-36
-par
-104 2
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.424302
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 104, dtype: float64
-
-Before inclusion: (58, 205)  X_train_v1
-Before inclusion: (58, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.424302
-target_LBL+aDLminpA+bt7d_000   -0.506402
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 104, dtype: float64
-
-After inclusion: (58, 205)  X_train_v1
-After inclusion: (58, 6)  y_train_df
-
-
-After inclusion: (58, 205)  X_train_v1
-After inclusion: (58, 206)  X_train_v2
-After inclusion: (58, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-37
-par
-140 3
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 140, dtype: float64
-
-Before inclusion: (58, 205)  X_train_v1
-Before inclusion: (58, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.723948
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 140, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.723948
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 140, dtype: float64
-
-After inclusion: (59, 205)  X_train_v1
-After inclusion: (59, 6)  y_train_df
-
-
-After inclusion: (59, 205)  X_train_v1
-After inclusion: (59, 206)  X_train_v2
-After inclusion: (59, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-38
-par
-1 4
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.699754
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 1, dtype: float64
-
-Before inclusion: (59, 205)  X_train_v1
-Before inclusion: (59, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.699754
-target_LBL+aFLminpA+bt7d_000   -0.284720
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 1, dtype: float64
-
-After inclusion: (59, 205)  X_train_v1
-After inclusion: (59, 6)  y_train_df
-
-
-After inclusion: (59, 205)  X_train_v1
-After inclusion: (59, 206)  X_train_v2
-After inclusion: (59, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-39
-par
-0 0
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.396158
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 0, dtype: float64
-
-Before inclusion: (59, 205)  X_train_v1
-Before inclusion: (59, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000   -0.090199
-target_LBL+ALLminp0+bt7d_000   -0.396158
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 0, dtype: float64
-
-After inclusion: (59, 205)  X_train_v1
-After inclusion: (59, 6)  y_train_df
-
-
-After inclusion: (59, 205)  X_train_v1
-After inclusion: (59, 206)  X_train_v2
-After inclusion: (59, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-40
-par
-80 3
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 80, dtype: float64
-
-Before inclusion: (59, 205)  X_train_v1
-Before inclusion: (59, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.667801
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 80, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.667801
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 80, dtype: float64
-
-After inclusion: (60, 205)  X_train_v1
-After inclusion: (60, 6)  y_train_df
-
-
-After inclusion: (60, 205)  X_train_v1
-After inclusion: (60, 206)  X_train_v2
-After inclusion: (60, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-41
-par
-19 2
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 19, dtype: float64
-
-Before inclusion: (60, 205)  X_train_v1
-Before inclusion: (60, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000   -0.420913
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 19, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000   -0.420913
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 19, dtype: float64
-
-After inclusion: (61, 205)  X_train_v1
-After inclusion: (61, 6)  y_train_df
-
-
-After inclusion: (61, 205)  X_train_v1
-After inclusion: (61, 206)  X_train_v2
-After inclusion: (61, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-42
-par
-24 4
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 24, dtype: float64
-
-Before inclusion: (61, 205)  X_train_v1
-Before inclusion: (61, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.265389
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 24, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.265389
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 24, dtype: float64
-
-After inclusion: (62, 205)  X_train_v1
-After inclusion: (62, 6)  y_train_df
-
-
-After inclusion: (62, 205)  X_train_v1
-After inclusion: (62, 206)  X_train_v2
-After inclusion: (62, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-43
-par
-76 4
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.419817
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.715563
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 76, dtype: float64
-
-Before inclusion: (62, 205)  X_train_v1
-Before inclusion: (62, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.419817
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.715563
-target_LBL+aFLminpA+bt7d_000   -0.257625
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 76, dtype: float64
-
-After inclusion: (62, 205)  X_train_v1
-After inclusion: (62, 6)  y_train_df
-
-
-After inclusion: (62, 205)  X_train_v1
-After inclusion: (62, 206)  X_train_v2
-After inclusion: (62, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-44
-par
-76 5
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.419817
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.715563
-target_LBL+aFLminpA+bt7d_000   -0.257625
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 76, dtype: float64
-
-Before inclusion: (62, 205)  X_train_v1
-Before inclusion: (62, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.419817
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.715563
-target_LBL+aFLminpA+bt7d_000   -0.257625
-target_LBL+aUAminpA+bt7d_000   -0.702867
-Name: 76, dtype: float64
-
-After inclusion: (62, 205)  X_train_v1
-After inclusion: (62, 6)  y_train_df
-
-
-After inclusion: (62, 205)  X_train_v1
-After inclusion: (62, 206)  X_train_v2
-After inclusion: (62, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-45
-par
-117 0
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 117, dtype: float64
-
-Before inclusion: (62, 205)  X_train_v1
-Before inclusion: (62, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000   -0.159326
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 117, dtype: float64
-target_LBL+ALLminpA+bt7d_000   -0.159326
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 117, dtype: float64
-
-After inclusion: (63, 205)  X_train_v1
-After inclusion: (63, 6)  y_train_df
-
-
-After inclusion: (63, 205)  X_train_v1
-After inclusion: (63, 206)  X_train_v2
-After inclusion: (63, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-46
-par
-112 4
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.351419
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 112, dtype: float64
-
-Before inclusion: (63, 205)  X_train_v1
-Before inclusion: (63, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.351419
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.288522
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 112, dtype: float64
-
-After inclusion: (63, 205)  X_train_v1
-After inclusion: (63, 6)  y_train_df
-
-
-After inclusion: (63, 205)  X_train_v1
-After inclusion: (63, 206)  X_train_v2
-After inclusion: (63, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-47
-par
-74 1
-207
-target_LBL+ALLminpA+bt7d_000    0.009749
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.742844
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 74, dtype: float64
-
-Before inclusion: (63, 205)  X_train_v1
-Before inclusion: (63, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000    0.009749
-target_LBL+ALLminp0+bt7d_000   -0.331759
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.742844
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 74, dtype: float64
-
-After inclusion: (63, 205)  X_train_v1
-After inclusion: (63, 6)  y_train_df
-
-
-After inclusion: (63, 205)  X_train_v1
-After inclusion: (63, 206)  X_train_v2
-After inclusion: (63, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-48
-par
-1 2
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.699754
-target_LBL+aFLminpA+bt7d_000   -0.284720
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 1, dtype: float64
-
-Before inclusion: (63, 205)  X_train_v1
-Before inclusion: (63, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000   -0.478228
-target_LBL+aCOminpA+bt7d_000   -0.699754
-target_LBL+aFLminpA+bt7d_000   -0.284720
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 1, dtype: float64
-
-After inclusion: (63, 205)  X_train_v1
-After inclusion: (63, 6)  y_train_df
-
-
-After inclusion: (63, 205)  X_train_v1
-After inclusion: (63, 206)  X_train_v2
-After inclusion: (63, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-49
-par
-76 2
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.419817
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.715563
-target_LBL+aFLminpA+bt7d_000   -0.257625
-target_LBL+aUAminpA+bt7d_000   -0.702867
-Name: 76, dtype: float64
-
-Before inclusion: (63, 205)  X_train_v1
-Before inclusion: (63, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.419817
-target_LBL+aDLminpA+bt7d_000   -0.460651
-target_LBL+aCOminpA+bt7d_000   -0.715563
-target_LBL+aFLminpA+bt7d_000   -0.257625
-target_LBL+aUAminpA+bt7d_000   -0.702867
-Name: 76, dtype: float64
-
-After inclusion: (63, 205)  X_train_v1
-After inclusion: (63, 6)  y_train_df
-
-
-After inclusion: (63, 205)  X_train_v1
-After inclusion: (63, 206)  X_train_v2
-After inclusion: (63, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-50
-par
-70 2
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.397428
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 70, dtype: float64
-
-Before inclusion: (63, 205)  X_train_v1
-Before inclusion: (63, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.397428
-target_LBL+aDLminpA+bt7d_000   -0.535669
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 70, dtype: float64
-
-After inclusion: (63, 205)  X_train_v1
-After inclusion: (63, 6)  y_train_df
-
-
-After inclusion: (63, 205)  X_train_v1
-After inclusion: (63, 206)  X_train_v2
-After inclusion: (63, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-51
-par
-178 3
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.415705
-target_LBL+aDLminpA+bt7d_000   -0.498244
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 178, dtype: float64
-
-Before inclusion: (63, 205)  X_train_v1
-Before inclusion: (63, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.415705
-target_LBL+aDLminpA+bt7d_000   -0.498244
-target_LBL+aCOminpA+bt7d_000   -0.711976
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 178, dtype: float64
-
-After inclusion: (63, 205)  X_train_v1
-After inclusion: (63, 6)  y_train_df
-
-
-After inclusion: (63, 205)  X_train_v1
-After inclusion: (63, 206)  X_train_v2
-After inclusion: (63, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-52
-par
-137 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 137, dtype: float64
-
-Before inclusion: (63, 205)  X_train_v1
-Before inclusion: (63, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.342075
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 137, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.342075
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 137, dtype: float64
-
-After inclusion: (64, 205)  X_train_v1
-After inclusion: (64, 6)  y_train_df
-
-
-After inclusion: (64, 205)  X_train_v1
-After inclusion: (64, 206)  X_train_v2
-After inclusion: (64, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-53
-par
-192 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 192, dtype: float64
-
-Before inclusion: (64, 205)  X_train_v1
-Before inclusion: (64, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.300849
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 192, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.300849
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 192, dtype: float64
-
-After inclusion: (65, 205)  X_train_v1
-After inclusion: (65, 6)  y_train_df
-
-
-After inclusion: (65, 205)  X_train_v1
-After inclusion: (65, 206)  X_train_v2
-After inclusion: (65, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-54
-par
-202 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 202, dtype: float64
-
-Before inclusion: (65, 205)  X_train_v1
-Before inclusion: (65, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.364276
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 202, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.364276
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 202, dtype: float64
-
-After inclusion: (66, 205)  X_train_v1
-After inclusion: (66, 6)  y_train_df
-
-
-After inclusion: (66, 205)  X_train_v1
-After inclusion: (66, 206)  X_train_v2
-After inclusion: (66, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-55
-par
-57 1
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 57, dtype: float64
-
-Before inclusion: (66, 205)  X_train_v1
-Before inclusion: (66, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.402549
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 57, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.402549
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 57, dtype: float64
-
-After inclusion: (67, 205)  X_train_v1
-After inclusion: (67, 6)  y_train_df
-
-
-After inclusion: (67, 205)  X_train_v1
-After inclusion: (67, 206)  X_train_v2
-After inclusion: (67, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-56
-par
-48 4
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.383936
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.798783
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 48, dtype: float64
-
-Before inclusion: (67, 205)  X_train_v1
-Before inclusion: (67, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.383936
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.798783
-target_LBL+aFLminpA+bt7d_000   -0.325203
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 48, dtype: float64
-
-After inclusion: (67, 205)  X_train_v1
-After inclusion: (67, 6)  y_train_df
-
-
-After inclusion: (67, 205)  X_train_v1
-After inclusion: (67, 206)  X_train_v2
-After inclusion: (67, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-57
-par
-24 1
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.265389
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 24, dtype: float64
-
-Before inclusion: (67, 205)  X_train_v1
-Before inclusion: (67, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.319201
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.265389
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 24, dtype: float64
-
-After inclusion: (67, 205)  X_train_v1
-After inclusion: (67, 6)  y_train_df
-
-
-After inclusion: (67, 205)  X_train_v1
-After inclusion: (67, 206)  X_train_v2
-After inclusion: (67, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-58
-par
-24 0
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.319201
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.265389
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 24, dtype: float64
-
-Before inclusion: (67, 205)  X_train_v1
-Before inclusion: (67, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000   -0.047364
-target_LBL+ALLminp0+bt7d_000   -0.319201
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.265389
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 24, dtype: float64
-
-After inclusion: (67, 205)  X_train_v1
-After inclusion: (67, 6)  y_train_df
-
-
-After inclusion: (67, 205)  X_train_v1
-After inclusion: (67, 206)  X_train_v2
-After inclusion: (67, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-59
-par
-19 3
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000   -0.420913
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 19, dtype: float64
-
-Before inclusion: (67, 205)  X_train_v1
-Before inclusion: (67, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000   -0.420913
-target_LBL+aCOminpA+bt7d_000   -0.700338
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 19, dtype: float64
-
-After inclusion: (67, 205)  X_train_v1
-After inclusion: (67, 6)  y_train_df
-
-
-After inclusion: (67, 205)  X_train_v1
-After inclusion: (67, 206)  X_train_v2
-After inclusion: (67, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
 linhas completas
 Index([], dtype='int64')
-        After pool clean: (67, 205)  X_train_v1
-        After pool clean: (67, 206)  X_train_v2
-        After pool clean: (67, 6)  y_train_df
-        After pool clean: (207, 205)  X_pool_v1_df
-        After pool clean: (207, 206)  X_pool_v2_df
-        After pool clean: (207, 6)  y_pool
 Target Cotraining Making predictions on test data...
-UE1
-6
-UE2
-UE2
-UE2
-UE2
-UE2
-UE2
-    Overall: R²=0.473, MSE=0.373, MAE=0.351, CA=0.266, ARRMSE=0.706
+    Overall: R²=0.023, MSE=1.015, MAE=0.853, CA=0.057, ARRMSE=0.986
 ------------------------------------------------------------------------
-9
+0
 0
 ------------------------------------------------------------------------
 Iteration 2/10
-    Before cleaning: (67, 205)  X_train_v1
-    Before cleaning: (67, 206)  X_train_v2
-    Before cleaning: (67, 6)  y_train_df
-    Before cleaning: (207, 205)  X_pool_v1_df
-    After cleaning: (67, 205)  X_train_v1
-    After cleaning: (67, 206)  X_train_v2
-    After cleaning: (67, 6)  y_train_df
-    After cleaning: (207, 205)  X_pool_v1_df
-{(178, 1): -0.41371159488156994, (76, 1): -0.4211475185725748, (13, 1): -0.4227259003643371, (60, 1): -0.4153669709070768, (143, 1): -0.40091840493145525, (44, 1): -0.4250889879509854, (203, 2): -0.513501744738776, (1, 2): -0.47582728108165406, (95, 1): -0.419584087117461, (86, 1): -0.4192620942418749, (6, 1): -0.41344118066742375, (76, 2): -0.4657766505360723, (176, 1): -0.3916721823514143, (42, 1): -0.40416786060220555, (104, 2): -0.5038211560265575, (174, 1): -0.4033440970528228, (104, 1): -0.41409002527800803, (127, 1): -0.3096408064313052, (31, 3): -0.7101636172054473, (203, 1): -0.3854816217033058, (1, 3): -0.6985684251363287, (143, 2): -0.5027425681827241, (48, 1): -0.3988928211946663, (198, 1): -0.3894756041391977, (76, 3): -0.7095681523466968, (63, 3): -0.6715687344551113, (10, 3): -0.7386994195100239, (48, 3): -0.8034705620265712, (112, 4): -0.2920150769520553, (0, 1): -0.3916265838246328, (57, 1): -0.40015444272866946, (80, 3): -0.6646208796828964, (60, 2): -0.4981675055156984, (178, 2): -0.49231832153607247, (91, 1): -0.40999606246577314, (74, 3): -0.7337688453380997, (76, 4): -0.26043685319290766, (112, 1): -0.3565190820292203, (24, 4): -0.2660494656497039, (70, 1): -0.3909084070278364, (74, 1): -0.33500965893328627, (95, 4): -0.2455942680594349, (192, 1): -0.2792292053774751, (202, 1): -0.3662539937384892, (24, 1): -0.3122666461845677, (70, 2): -0.5389202546741036, (74, 0): 0.01899895724044301, (25, 3): -0.5007856587213828, (137, 1): -0.33616812314440825, (1, 4): -0.2902329368262089, (6, 3): -0.6484728321315892, (48, 4): -0.3286691716986688, (178, 3): -0.6972362941195738, (55, 1): -0.38304994944727855, (19, 3): -0.7056572726386694, (173, 4): -0.3823694624967555, (76, 5): -0.7022935993119999, (91, 3): -0.6849194528696236, (174, 4): -0.2769736399974729, (54, 4): -0.37707097253824673}
-Before inclusion: (67, 205)  X_train_v1
-Before inclusion: (67, 6)  y_train_df
-Before inclusion: (207, 205)  X_pool_v1_df
+1: Tamanho antes do filtro: 2
+par(180, 5)ja apareceu
+1: Tamanho depois do filtro: 1
+{(130, 5): -0.3528942912544678}
+Before inclusion: (51, 10)  X_train_v1
+Before inclusion: (51, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
 
-Quantidade de pares selecionados: 60
-Quantidade de linhas distintas 37
-A posicao (178, 1) nao esta vazia.
-A posicao (76, 1) nao esta vazia.
-A posicao (13, 1) nao esta vazia.
-A posicao (60, 1) nao esta vazia.
-A posicao (143, 1) nao esta vazia.
-A posicao (44, 1) nao esta vazia.
-A posicao (203, 2) nao esta vazia.
-A posicao (1, 2) nao esta vazia.
-A posicao (95, 1) nao esta vazia.
-A posicao (86, 1) nao esta vazia.
-A posicao (6, 1) nao esta vazia.
-A posicao (76, 2) nao esta vazia.
-A posicao (176, 1) nao esta vazia.
-A posicao (42, 1) nao esta vazia.
-A posicao (104, 2) nao esta vazia.
-A posicao (174, 1) nao esta vazia.
-A posicao (104, 1) nao esta vazia.
-A posicao (127, 1) nao esta vazia.
-A posicao (31, 3) nao esta vazia.
-A posicao (203, 1) nao esta vazia.
-A posicao (1, 3) nao esta vazia.
-A posicao (143, 2) nao esta vazia.
-A posicao (48, 1) nao esta vazia.
-A posicao (198, 1) nao esta vazia.
-A posicao (76, 3) nao esta vazia.
-A posicao (63, 3) nao esta vazia.
-A posicao (10, 3) nao esta vazia.
-A posicao (48, 3) nao esta vazia.
-A posicao (112, 4) nao esta vazia.
-A posicao (0, 1) nao esta vazia.
-A posicao (57, 1) nao esta vazia.
-A posicao (80, 3) nao esta vazia.
-A posicao (60, 2) nao esta vazia.
-A posicao (178, 2) nao esta vazia.
-A posicao (91, 1) nao esta vazia.
-A posicao (74, 3) nao esta vazia.
-A posicao (76, 4) nao esta vazia.
-A posicao (112, 1) nao esta vazia.
-A posicao (24, 4) nao esta vazia.
-A posicao (70, 1) nao esta vazia.
-A posicao (74, 1) nao esta vazia.
-A posicao (95, 4) nao esta vazia.
-A posicao (192, 1) nao esta vazia.
-A posicao (202, 1) nao esta vazia.
-A posicao (24, 1) nao esta vazia.
-A posicao (70, 2) nao esta vazia.
-A posicao (74, 0) nao esta vazia.
+Quantidade de pares selecionados: 1
+Quantidade de linhas distintas 1
 count
 0
 par
-25 3
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 25, dtype: float64
+130 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 130, dtype: float64
 
-Before inclusion: (67, 205)  X_train_v1
-Before inclusion: (67, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.500786
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 25, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.500786
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 25, dtype: float64
+Before inclusion: (51, 10)  X_train_v1
+Before inclusion: (51, 6)  y_train_df
 
-After inclusion: (68, 205)  X_train_v1
-After inclusion: (68, 6)  y_train_df
+After inclusion: (52, 10)  X_train_v1
+After inclusion: (52, 6)  y_train_df
 
 
-After inclusion: (68, 205)  X_train_v1
-After inclusion: (68, 206)  X_train_v2
-After inclusion: (68, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (137, 1) nao esta vazia.
-A posicao (1, 4) nao esta vazia.
-count
-1
-par
-6 3
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.409351
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 6, dtype: float64
-
-Before inclusion: (68, 205)  X_train_v1
-Before inclusion: (68, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.409351
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.648473
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 6, dtype: float64
-
-After inclusion: (68, 205)  X_train_v1
-After inclusion: (68, 6)  y_train_df
-
-
-After inclusion: (68, 205)  X_train_v1
-After inclusion: (68, 206)  X_train_v2
-After inclusion: (68, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (48, 4) nao esta vazia.
-A posicao (178, 3) nao esta vazia.
-A posicao (55, 1) nao esta vazia.
-A posicao (19, 3) nao esta vazia.
-count
-2
-par
-173 4
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 173, dtype: float64
-
-Before inclusion: (68, 205)  X_train_v1
-Before inclusion: (68, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.382369
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 173, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.382369
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 173, dtype: float64
-
-After inclusion: (69, 205)  X_train_v1
-After inclusion: (69, 6)  y_train_df
-
-
-After inclusion: (69, 205)  X_train_v1
-After inclusion: (69, 206)  X_train_v2
-After inclusion: (69, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (76, 5) nao esta vazia.
-count
-3
-par
-91 3
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.412117
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 91, dtype: float64
-
-Before inclusion: (69, 205)  X_train_v1
-Before inclusion: (69, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.412117
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.684919
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 91, dtype: float64
-
-After inclusion: (69, 205)  X_train_v1
-After inclusion: (69, 6)  y_train_df
-
-
-After inclusion: (69, 205)  X_train_v1
-After inclusion: (69, 206)  X_train_v2
-After inclusion: (69, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-4
-par
-174 4
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.401502
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 174, dtype: float64
-
-Before inclusion: (69, 205)  X_train_v1
-Before inclusion: (69, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.401502
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.276974
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 174, dtype: float64
-
-After inclusion: (69, 205)  X_train_v1
-After inclusion: (69, 6)  y_train_df
-
-
-After inclusion: (69, 205)  X_train_v1
-After inclusion: (69, 206)  X_train_v2
-After inclusion: (69, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-5
-par
-54 4
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 54, dtype: float64
-
-Before inclusion: (69, 205)  X_train_v1
-Before inclusion: (69, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.377071
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 54, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.377071
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 54, dtype: float64
-
-After inclusion: (70, 205)  X_train_v1
-After inclusion: (70, 6)  y_train_df
-
-
-After inclusion: (70, 205)  X_train_v1
-After inclusion: (70, 206)  X_train_v2
-After inclusion: (70, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
+After inclusion: (52, 10)  X_train_v1
+After inclusion: (52, 10)  X_train_v2
+After inclusion: (52, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
 linhas completas
 Index([], dtype='int64')
-        After pool clean: (70, 205)  X_train_v1
-        After pool clean: (70, 206)  X_train_v2
-        After pool clean: (70, 6)  y_train_df
-        After pool clean: (207, 205)  X_pool_v1_df
-        After pool clean: (207, 206)  X_pool_v2_df
-        After pool clean: (207, 6)  y_pool
 Target Cotraining Making predictions on test data...
-UE1
-6
-UE2
-UE2
-UE2
-UE2
-UE2
-UE2
-    Overall: R²=0.458, MSE=0.383, MAE=0.357, CA=0.280, ARRMSE=0.717
+    Overall: R²=0.023, MSE=1.014, MAE=0.853, CA=0.057, ARRMSE=0.986
 ------------------------------------------------------------------------
-9
+0
 1
 ------------------------------------------------------------------------
 Iteration 3/10
-    Before cleaning: (70, 205)  X_train_v1
-    Before cleaning: (70, 206)  X_train_v2
-    Before cleaning: (70, 6)  y_train_df
-    Before cleaning: (207, 205)  X_pool_v1_df
-    After cleaning: (70, 205)  X_train_v1
-    After cleaning: (70, 206)  X_train_v2
-    After cleaning: (70, 6)  y_train_df
-    After cleaning: (207, 205)  X_pool_v1_df
-{(178, 1): -0.4141787929018642, (76, 1): -0.42043195808469197, (104, 1): -0.41767474224812207, (42, 1): -0.4053519272648395, (91, 1): -0.41777472262446524, (6, 1): -0.41730453453684146, (13, 1): -0.42057062245711535, (86, 1): -0.4228606402733899, (95, 1): -0.41969789655520456, (60, 1): -0.4133597013326842, (44, 1): -0.4267877199527754, (143, 1): -0.39972275175791794, (1, 2): -0.47225154161574856, (203, 2): -0.5130997447470779, (48, 1): -0.3715062338826378, (76, 3): -0.7113952439739314, (48, 3): -0.8020452006098653, (63, 3): -0.6753576210376717, (176, 1): -0.3943899666750704, (10, 3): -0.7407028041922001, (74, 3): -0.7402459595897543, (0, 1): -0.39869715866376704, (80, 3): -0.6697520316561123, (76, 2): -0.46993163162181495, (70, 1): -0.39125973993909785, (198, 1): -0.39291193901806654, (127, 1): -0.30946214990834464, (31, 3): -0.7094880367734777, (178, 3): -0.7128235034586639, (203, 1): -0.38692993556621813, (1, 1): -0.41859175852235636, (1, 3): -0.698845695891459, (140, 3): -0.72530850773897, (104, 2): -0.5015052408024177, (112, 4): -0.28887230314324014, (178, 2): -0.4908444617338735, (76, 4): -0.26966646143995093, (60, 2): -0.506590162245526, (95, 4): -0.24099541367411442, (73, 3): -0.7920521437642329, (55, 1): -0.39202743972604603, (91, 3): -0.6799529651796503, (143, 2): -0.49954443958768147, (24, 1): -0.3188961860925441, (24, 4): -0.2670890823803076, (112, 1): -0.3601024908448779, (174, 4): -0.28728993185437157, (173, 4): -0.36668337328975953, (74, 0): 0.01206070427495316, (48, 4): -0.32338101450859347, (74, 1): -0.33342753955736154, (40, 3): -0.701486284286162, (192, 1): -0.2911093035167271, (174, 1): -0.40987085339633444, (202, 1): -0.37097138558900494, (54, 4): -0.36848127103601286, (6, 3): -0.6575829084478028, (137, 1): -0.33267123940210924, (76, 5): -0.6893559050801235, (1, 4): -0.2901049130924961}
-Before inclusion: (70, 205)  X_train_v1
-Before inclusion: (70, 6)  y_train_df
-Before inclusion: (207, 205)  X_pool_v1_df
+2: Tamanho antes do filtro: 2
+par(180, 5)ja apareceu
+par(130, 5)ja apareceu
+2: Tamanho depois do filtro: 0
+No confident predictions found.
+Target Cotraining Making predictions on test data...
+    Overall: R²=0.023, MSE=1.015, MAE=0.852, CA=0.065, ARRMSE=0.986
+saindo do training
+Index i: 0
+Length of added_pairs_per_iteration: 2
+added_pairs_per_iteration: [1, 1]
+Saved data...
 
-Quantidade de pares selecionados: 60
-Quantidade de linhas distintas 37
-A posicao (178, 1) nao esta vazia.
-A posicao (76, 1) nao esta vazia.
-A posicao (104, 1) nao esta vazia.
-A posicao (42, 1) nao esta vazia.
-A posicao (91, 1) nao esta vazia.
-A posicao (6, 1) nao esta vazia.
-A posicao (13, 1) nao esta vazia.
-A posicao (86, 1) nao esta vazia.
-A posicao (95, 1) nao esta vazia.
-A posicao (60, 1) nao esta vazia.
-A posicao (44, 1) nao esta vazia.
-A posicao (143, 1) nao esta vazia.
-A posicao (1, 2) nao esta vazia.
-A posicao (203, 2) nao esta vazia.
-A posicao (48, 1) nao esta vazia.
-A posicao (76, 3) nao esta vazia.
-A posicao (48, 3) nao esta vazia.
-A posicao (63, 3) nao esta vazia.
-A posicao (176, 1) nao esta vazia.
-A posicao (10, 3) nao esta vazia.
-A posicao (74, 3) nao esta vazia.
-A posicao (0, 1) nao esta vazia.
-A posicao (80, 3) nao esta vazia.
-A posicao (76, 2) nao esta vazia.
-A posicao (70, 1) nao esta vazia.
-A posicao (198, 1) nao esta vazia.
-A posicao (127, 1) nao esta vazia.
-A posicao (31, 3) nao esta vazia.
-A posicao (178, 3) nao esta vazia.
-A posicao (203, 1) nao esta vazia.
+Training model in fold 1...
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+Iteration 1/10
+0: Tamanho antes do filtro: 0
+0: Tamanho depois do filtro: 0
+No confident predictions found.
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.086, MSE=1.056, MAE=0.852, CA=0.063, ARRMSE=1.040
+saindo do training
+Index i: 1
+Length of added_pairs_per_iteration: 0
+added_pairs_per_iteration: []
+Saved data...
+
+Training model in fold 2...
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+Iteration 1/10
+0: Tamanho antes do filtro: 0
+0: Tamanho depois do filtro: 0
+No confident predictions found.
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.043, MSE=1.092, MAE=0.888, CA=0.058, ARRMSE=1.019
+saindo do training
+Index i: 2
+Length of added_pairs_per_iteration: 0
+added_pairs_per_iteration: []
+Saved data...
+
+Training model in fold 3...
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+Iteration 1/10
+0: Tamanho antes do filtro: 0
+0: Tamanho depois do filtro: 0
+No confident predictions found.
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.037, MSE=1.058, MAE=0.863, CA=0.060, ARRMSE=1.017
+saindo do training
+Index i: 3
+Length of added_pairs_per_iteration: 0
+added_pairs_per_iteration: []
+Saved data...
+
+Training model in fold 4...
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+Iteration 1/10
+0: Tamanho antes do filtro: 0
+0: Tamanho depois do filtro: 0
+No confident predictions found.
+Target Cotraining Making predictions on test data...
+    Overall: R²=0.004, MSE=0.971, MAE=0.832, CA=0.063, ARRMSE=0.994
+saindo do training
+Index i: 4
+Length of added_pairs_per_iteration: 0
+added_pairs_per_iteration: []
+Saved data...
+
+Training model in fold 5...
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+Iteration 1/10
+0: Tamanho antes do filtro: 1
+0: Tamanho depois do filtro: 1
+{(172, 5): -0.4806866048304841}
+Before inclusion: (50, 10)  X_train_v1
+Before inclusion: (50, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
+
+Quantidade de pares selecionados: 1
+Quantidade de linhas distintas 1
 count
 0
 par
-1 1
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000   -0.478228
-target_LBL+aCOminpA+bt7d_000   -0.699754
-target_LBL+aFLminpA+bt7d_000   -0.284720
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 1, dtype: float64
+172 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 172, dtype: float64
 
-Before inclusion: (70, 205)  X_train_v1
-Before inclusion: (70, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.418592
-target_LBL+aDLminpA+bt7d_000   -0.478228
-target_LBL+aCOminpA+bt7d_000   -0.699754
-target_LBL+aFLminpA+bt7d_000   -0.284720
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 1, dtype: float64
+Before inclusion: (50, 10)  X_train_v1
+Before inclusion: (50, 6)  y_train_df
 
-After inclusion: (70, 205)  X_train_v1
-After inclusion: (70, 6)  y_train_df
+After inclusion: (51, 10)  X_train_v1
+After inclusion: (51, 6)  y_train_df
 
 
-After inclusion: (70, 205)  X_train_v1
-After inclusion: (70, 206)  X_train_v2
-After inclusion: (70, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (1, 3) nao esta vazia.
-A posicao (140, 3) nao esta vazia.
-A posicao (104, 2) nao esta vazia.
-A posicao (112, 4) nao esta vazia.
-A posicao (178, 2) nao esta vazia.
-A posicao (76, 4) nao esta vazia.
-A posicao (60, 2) nao esta vazia.
-A posicao (95, 4) nao esta vazia.
+After inclusion: (51, 10)  X_train_v1
+After inclusion: (51, 10)  X_train_v2
+After inclusion: (51, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+linhas completas
+Index([], dtype='int64')
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.060, MSE=0.992, MAE=0.851, CA=0.038, ARRMSE=1.029
+------------------------------------------------------------------------
+5
+0
+------------------------------------------------------------------------
+Iteration 2/10
+1: Tamanho antes do filtro: 4
+par(172, 5)ja apareceu
+1: Tamanho depois do filtro: 3
+{(314, 5): -0.3750416835782903, (286, 5): -0.5012825670391741, (170, 5): -0.07593320217409497}
+Before inclusion: (51, 10)  X_train_v1
+Before inclusion: (51, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
+
+Quantidade de pares selecionados: 3
+Quantidade de linhas distintas 3
+count
+0
+par
+314 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 314, dtype: float64
+
+Before inclusion: (51, 10)  X_train_v1
+Before inclusion: (51, 6)  y_train_df
+
+After inclusion: (52, 10)  X_train_v1
+After inclusion: (52, 6)  y_train_df
+
+
+After inclusion: (52, 10)  X_train_v1
+After inclusion: (52, 10)  X_train_v2
+After inclusion: (52, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
 count
 1
 par
-73 3
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 73, dtype: float64
+286 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 286, dtype: float64
 
-Before inclusion: (70, 205)  X_train_v1
-Before inclusion: (70, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.792052
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 73, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.792052
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 73, dtype: float64
+Before inclusion: (52, 10)  X_train_v1
+Before inclusion: (52, 6)  y_train_df
 
-After inclusion: (71, 205)  X_train_v1
-After inclusion: (71, 6)  y_train_df
+After inclusion: (53, 10)  X_train_v1
+After inclusion: (53, 6)  y_train_df
 
 
-After inclusion: (71, 205)  X_train_v1
-After inclusion: (71, 206)  X_train_v2
-After inclusion: (71, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (55, 1) nao esta vazia.
-A posicao (91, 3) nao esta vazia.
-A posicao (143, 2) nao esta vazia.
-A posicao (24, 1) nao esta vazia.
-A posicao (24, 4) nao esta vazia.
-A posicao (112, 1) nao esta vazia.
-A posicao (174, 4) nao esta vazia.
-A posicao (173, 4) nao esta vazia.
-A posicao (74, 0) nao esta vazia.
-A posicao (48, 4) nao esta vazia.
-A posicao (74, 1) nao esta vazia.
+After inclusion: (53, 10)  X_train_v1
+After inclusion: (53, 10)  X_train_v2
+After inclusion: (53, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
 count
 2
 par
-40 3
-207
-target_LBL+ALLminpA+bt7d_000   NaN
-target_LBL+ALLminp0+bt7d_000   NaN
-target_LBL+aDLminpA+bt7d_000   NaN
-target_LBL+aCOminpA+bt7d_000   NaN
-target_LBL+aFLminpA+bt7d_000   NaN
-target_LBL+aUAminpA+bt7d_000   NaN
-Name: 40, dtype: float64
+170 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 170, dtype: float64
 
-Before inclusion: (71, 205)  X_train_v1
-Before inclusion: (71, 6)  y_train_df
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.701486
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 40, dtype: float64
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.701486
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 40, dtype: float64
+Before inclusion: (53, 10)  X_train_v1
+Before inclusion: (53, 6)  y_train_df
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 6)  y_train_df
+After inclusion: (54, 10)  X_train_v1
+After inclusion: (54, 6)  y_train_df
 
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 206)  X_train_v2
-After inclusion: (72, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (192, 1) nao esta vazia.
-A posicao (174, 1) nao esta vazia.
-A posicao (202, 1) nao esta vazia.
-A posicao (54, 4) nao esta vazia.
-A posicao (6, 3) nao esta vazia.
-A posicao (137, 1) nao esta vazia.
-A posicao (76, 5) nao esta vazia.
-A posicao (1, 4) nao esta vazia.
+After inclusion: (54, 10)  X_train_v1
+After inclusion: (54, 10)  X_train_v2
+After inclusion: (54, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
 linhas completas
 Index([], dtype='int64')
-        After pool clean: (72, 205)  X_train_v1
-        After pool clean: (72, 206)  X_train_v2
-        After pool clean: (72, 6)  y_train_df
-        After pool clean: (207, 205)  X_pool_v1_df
-        After pool clean: (207, 206)  X_pool_v2_df
-        After pool clean: (207, 6)  y_pool
 Target Cotraining Making predictions on test data...
-UE1
-6
-UE2
-UE2
-UE2
-UE2
-UE2
-UE2
-    Overall: R²=0.448, MSE=0.389, MAE=0.354, CA=0.277, ARRMSE=0.720
+    Overall: R²=-0.045, MSE=0.978, MAE=0.842, CA=0.048, ARRMSE=1.021
 ------------------------------------------------------------------------
-9
+5
+1
+------------------------------------------------------------------------
+Iteration 3/10
+2: Tamanho antes do filtro: 8
+par(286, 5)ja apareceu
+par(170, 5)ja apareceu
+par(172, 5)ja apareceu
+par(314, 5)ja apareceu
+2: Tamanho depois do filtro: 4
+{(188, 5): -0.2069102836536208, (192, 5): -0.16452136357578037, (325, 5): -0.16499485628307337, (232, 5): -0.26735587209906153}
+Before inclusion: (54, 10)  X_train_v1
+Before inclusion: (54, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
+
+Quantidade de pares selecionados: 4
+Quantidade de linhas distintas 4
+count
+0
+par
+188 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 188, dtype: float64
+
+Before inclusion: (54, 10)  X_train_v1
+Before inclusion: (54, 6)  y_train_df
+
+After inclusion: (55, 10)  X_train_v1
+After inclusion: (55, 6)  y_train_df
+
+
+After inclusion: (55, 10)  X_train_v1
+After inclusion: (55, 10)  X_train_v2
+After inclusion: (55, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+1
+par
+192 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 192, dtype: float64
+
+Before inclusion: (55, 10)  X_train_v1
+Before inclusion: (55, 6)  y_train_df
+
+After inclusion: (56, 10)  X_train_v1
+After inclusion: (56, 6)  y_train_df
+
+
+After inclusion: (56, 10)  X_train_v1
+After inclusion: (56, 10)  X_train_v2
+After inclusion: (56, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+2
+par
+325 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 325, dtype: float64
+
+Before inclusion: (56, 10)  X_train_v1
+Before inclusion: (56, 6)  y_train_df
+
+After inclusion: (57, 10)  X_train_v1
+After inclusion: (57, 6)  y_train_df
+
+
+After inclusion: (57, 10)  X_train_v1
+After inclusion: (57, 10)  X_train_v2
+After inclusion: (57, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+3
+par
+232 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 232, dtype: float64
+
+Before inclusion: (57, 10)  X_train_v1
+Before inclusion: (57, 6)  y_train_df
+
+After inclusion: (58, 10)  X_train_v1
+After inclusion: (58, 6)  y_train_df
+
+
+After inclusion: (58, 10)  X_train_v1
+After inclusion: (58, 10)  X_train_v2
+After inclusion: (58, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+linhas completas
+Index([], dtype='int64')
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.048, MSE=0.981, MAE=0.844, CA=0.062, ARRMSE=1.023
+------------------------------------------------------------------------
+5
 2
 ------------------------------------------------------------------------
 Iteration 4/10
-    Before cleaning: (72, 205)  X_train_v1
-    Before cleaning: (72, 206)  X_train_v2
-    Before cleaning: (72, 6)  y_train_df
-    Before cleaning: (207, 205)  X_pool_v1_df
-    After cleaning: (72, 205)  X_train_v1
-    After cleaning: (72, 206)  X_train_v2
-    After cleaning: (72, 6)  y_train_df
-    After cleaning: (207, 205)  X_pool_v1_df
-{(13, 1): -0.42375531700708524, (60, 1): -0.4158300986982183, (76, 1): -0.41980302171614803, (198, 1): -0.3926390953742145, (104, 1): -0.4162946822783907, (48, 3): -0.8066453665155018, (178, 1): -0.4123241027257315, (44, 1): -0.42615835376205286, (10, 3): -0.7400003066524953, (95, 1): -0.41854329887489894, (86, 1): -0.42212867739741067, (143, 2): -0.5031960796796346, (1, 2): -0.47297396419497184, (80, 3): -0.6727862718054742, (143, 1): -0.39758550021911115, (1, 3): -0.6963713996620382, (203, 2): -0.5129712813606095, (140, 3): -0.7238689416279855, (74, 3): -0.7369934728306139, (63, 3): -0.6766326313526447, (112, 4): -0.2855189622889931, (203, 1): -0.38718614696054765, (76, 2): -0.4655621944735555, (1, 1): -0.42160899061393164, (31, 3): -0.7111852814900403, (70, 2): -0.5307667192776306, (48, 1): -0.3945219463782187, (76, 4): -0.2652907409805896, (60, 2): -0.5053437940704283, (91, 1): -0.415618884079619, (112, 1): -0.3616448479316912, (70, 1): -0.3902123249598159, (40, 3): -0.6997211091157969, (127, 1): -0.3141849612558958, (6, 1): -0.4135030376853108, (42, 1): -0.4094531783661911, (6, 3): -0.6573751579594342, (76, 3): -0.7088604382532607, (174, 1): -0.3981916504058089, (104, 2): -0.5024860619118696, (176, 1): -0.39774748151033135, (1, 4): -0.28966896414484095, (178, 2): -0.4913894324339163, (74, 0): 0.018499710255841368, (74, 1): -0.34177323421570094, (95, 4): -0.23669545100516598, (91, 3): -0.6842509800094493, (0, 1): -0.4002498370892449, (137, 1): -0.33938884239932693, (24, 1): -0.31808868103426735, (48, 4): -0.32700600794479295, (173, 4): -0.40458435610095067, (178, 3): -0.7039044377631538, (174, 4): -0.2724252412908653, (19, 3): -0.698876169347884, (192, 1): -0.28815773330371575, (76, 5): -0.7029920991928473, (55, 3): -0.5837926627234695, (24, 4): -0.2617974195356172, (0, 0): -0.09099490207706332}
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-Before inclusion: (207, 205)  X_pool_v1_df
+3: Tamanho antes do filtro: 9
+par(286, 5)ja apareceu
+par(172, 5)ja apareceu
+par(170, 5)ja apareceu
+par(192, 5)ja apareceu
+par(325, 5)ja apareceu
+par(188, 5)ja apareceu
+par(232, 5)ja apareceu
+par(314, 5)ja apareceu
+3: Tamanho depois do filtro: 1
+{(211, 5): -0.18553991584367463}
+Before inclusion: (58, 10)  X_train_v1
+Before inclusion: (58, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
 
-Quantidade de pares selecionados: 60
-Quantidade de linhas distintas 35
-A posicao (13, 1) nao esta vazia.
-A posicao (60, 1) nao esta vazia.
-A posicao (76, 1) nao esta vazia.
-A posicao (198, 1) nao esta vazia.
-A posicao (104, 1) nao esta vazia.
-A posicao (48, 3) nao esta vazia.
-A posicao (178, 1) nao esta vazia.
-A posicao (44, 1) nao esta vazia.
-A posicao (10, 3) nao esta vazia.
-A posicao (95, 1) nao esta vazia.
-A posicao (86, 1) nao esta vazia.
-A posicao (143, 2) nao esta vazia.
-A posicao (1, 2) nao esta vazia.
-A posicao (80, 3) nao esta vazia.
-A posicao (143, 1) nao esta vazia.
-A posicao (1, 3) nao esta vazia.
-A posicao (203, 2) nao esta vazia.
-A posicao (140, 3) nao esta vazia.
-A posicao (74, 3) nao esta vazia.
-A posicao (63, 3) nao esta vazia.
-A posicao (112, 4) nao esta vazia.
-A posicao (203, 1) nao esta vazia.
-A posicao (76, 2) nao esta vazia.
-A posicao (1, 1) nao esta vazia.
-A posicao (31, 3) nao esta vazia.
-A posicao (70, 2) nao esta vazia.
-A posicao (48, 1) nao esta vazia.
-A posicao (76, 4) nao esta vazia.
-A posicao (60, 2) nao esta vazia.
-A posicao (91, 1) nao esta vazia.
-A posicao (112, 1) nao esta vazia.
-A posicao (70, 1) nao esta vazia.
-A posicao (40, 3) nao esta vazia.
-A posicao (127, 1) nao esta vazia.
-A posicao (6, 1) nao esta vazia.
-A posicao (42, 1) nao esta vazia.
-A posicao (6, 3) nao esta vazia.
-A posicao (76, 3) nao esta vazia.
-A posicao (174, 1) nao esta vazia.
-A posicao (104, 2) nao esta vazia.
-A posicao (176, 1) nao esta vazia.
-A posicao (1, 4) nao esta vazia.
-A posicao (178, 2) nao esta vazia.
-A posicao (74, 0) nao esta vazia.
-A posicao (74, 1) nao esta vazia.
-A posicao (95, 4) nao esta vazia.
-A posicao (91, 3) nao esta vazia.
-A posicao (0, 1) nao esta vazia.
-A posicao (137, 1) nao esta vazia.
-A posicao (24, 1) nao esta vazia.
-A posicao (48, 4) nao esta vazia.
-A posicao (173, 4) nao esta vazia.
-A posicao (178, 3) nao esta vazia.
-A posicao (174, 4) nao esta vazia.
-A posicao (19, 3) nao esta vazia.
-A posicao (192, 1) nao esta vazia.
-A posicao (76, 5) nao esta vazia.
+Quantidade de pares selecionados: 1
+Quantidade de linhas distintas 1
 count
 0
 par
-55 3
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.391112
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 55, dtype: float64
+211 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 211, dtype: float64
 
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.391112
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.583793
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 55, dtype: float64
+Before inclusion: (58, 10)  X_train_v1
+Before inclusion: (58, 6)  y_train_df
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 6)  y_train_df
+After inclusion: (59, 10)  X_train_v1
+After inclusion: (59, 6)  y_train_df
 
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 206)  X_train_v2
-After inclusion: (72, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (24, 4) nao esta vazia.
-A posicao (0, 0) nao esta vazia.
+After inclusion: (59, 10)  X_train_v1
+After inclusion: (59, 10)  X_train_v2
+After inclusion: (59, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
 linhas completas
 Index([], dtype='int64')
-        After pool clean: (72, 205)  X_train_v1
-        After pool clean: (72, 206)  X_train_v2
-        After pool clean: (72, 6)  y_train_df
-        After pool clean: (207, 205)  X_pool_v1_df
-        After pool clean: (207, 206)  X_pool_v2_df
-        After pool clean: (207, 6)  y_pool
 Target Cotraining Making predictions on test data...
-UE1
-6
-UE2
-UE2
-UE2
-UE2
-UE2
-UE2
-    Overall: R²=0.459, MSE=0.385, MAE=0.357, CA=0.274, ARRMSE=0.714
+    Overall: R²=-0.055, MSE=0.989, MAE=0.848, CA=0.060, ARRMSE=1.026
 ------------------------------------------------------------------------
-9
+5
 3
 ------------------------------------------------------------------------
 Iteration 5/10
-    Before cleaning: (72, 205)  X_train_v1
-    Before cleaning: (72, 206)  X_train_v2
-    Before cleaning: (72, 6)  y_train_df
-    Before cleaning: (207, 205)  X_pool_v1_df
-    After cleaning: (72, 205)  X_train_v1
-    After cleaning: (72, 206)  X_train_v2
-    After cleaning: (72, 6)  y_train_df
-    After cleaning: (207, 205)  X_pool_v1_df
-{(76, 1): -0.42011986793834344, (13, 1): -0.4228131580041915, (44, 1): -0.4276519353755477, (60, 1): -0.4154981881430566, (178, 1): -0.4130079367304521, (104, 1): -0.41751234421626776, (198, 1): -0.3956314052545956, (1, 1): -0.4188086636128422, (1, 2): -0.47278200499391526, (6, 1): -0.4147988581143991, (176, 1): -0.393515932618704, (95, 1): -0.420711802223679, (48, 3): -0.8023359492115079, (143, 1): -0.39892893186405154, (80, 3): -0.6755581891845583, (48, 1): -0.352578360167642, (10, 3): -0.7392073994405639, (76, 3): -0.7126636612044823, (74, 3): -0.7415393355739541, (24, 1): -0.31756672740599456, (31, 3): -0.7146069479648687, (63, 3): -0.6807573752993727, (76, 4): -0.25994246676535326, (178, 2): -0.49339459661844864, (0, 1): -0.39787115256388667, (203, 1): -0.3874399289251715, (76, 2): -0.4663058524079887, (86, 1): -0.4214767997372782, (127, 1): -0.3177760321190861, (73, 3): -0.7950624829263577, (104, 2): -0.49858611533968855, (1, 3): -0.6957411383577619, (60, 2): -0.5018910514639074, (40, 3): -0.7037104504282207, (112, 4): -0.28716981663979924, (70, 1): -0.38873275928692996, (6, 3): -0.6594714479234848, (70, 2): -0.5371896783500096, (42, 1): -0.4020402408177854, (55, 2): -0.41544297165920574, (24, 4): -0.26778891403248295, (174, 1): -0.40452778995704064, (91, 1): -0.41231243025039227, (198, 2): -0.4318431836636177, (95, 4): -0.24112495652482696, (174, 4): -0.2755402728939206, (91, 3): -0.6873120562549082, (203, 2): -0.5187878764287743, (48, 4): -0.32771762414214356, (112, 1): -0.36397303208863974, (55, 1): -0.3865182406707355, (74, 0): 0.009217359762059025, (38, 2): -0.4628333462035501, (19, 2): -0.4121048158704027, (1, 4): -0.28037825451651, (173, 4): -0.40575744914558104, (60, 4): -0.29558866006235307, (143, 4): -0.36335122481087034, (178, 3): -0.6970553940977147, (76, 5): -0.7012480561244698}
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-Before inclusion: (207, 205)  X_pool_v1_df
+4: Tamanho antes do filtro: 9
+par(286, 5)ja apareceu
+par(170, 5)ja apareceu
+par(192, 5)ja apareceu
+par(325, 5)ja apareceu
+par(188, 5)ja apareceu
+par(232, 5)ja apareceu
+par(314, 5)ja apareceu
+par(211, 5)ja apareceu
+4: Tamanho depois do filtro: 1
+{(187, 5): -0.5813130628702671}
+Before inclusion: (59, 10)  X_train_v1
+Before inclusion: (59, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
 
-Quantidade de pares selecionados: 60
-Quantidade de linhas distintas 34
-A posicao (76, 1) nao esta vazia.
-A posicao (13, 1) nao esta vazia.
-A posicao (44, 1) nao esta vazia.
-A posicao (60, 1) nao esta vazia.
-A posicao (178, 1) nao esta vazia.
-A posicao (104, 1) nao esta vazia.
-A posicao (198, 1) nao esta vazia.
-A posicao (1, 1) nao esta vazia.
-A posicao (1, 2) nao esta vazia.
-A posicao (6, 1) nao esta vazia.
-A posicao (176, 1) nao esta vazia.
-A posicao (95, 1) nao esta vazia.
-A posicao (48, 3) nao esta vazia.
-A posicao (143, 1) nao esta vazia.
-A posicao (80, 3) nao esta vazia.
-A posicao (48, 1) nao esta vazia.
-A posicao (10, 3) nao esta vazia.
-A posicao (76, 3) nao esta vazia.
-A posicao (74, 3) nao esta vazia.
-A posicao (24, 1) nao esta vazia.
-A posicao (31, 3) nao esta vazia.
-A posicao (63, 3) nao esta vazia.
-A posicao (76, 4) nao esta vazia.
-A posicao (178, 2) nao esta vazia.
-A posicao (0, 1) nao esta vazia.
-A posicao (203, 1) nao esta vazia.
-A posicao (76, 2) nao esta vazia.
-A posicao (86, 1) nao esta vazia.
-A posicao (127, 1) nao esta vazia.
-A posicao (73, 3) nao esta vazia.
-A posicao (104, 2) nao esta vazia.
-A posicao (1, 3) nao esta vazia.
-A posicao (60, 2) nao esta vazia.
-A posicao (40, 3) nao esta vazia.
-A posicao (112, 4) nao esta vazia.
-A posicao (70, 1) nao esta vazia.
-A posicao (6, 3) nao esta vazia.
-A posicao (70, 2) nao esta vazia.
-A posicao (42, 1) nao esta vazia.
+Quantidade de pares selecionados: 1
+Quantidade de linhas distintas 1
 count
 0
 par
-55 2
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.391112
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.583793
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 55, dtype: float64
+187 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 187, dtype: float64
 
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.391112
-target_LBL+aDLminpA+bt7d_000   -0.415443
-target_LBL+aCOminpA+bt7d_000   -0.583793
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 55, dtype: float64
+Before inclusion: (59, 10)  X_train_v1
+Before inclusion: (59, 6)  y_train_df
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 6)  y_train_df
+After inclusion: (60, 10)  X_train_v1
+After inclusion: (60, 6)  y_train_df
 
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 206)  X_train_v2
-After inclusion: (72, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (24, 4) nao esta vazia.
-A posicao (174, 1) nao esta vazia.
-A posicao (91, 1) nao esta vazia.
-count
-1
-par
-198 2
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.388197
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 198, dtype: float64
-
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.388197
-target_LBL+aDLminpA+bt7d_000   -0.431843
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 198, dtype: float64
-
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 6)  y_train_df
-
-
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 206)  X_train_v2
-After inclusion: (72, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (95, 4) nao esta vazia.
-A posicao (174, 4) nao esta vazia.
-A posicao (91, 3) nao esta vazia.
-A posicao (203, 2) nao esta vazia.
-A posicao (48, 4) nao esta vazia.
-A posicao (112, 1) nao esta vazia.
-A posicao (55, 1) nao esta vazia.
-A posicao (74, 0) nao esta vazia.
-count
-2
-par
-38 2
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.305633
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 38, dtype: float64
-
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.305633
-target_LBL+aDLminpA+bt7d_000   -0.462833
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 38, dtype: float64
-
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 6)  y_train_df
-
-
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 206)  X_train_v2
-After inclusion: (72, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (19, 2) nao esta vazia.
-A posicao (1, 4) nao esta vazia.
-A posicao (173, 4) nao esta vazia.
-count
-3
-par
-60 4
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.416453
-target_LBL+aDLminpA+bt7d_000   -0.506528
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 60, dtype: float64
-
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.416453
-target_LBL+aDLminpA+bt7d_000   -0.506528
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.295589
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 60, dtype: float64
-
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 6)  y_train_df
-
-
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 206)  X_train_v2
-After inclusion: (72, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-count
-4
-par
-143 4
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.404119
-target_LBL+aDLminpA+bt7d_000   -0.506528
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 143, dtype: float64
-
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.404119
-target_LBL+aDLminpA+bt7d_000   -0.506528
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.363351
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 143, dtype: float64
-
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 6)  y_train_df
-
-
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 206)  X_train_v2
-After inclusion: (72, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (178, 3) nao esta vazia.
-A posicao (76, 5) nao esta vazia.
+After inclusion: (60, 10)  X_train_v1
+After inclusion: (60, 10)  X_train_v2
+After inclusion: (60, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
 linhas completas
 Index([], dtype='int64')
-        After pool clean: (72, 205)  X_train_v1
-        After pool clean: (72, 206)  X_train_v2
-        After pool clean: (72, 6)  y_train_df
-        After pool clean: (207, 205)  X_pool_v1_df
-        After pool clean: (207, 206)  X_pool_v2_df
-        After pool clean: (207, 6)  y_pool
 Target Cotraining Making predictions on test data...
-UE1
-6
-UE2
-UE2
-UE2
-UE2
-UE2
-UE2
-    Overall: R²=0.450, MSE=0.387, MAE=0.360, CA=0.277, ARRMSE=0.723
+    Overall: R²=-0.058, MSE=0.989, MAE=0.848, CA=0.053, ARRMSE=1.027
 ------------------------------------------------------------------------
-9
+5
 4
 ------------------------------------------------------------------------
 Iteration 6/10
-    Before cleaning: (72, 205)  X_train_v1
-    Before cleaning: (72, 206)  X_train_v2
-    Before cleaning: (72, 6)  y_train_df
-    Before cleaning: (207, 205)  X_pool_v1_df
-    After cleaning: (72, 205)  X_train_v1
-    After cleaning: (72, 206)  X_train_v2
-    After cleaning: (72, 6)  y_train_df
-    After cleaning: (207, 205)  X_pool_v1_df
-{(178, 1): -0.41451441300930697, (42, 1): -0.40610336856068074, (76, 1): -0.42142484544862946, (60, 1): -0.4156837872285987, (91, 1): -0.4191049288278471, (13, 1): -0.4231611850222612, (44, 1): -0.4269373092837053, (198, 1): -0.39631314060580913, (76, 3): -0.7153262511421652, (10, 3): -0.7396252615449651, (1, 2): -0.4800459261828186, (203, 2): -0.5102370317413429, (86, 1): -0.42043457439360565, (63, 3): -0.6819879428808293, (74, 3): -0.7397804023717922, (178, 2): -0.49356135407839397, (48, 3): -0.8027251736171569, (176, 1): -0.39147334287397695, (80, 3): -0.6737726525654968, (143, 1): -0.4002488597109871, (48, 1): -0.39806232999379115, (140, 3): -0.7270877218745844, (31, 3): -0.711009799450415, (127, 1): -0.3126624563473608, (203, 1): -0.38664741718576207, (104, 1): -0.41434661043075366, (95, 1): -0.4178935628504914, (55, 2): -0.4191574000709917, (0, 1): -0.3911722804696987, (76, 4): -0.26895078376347503, (70, 1): -0.3877072091749976, (40, 3): -0.707555003417394, (174, 1): -0.4063111782401079, (6, 1): -0.4178193867552058, (10, 1): -0.30792974040177906, (60, 2): -0.493561327797014, (1, 4): -0.2932392347185193, (91, 3): -0.6840830220958808, (1, 3): -0.6962018553252804, (24, 4): -0.2634023430670355, (202, 1): -0.36689611069758177, (104, 2): -0.49337332026428465, (112, 4): -0.2928349478530499, (143, 4): -0.35776869843654796, (143, 2): -0.5018865531428706, (112, 1): -0.3592015461825422, (60, 4): -0.2967393164718123, (76, 2): -0.46767750917882556, (48, 4): -0.3286059167660229, (73, 0): -0.02370536939607161, (74, 1): -0.3413248680132086, (178, 3): -0.7010782481283289, (198, 2): -0.4379162734388282, (76, 5): -0.6961695888690014, (70, 2): -0.532534404910582, (137, 1): -0.34250781340059394, (74, 0): 0.017132935473539335, (13, 4): -0.297539102180226, (24, 1): -0.3011409794084871, (173, 4): -0.41333059089480145}
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-Before inclusion: (207, 205)  X_pool_v1_df
+5: Tamanho antes do filtro: 12
+par(314, 5)ja apareceu
+par(286, 5)ja apareceu
+par(188, 5)ja apareceu
+par(170, 5)ja apareceu
+par(192, 5)ja apareceu
+par(325, 5)ja apareceu
+par(172, 5)ja apareceu
+par(232, 5)ja apareceu
+par(211, 5)ja apareceu
+5: Tamanho depois do filtro: 3
+{(252, 5): -0.5445409439455096, (140, 5): -0.1943689177120057, (112, 5): -0.21944348250204743}
+Before inclusion: (60, 10)  X_train_v1
+Before inclusion: (60, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
 
-Quantidade de pares selecionados: 60
-Quantidade de linhas distintas 35
-A posicao (178, 1) nao esta vazia.
-A posicao (42, 1) nao esta vazia.
-A posicao (76, 1) nao esta vazia.
-A posicao (60, 1) nao esta vazia.
-A posicao (91, 1) nao esta vazia.
-A posicao (13, 1) nao esta vazia.
-A posicao (44, 1) nao esta vazia.
-A posicao (198, 1) nao esta vazia.
-A posicao (76, 3) nao esta vazia.
-A posicao (10, 3) nao esta vazia.
-A posicao (1, 2) nao esta vazia.
-A posicao (203, 2) nao esta vazia.
-A posicao (86, 1) nao esta vazia.
-A posicao (63, 3) nao esta vazia.
-A posicao (74, 3) nao esta vazia.
-A posicao (178, 2) nao esta vazia.
-A posicao (48, 3) nao esta vazia.
-A posicao (176, 1) nao esta vazia.
-A posicao (80, 3) nao esta vazia.
-A posicao (143, 1) nao esta vazia.
-A posicao (48, 1) nao esta vazia.
-A posicao (140, 3) nao esta vazia.
-A posicao (31, 3) nao esta vazia.
-A posicao (127, 1) nao esta vazia.
-A posicao (203, 1) nao esta vazia.
-A posicao (104, 1) nao esta vazia.
-A posicao (95, 1) nao esta vazia.
-A posicao (55, 2) nao esta vazia.
-A posicao (0, 1) nao esta vazia.
-A posicao (76, 4) nao esta vazia.
-A posicao (70, 1) nao esta vazia.
-A posicao (40, 3) nao esta vazia.
-A posicao (174, 1) nao esta vazia.
-A posicao (6, 1) nao esta vazia.
+Quantidade de pares selecionados: 3
+Quantidade de linhas distintas 3
 count
 0
 par
-10 1
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.748517
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 10, dtype: float64
+252 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 252, dtype: float64
 
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.307930
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.748517
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 10, dtype: float64
+Before inclusion: (60, 10)  X_train_v1
+Before inclusion: (60, 6)  y_train_df
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 6)  y_train_df
+After inclusion: (61, 10)  X_train_v1
+After inclusion: (61, 6)  y_train_df
 
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 206)  X_train_v2
-After inclusion: (72, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (60, 2) nao esta vazia.
-A posicao (1, 4) nao esta vazia.
-A posicao (91, 3) nao esta vazia.
-A posicao (1, 3) nao esta vazia.
-A posicao (24, 4) nao esta vazia.
-A posicao (202, 1) nao esta vazia.
-A posicao (104, 2) nao esta vazia.
-A posicao (112, 4) nao esta vazia.
-A posicao (143, 4) nao esta vazia.
-A posicao (143, 2) nao esta vazia.
-A posicao (112, 1) nao esta vazia.
-A posicao (60, 4) nao esta vazia.
-A posicao (76, 2) nao esta vazia.
-A posicao (48, 4) nao esta vazia.
+After inclusion: (61, 10)  X_train_v1
+After inclusion: (61, 10)  X_train_v2
+After inclusion: (61, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
 count
 1
 par
-73 0
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.792052
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 73, dtype: float64
+140 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 140, dtype: float64
 
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000   -0.023705
-target_LBL+ALLminp0+bt7d_000         NaN
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000   -0.792052
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 73, dtype: float64
+Before inclusion: (61, 10)  X_train_v1
+Before inclusion: (61, 6)  y_train_df
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 6)  y_train_df
+After inclusion: (62, 10)  X_train_v1
+After inclusion: (62, 6)  y_train_df
 
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 206)  X_train_v2
-After inclusion: (72, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (74, 1) nao esta vazia.
-A posicao (178, 3) nao esta vazia.
-A posicao (198, 2) nao esta vazia.
-A posicao (76, 5) nao esta vazia.
-A posicao (70, 2) nao esta vazia.
-A posicao (137, 1) nao esta vazia.
-A posicao (74, 0) nao esta vazia.
+After inclusion: (62, 10)  X_train_v1
+After inclusion: (62, 10)  X_train_v2
+After inclusion: (62, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
 count
 2
 par
-13 4
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.425049
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 13, dtype: float64
+112 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 112, dtype: float64
 
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.425049
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.297539
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 13, dtype: float64
+Before inclusion: (62, 10)  X_train_v1
+Before inclusion: (62, 6)  y_train_df
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 6)  y_train_df
+After inclusion: (63, 10)  X_train_v1
+After inclusion: (63, 6)  y_train_df
 
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 206)  X_train_v2
-After inclusion: (72, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (24, 1) nao esta vazia.
-A posicao (173, 4) nao esta vazia.
+After inclusion: (63, 10)  X_train_v1
+After inclusion: (63, 10)  X_train_v2
+After inclusion: (63, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
 linhas completas
 Index([], dtype='int64')
-        After pool clean: (72, 205)  X_train_v1
-        After pool clean: (72, 206)  X_train_v2
-        After pool clean: (72, 6)  y_train_df
-        After pool clean: (207, 205)  X_pool_v1_df
-        After pool clean: (207, 206)  X_pool_v2_df
-        After pool clean: (207, 6)  y_pool
 Target Cotraining Making predictions on test data...
-UE1
-6
-UE2
-UE2
-UE2
-UE2
-UE2
-UE2
-    Overall: R²=0.452, MSE=0.385, MAE=0.355, CA=0.297, ARRMSE=0.721
+    Overall: R²=-0.057, MSE=0.988, MAE=0.847, CA=0.052, ARRMSE=1.026
 ------------------------------------------------------------------------
-9
+5
 5
 ------------------------------------------------------------------------
 Iteration 7/10
-    Before cleaning: (72, 205)  X_train_v1
-    Before cleaning: (72, 206)  X_train_v2
-    Before cleaning: (72, 6)  y_train_df
-    Before cleaning: (207, 205)  X_pool_v1_df
-    After cleaning: (72, 205)  X_train_v1
-    After cleaning: (72, 206)  X_train_v2
-    After cleaning: (72, 6)  y_train_df
-    After cleaning: (207, 205)  X_pool_v1_df
-{(178, 1): -0.41332479790298404, (42, 1): -0.40571036158600926, (104, 1): -0.41742679652116776, (60, 1): -0.4150128011694362, (76, 1): -0.4178893356428048, (86, 1): -0.4223936291323037, (13, 1): -0.42212548176295195, (48, 3): -0.8044001111668366, (44, 1): -0.4261644777937028, (1, 2): -0.4780857767463106, (70, 1): -0.3942361650867888, (176, 1): -0.3947753116022091, (178, 2): -0.49267326103711073, (48, 1): -0.4017164613769686, (74, 3): -0.7415191906953574, (10, 3): -0.7378259199149904, (63, 3): -0.676049521740282, (76, 2): -0.4703898622033562, (60, 2): -0.5001159965319453, (0, 1): -0.3998219846174274, (76, 4): -0.26769773159126486, (31, 3): -0.7080713063425023, (76, 3): -0.7107301354537099, (143, 1): -0.3977702377915038, (60, 4): -0.2910456784050618, (104, 2): -0.4983998707619448, (203, 2): -0.5080677855413707, (13, 4): -0.2949685741236554, (40, 3): -0.7131411522450033, (6, 3): -0.6634289432011762, (198, 1): -0.39224743953621766, (174, 1): -0.39631735473195273, (1, 3): -0.6989728822938206, (112, 4): -0.2882345250950444, (174, 4): -0.27650642753025756, (95, 1): -0.4165307107182434, (80, 3): -0.6700521172846563, (1, 4): -0.2909646289090728, (74, 1): -0.3297055934471423, (1, 1): -0.41830117069769335, (74, 0): 0.01622988679447405, (91, 3): -0.6770940857176166, (203, 1): -0.3856993789629808, (24, 4): -0.2643884650233673, (70, 2): -0.5318917515765731, (91, 1): -0.41379288733710085, (127, 1): -0.3123299758106143, (95, 2): -0.4276191203931093, (24, 1): -0.3195124090685598, (48, 4): -0.32514614219204996, (143, 4): -0.36681537019387067, (112, 1): -0.36282650572133246, (143, 2): -0.4991334429539096, (55, 2): -0.42041578409312186, (178, 3): -0.6981713685417639, (10, 1): -0.2829871743238507, (76, 5): -0.7012079355109808, (44, 4): -0.28018269029597065, (178, 4): -0.3357323349101525, (137, 1): -0.3228645436514184}
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-Before inclusion: (207, 205)  X_pool_v1_df
+6: Tamanho antes do filtro: 16
+par(252, 5)ja apareceu
+par(286, 5)ja apareceu
+par(188, 5)ja apareceu
+par(211, 5)ja apareceu
+par(232, 5)ja apareceu
+par(112, 5)ja apareceu
+par(140, 5)ja apareceu
+par(170, 5)ja apareceu
+par(192, 5)ja apareceu
+par(314, 5)ja apareceu
+par(325, 5)ja apareceu
+6: Tamanho depois do filtro: 5
+{(360, 5): -0.4187240473062856, (317, 5): -0.23425546569313813, (242, 5): -0.5586732002895671, (221, 5): -0.5186802125088367, (365, 5): -0.24937499946416944}
+Before inclusion: (63, 10)  X_train_v1
+Before inclusion: (63, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
 
-Quantidade de pares selecionados: 60
-Quantidade de linhas distintas 31
-A posicao (178, 1) nao esta vazia.
-A posicao (42, 1) nao esta vazia.
-A posicao (104, 1) nao esta vazia.
-A posicao (60, 1) nao esta vazia.
-A posicao (76, 1) nao esta vazia.
-A posicao (86, 1) nao esta vazia.
-A posicao (13, 1) nao esta vazia.
-A posicao (48, 3) nao esta vazia.
-A posicao (44, 1) nao esta vazia.
-A posicao (1, 2) nao esta vazia.
-A posicao (70, 1) nao esta vazia.
-A posicao (176, 1) nao esta vazia.
-A posicao (178, 2) nao esta vazia.
-A posicao (48, 1) nao esta vazia.
-A posicao (74, 3) nao esta vazia.
-A posicao (10, 3) nao esta vazia.
-A posicao (63, 3) nao esta vazia.
-A posicao (76, 2) nao esta vazia.
-A posicao (60, 2) nao esta vazia.
-A posicao (0, 1) nao esta vazia.
-A posicao (76, 4) nao esta vazia.
-A posicao (31, 3) nao esta vazia.
-A posicao (76, 3) nao esta vazia.
-A posicao (143, 1) nao esta vazia.
-A posicao (60, 4) nao esta vazia.
-A posicao (104, 2) nao esta vazia.
-A posicao (203, 2) nao esta vazia.
-A posicao (13, 4) nao esta vazia.
-A posicao (40, 3) nao esta vazia.
-A posicao (6, 3) nao esta vazia.
-A posicao (198, 1) nao esta vazia.
-A posicao (174, 1) nao esta vazia.
-A posicao (1, 3) nao esta vazia.
-A posicao (112, 4) nao esta vazia.
-A posicao (174, 4) nao esta vazia.
-A posicao (95, 1) nao esta vazia.
-A posicao (80, 3) nao esta vazia.
-A posicao (1, 4) nao esta vazia.
-A posicao (74, 1) nao esta vazia.
-A posicao (1, 1) nao esta vazia.
-A posicao (74, 0) nao esta vazia.
-A posicao (91, 3) nao esta vazia.
-A posicao (203, 1) nao esta vazia.
-A posicao (24, 4) nao esta vazia.
-A posicao (70, 2) nao esta vazia.
-A posicao (91, 1) nao esta vazia.
-A posicao (127, 1) nao esta vazia.
+Quantidade de pares selecionados: 5
+Quantidade de linhas distintas 5
 count
 0
 par
-95 2
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.420190
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.245979
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 95, dtype: float64
+360 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 360, dtype: float64
 
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.420190
-target_LBL+aDLminpA+bt7d_000   -0.427619
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.245979
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 95, dtype: float64
+Before inclusion: (63, 10)  X_train_v1
+Before inclusion: (63, 6)  y_train_df
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 6)  y_train_df
+After inclusion: (64, 10)  X_train_v1
+After inclusion: (64, 6)  y_train_df
 
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 206)  X_train_v2
-After inclusion: (72, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (24, 1) nao esta vazia.
-A posicao (48, 4) nao esta vazia.
-A posicao (143, 4) nao esta vazia.
-A posicao (112, 1) nao esta vazia.
-A posicao (143, 2) nao esta vazia.
-A posicao (55, 2) nao esta vazia.
-A posicao (178, 3) nao esta vazia.
-A posicao (10, 1) nao esta vazia.
-A posicao (76, 5) nao esta vazia.
+After inclusion: (64, 10)  X_train_v1
+After inclusion: (64, 10)  X_train_v2
+After inclusion: (64, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
 count
 1
 par
-44 4
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.431403
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 44, dtype: float64
+317 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 317, dtype: float64
 
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.431403
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.280183
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 44, dtype: float64
+Before inclusion: (64, 10)  X_train_v1
+Before inclusion: (64, 6)  y_train_df
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 6)  y_train_df
+After inclusion: (65, 10)  X_train_v1
+After inclusion: (65, 6)  y_train_df
 
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 206)  X_train_v2
-After inclusion: (72, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
+After inclusion: (65, 10)  X_train_v1
+After inclusion: (65, 10)  X_train_v2
+After inclusion: (65, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
 count
 2
 par
-178 4
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.415705
-target_LBL+aDLminpA+bt7d_000   -0.498244
-target_LBL+aCOminpA+bt7d_000   -0.711976
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 178, dtype: float64
+242 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 242, dtype: float64
 
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.415705
-target_LBL+aDLminpA+bt7d_000   -0.498244
-target_LBL+aCOminpA+bt7d_000   -0.711976
-target_LBL+aFLminpA+bt7d_000   -0.335732
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 178, dtype: float64
+Before inclusion: (65, 10)  X_train_v1
+Before inclusion: (65, 6)  y_train_df
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 6)  y_train_df
+After inclusion: (66, 10)  X_train_v1
+After inclusion: (66, 6)  y_train_df
 
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 206)  X_train_v2
-After inclusion: (72, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (137, 1) nao esta vazia.
+After inclusion: (66, 10)  X_train_v1
+After inclusion: (66, 10)  X_train_v2
+After inclusion: (66, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+3
+par
+221 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 221, dtype: float64
+
+Before inclusion: (66, 10)  X_train_v1
+Before inclusion: (66, 6)  y_train_df
+
+After inclusion: (67, 10)  X_train_v1
+After inclusion: (67, 6)  y_train_df
+
+
+After inclusion: (67, 10)  X_train_v1
+After inclusion: (67, 10)  X_train_v2
+After inclusion: (67, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+4
+par
+365 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 365, dtype: float64
+
+Before inclusion: (67, 10)  X_train_v1
+Before inclusion: (67, 6)  y_train_df
+
+After inclusion: (68, 10)  X_train_v1
+After inclusion: (68, 6)  y_train_df
+
+
+After inclusion: (68, 10)  X_train_v1
+After inclusion: (68, 10)  X_train_v2
+After inclusion: (68, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
 linhas completas
 Index([], dtype='int64')
-        After pool clean: (72, 205)  X_train_v1
-        After pool clean: (72, 206)  X_train_v2
-        After pool clean: (72, 6)  y_train_df
-        After pool clean: (207, 205)  X_pool_v1_df
-        After pool clean: (207, 206)  X_pool_v2_df
-        After pool clean: (207, 6)  y_pool
 Target Cotraining Making predictions on test data...
-UE1
-6
-UE2
-UE2
-UE2
-UE2
-UE2
-UE2
-    Overall: R²=0.467, MSE=0.378, MAE=0.351, CA=0.294, ARRMSE=0.711
+    Overall: R²=-0.051, MSE=0.983, MAE=0.845, CA=0.060, ARRMSE=1.024
 ------------------------------------------------------------------------
-9
+5
 6
 ------------------------------------------------------------------------
 Iteration 8/10
-    Before cleaning: (72, 205)  X_train_v1
-    Before cleaning: (72, 206)  X_train_v2
-    Before cleaning: (72, 6)  y_train_df
-    Before cleaning: (207, 205)  X_pool_v1_df
-    After cleaning: (72, 205)  X_train_v1
-    After cleaning: (72, 206)  X_train_v2
-    After cleaning: (72, 6)  y_train_df
-    After cleaning: (207, 205)  X_pool_v1_df
-{(60, 1): -0.415120490313114, (178, 1): -0.4116938021389683, (104, 1): -0.4156356022935772, (44, 1): -0.4279778489769207, (13, 1): -0.42256446476040455, (48, 3): -0.8058489858587614, (76, 1): -0.41916685685983407, (86, 1): -0.4234033374937638, (1, 2): -0.47769639437166356, (143, 1): -0.40148128510630565, (60, 2): -0.5002869064499639, (76, 4): -0.2680686716750323, (127, 1): -0.31514365159353974, (176, 1): -0.3922426629036587, (60, 4): -0.2915291330958757, (10, 3): -0.7371595362941121, (63, 3): -0.6782939026003096, (70, 1): -0.3916111588147948, (6, 1): -0.4155992617627671, (48, 1): -0.4004098841806609, (91, 1): -0.41835554320329527, (140, 3): -0.7218762703232503, (76, 2): -0.4709218887980178, (104, 2): -0.49260842067762267, (10, 1): -0.2860223655073264, (42, 1): -0.40323626774973875, (31, 3): -0.7067742602213344, (44, 4): -0.2801389689971666, (112, 4): -0.286970582145732, (1, 4): -0.2941512281332943, (95, 4): -0.24410509371066902, (1, 3): -0.6991394226360292, (0, 1): -0.3935753022743299, (203, 1): -0.38441009930617653, (74, 3): -0.7412195504320319, (178, 4): -0.342055287358903, (40, 3): -0.7064123436508274, (112, 1): -0.35340210129151983, (95, 1): -0.4204318347444137, (76, 3): -0.7052181701093093, (178, 2): -0.4905031669262251, (91, 3): -0.6841138552193389, (24, 1): -0.31363827790201315, (1, 1): -0.4206879938125652, (174, 1): -0.3957380086300747, (95, 2): -0.42335298503764357, (74, 1): -0.33100565229667067, (48, 4): -0.32708091843978004, (143, 2): -0.5001906882145031, (137, 1): -0.33144454185451944, (178, 3): -0.7063315859686098, (192, 1): -0.2959715043280291, (6, 3): -0.6530144185549958, (74, 0): 0.012047309783615805, (42, 4): -0.24099113386204035, (70, 2): -0.5347999229600304, (42, 2): -0.4230063716355437, (143, 4): -0.35508549560029523, (86, 4): -0.2463263454497361, (13, 4): -0.2893943208430629}
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-Before inclusion: (207, 205)  X_pool_v1_df
+7: Tamanho antes do filtro: 21
+par(360, 5)ja apareceu
+par(252, 5)ja apareceu
+par(317, 5)ja apareceu
+par(187, 5)ja apareceu
+par(242, 5)ja apareceu
+par(286, 5)ja apareceu
+par(188, 5)ja apareceu
+par(211, 5)ja apareceu
+par(221, 5)ja apareceu
+par(232, 5)ja apareceu
+par(112, 5)ja apareceu
+par(365, 5)ja apareceu
+par(140, 5)ja apareceu
+par(170, 5)ja apareceu
+par(192, 5)ja apareceu
+par(172, 5)ja apareceu
+par(314, 5)ja apareceu
+par(325, 5)ja apareceu
+7: Tamanho depois do filtro: 3
+{(179, 5): -0.17074998625643395, (318, 5): 0.060109374077840005, (380, 5): -0.18868854147042213}
+Before inclusion: (68, 10)  X_train_v1
+Before inclusion: (68, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
 
-Quantidade de pares selecionados: 60
-Quantidade de linhas distintas 30
-A posicao (60, 1) nao esta vazia.
-A posicao (178, 1) nao esta vazia.
-A posicao (104, 1) nao esta vazia.
-A posicao (44, 1) nao esta vazia.
-A posicao (13, 1) nao esta vazia.
-A posicao (48, 3) nao esta vazia.
-A posicao (76, 1) nao esta vazia.
-A posicao (86, 1) nao esta vazia.
-A posicao (1, 2) nao esta vazia.
-A posicao (143, 1) nao esta vazia.
-A posicao (60, 2) nao esta vazia.
-A posicao (76, 4) nao esta vazia.
-A posicao (127, 1) nao esta vazia.
-A posicao (176, 1) nao esta vazia.
-A posicao (60, 4) nao esta vazia.
-A posicao (10, 3) nao esta vazia.
-A posicao (63, 3) nao esta vazia.
-A posicao (70, 1) nao esta vazia.
-A posicao (6, 1) nao esta vazia.
-A posicao (48, 1) nao esta vazia.
-A posicao (91, 1) nao esta vazia.
-A posicao (140, 3) nao esta vazia.
-A posicao (76, 2) nao esta vazia.
-A posicao (104, 2) nao esta vazia.
-A posicao (10, 1) nao esta vazia.
-A posicao (42, 1) nao esta vazia.
-A posicao (31, 3) nao esta vazia.
-A posicao (44, 4) nao esta vazia.
-A posicao (112, 4) nao esta vazia.
-A posicao (1, 4) nao esta vazia.
-A posicao (95, 4) nao esta vazia.
-A posicao (1, 3) nao esta vazia.
-A posicao (0, 1) nao esta vazia.
-A posicao (203, 1) nao esta vazia.
-A posicao (74, 3) nao esta vazia.
-A posicao (178, 4) nao esta vazia.
-A posicao (40, 3) nao esta vazia.
-A posicao (112, 1) nao esta vazia.
-A posicao (95, 1) nao esta vazia.
-A posicao (76, 3) nao esta vazia.
-A posicao (178, 2) nao esta vazia.
-A posicao (91, 3) nao esta vazia.
-A posicao (24, 1) nao esta vazia.
-A posicao (1, 1) nao esta vazia.
-A posicao (174, 1) nao esta vazia.
-A posicao (95, 2) nao esta vazia.
-A posicao (74, 1) nao esta vazia.
-A posicao (48, 4) nao esta vazia.
-A posicao (143, 2) nao esta vazia.
-A posicao (137, 1) nao esta vazia.
-A posicao (178, 3) nao esta vazia.
-A posicao (192, 1) nao esta vazia.
-A posicao (6, 3) nao esta vazia.
-A posicao (74, 0) nao esta vazia.
+Quantidade de pares selecionados: 3
+Quantidade de linhas distintas 3
 count
 0
 par
-42 4
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.406885
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 42, dtype: float64
+179 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 179, dtype: float64
 
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.406885
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.240991
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 42, dtype: float64
+Before inclusion: (68, 10)  X_train_v1
+Before inclusion: (68, 6)  y_train_df
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 6)  y_train_df
+After inclusion: (69, 10)  X_train_v1
+After inclusion: (69, 6)  y_train_df
 
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 206)  X_train_v2
-After inclusion: (72, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (70, 2) nao esta vazia.
+After inclusion: (69, 10)  X_train_v1
+After inclusion: (69, 10)  X_train_v2
+After inclusion: (69, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
 count
 1
 par
-42 2
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.406885
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.240991
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 42, dtype: float64
+318 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 318, dtype: float64
 
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.406885
-target_LBL+aDLminpA+bt7d_000   -0.423006
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.240991
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 42, dtype: float64
+Before inclusion: (69, 10)  X_train_v1
+Before inclusion: (69, 6)  y_train_df
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 6)  y_train_df
+After inclusion: (70, 10)  X_train_v1
+After inclusion: (70, 6)  y_train_df
 
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 206)  X_train_v2
-After inclusion: (72, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (143, 4) nao esta vazia.
+After inclusion: (70, 10)  X_train_v1
+After inclusion: (70, 10)  X_train_v2
+After inclusion: (70, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
 count
 2
 par
-86 4
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.419817
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 86, dtype: float64
+380 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 380, dtype: float64
 
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.419817
-target_LBL+aDLminpA+bt7d_000         NaN
-target_LBL+aCOminpA+bt7d_000         NaN
-target_LBL+aFLminpA+bt7d_000   -0.246326
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 86, dtype: float64
+Before inclusion: (70, 10)  X_train_v1
+Before inclusion: (70, 6)  y_train_df
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 6)  y_train_df
+After inclusion: (71, 10)  X_train_v1
+After inclusion: (71, 6)  y_train_df
 
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 206)  X_train_v2
-After inclusion: (72, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (13, 4) nao esta vazia.
+After inclusion: (71, 10)  X_train_v1
+After inclusion: (71, 10)  X_train_v2
+After inclusion: (71, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
 linhas completas
 Index([], dtype='int64')
-        After pool clean: (72, 205)  X_train_v1
-        After pool clean: (72, 206)  X_train_v2
-        After pool clean: (72, 6)  y_train_df
-        After pool clean: (207, 205)  X_pool_v1_df
-        After pool clean: (207, 206)  X_pool_v2_df
-        After pool clean: (207, 6)  y_pool
 Target Cotraining Making predictions on test data...
-UE1
-6
-UE2
-UE2
-UE2
-UE2
-UE2
-UE2
-    Overall: R²=0.467, MSE=0.377, MAE=0.351, CA=0.291, ARRMSE=0.711
+    Overall: R²=-0.045, MSE=0.978, MAE=0.841, CA=0.057, ARRMSE=1.021
 ------------------------------------------------------------------------
-9
+5
 7
 ------------------------------------------------------------------------
 Iteration 9/10
-    Before cleaning: (72, 205)  X_train_v1
-    Before cleaning: (72, 206)  X_train_v2
-    Before cleaning: (72, 6)  y_train_df
-    Before cleaning: (207, 205)  X_pool_v1_df
-    After cleaning: (72, 205)  X_train_v1
-    After cleaning: (72, 206)  X_train_v2
-    After cleaning: (72, 6)  y_train_df
-    After cleaning: (207, 205)  X_pool_v1_df
-{(42, 1): -0.4072583250490663, (76, 1): -0.4195793702862488, (178, 1): -0.4123548368802985, (95, 1): -0.41941813838065234, (13, 1): -0.4202491752688161, (48, 3): -0.8047040430840977, (143, 2): -0.506212530349559, (86, 1): -0.4220418178102695, (60, 1): -0.41627938621520655, (1, 2): -0.4772981294897207, (80, 3): -0.6748569490664089, (63, 3): -0.6811870216741851, (60, 4): -0.2909569869976006, (1, 3): -0.6978797904328056, (13, 4): -0.29594987648420595, (1, 1): -0.4175316039874568, (143, 1): -0.3984320200496664, (203, 2): -0.511439052911743, (74, 3): -0.7393289360684354, (198, 1): -0.39352938792168746, (48, 1): -0.35689120151480075, (6, 1): -0.4160554768920006, (44, 1): -0.4233432875978188, (76, 2): -0.4712153797303983, (31, 3): -0.7107482715821847, (174, 1): -0.3998552304285522, (76, 4): -0.2661060445498121, (44, 4): -0.28030086413726535, (10, 3): -0.7366424653150173, (76, 3): -0.7127752589450815, (40, 3): -0.7091844494854143, (112, 4): -0.28470647651055425, (86, 4): -0.2438730512700898, (0, 1): -0.3923995592116256, (1, 4): -0.28738937859471564, (42, 4): -0.235538179408965, (127, 1): -0.30847353647189685, (178, 4): -0.3446669904168427, (70, 2): -0.5337959470996272, (143, 4): -0.3667992509783812, (55, 4): -0.2270122579719702, (74, 1): -0.3287231245990575, (91, 3): -0.6854935718612911, (104, 1): -0.4130699376453293, (174, 4): -0.2759532899658778, (104, 2): -0.49775675860781043, (42, 2): -0.42382484114955865, (176, 1): -0.3867846257691548, (24, 4): -0.2591236291489184, (48, 4): -0.33600040996260705, (6, 3): -0.6601222998655113, (137, 1): -0.3315361575175072, (112, 1): -0.3590620296409298, (95, 4): -0.2374292566587345, (178, 2): -0.49205506725803627, (74, 0): 0.004728627169381248, (203, 1): -0.3835606903230637, (91, 1): -0.41206089083626585, (60, 2): -0.5046674457573037, (178, 3): -0.69996085001123}
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-Before inclusion: (207, 205)  X_pool_v1_df
+8: Tamanho antes do filtro: 26
+par(360, 5)ja apareceu
+par(252, 5)ja apareceu
+par(317, 5)ja apareceu
+par(187, 5)ja apareceu
+par(242, 5)ja apareceu
+par(286, 5)ja apareceu
+par(188, 5)ja apareceu
+par(221, 5)ja apareceu
+par(211, 5)ja apareceu
+par(232, 5)ja apareceu
+par(112, 5)ja apareceu
+par(365, 5)ja apareceu
+par(140, 5)ja apareceu
+par(170, 5)ja apareceu
+par(192, 5)ja apareceu
+par(179, 5)ja apareceu
+par(172, 5)ja apareceu
+par(314, 5)ja apareceu
+par(325, 5)ja apareceu
+par(380, 5)ja apareceu
+8: Tamanho depois do filtro: 6
+{(350, 5): -0.33153557861734806, (257, 5): -0.030891102467693998, (376, 5): -0.17190523340498193, (349, 5): -0.585482212905698, (283, 5): -0.014587162764946371, (78, 5): -0.2421575921282952}
+Before inclusion: (71, 10)  X_train_v1
+Before inclusion: (71, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
 
-Quantidade de pares selecionados: 60
-Quantidade de linhas distintas 31
-A posicao (42, 1) nao esta vazia.
-A posicao (76, 1) nao esta vazia.
-A posicao (178, 1) nao esta vazia.
-A posicao (95, 1) nao esta vazia.
-A posicao (13, 1) nao esta vazia.
-A posicao (48, 3) nao esta vazia.
-A posicao (143, 2) nao esta vazia.
-A posicao (86, 1) nao esta vazia.
-A posicao (60, 1) nao esta vazia.
-A posicao (1, 2) nao esta vazia.
-A posicao (80, 3) nao esta vazia.
-A posicao (63, 3) nao esta vazia.
-A posicao (60, 4) nao esta vazia.
-A posicao (1, 3) nao esta vazia.
-A posicao (13, 4) nao esta vazia.
-A posicao (1, 1) nao esta vazia.
-A posicao (143, 1) nao esta vazia.
-A posicao (203, 2) nao esta vazia.
-A posicao (74, 3) nao esta vazia.
-A posicao (198, 1) nao esta vazia.
-A posicao (48, 1) nao esta vazia.
-A posicao (6, 1) nao esta vazia.
-A posicao (44, 1) nao esta vazia.
-A posicao (76, 2) nao esta vazia.
-A posicao (31, 3) nao esta vazia.
-A posicao (174, 1) nao esta vazia.
-A posicao (76, 4) nao esta vazia.
-A posicao (44, 4) nao esta vazia.
-A posicao (10, 3) nao esta vazia.
-A posicao (76, 3) nao esta vazia.
-A posicao (40, 3) nao esta vazia.
-A posicao (112, 4) nao esta vazia.
-A posicao (86, 4) nao esta vazia.
-A posicao (0, 1) nao esta vazia.
-A posicao (1, 4) nao esta vazia.
-A posicao (42, 4) nao esta vazia.
-A posicao (127, 1) nao esta vazia.
-A posicao (178, 4) nao esta vazia.
-A posicao (70, 2) nao esta vazia.
-A posicao (143, 4) nao esta vazia.
+Quantidade de pares selecionados: 6
+Quantidade de linhas distintas 6
 count
 0
 par
-55 4
-207
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.391112
-target_LBL+aDLminpA+bt7d_000   -0.415443
-target_LBL+aCOminpA+bt7d_000   -0.583793
-target_LBL+aFLminpA+bt7d_000         NaN
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 55, dtype: float64
+350 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 350, dtype: float64
 
-Before inclusion: (72, 205)  X_train_v1
+Before inclusion: (71, 10)  X_train_v1
+Before inclusion: (71, 6)  y_train_df
+
+After inclusion: (72, 10)  X_train_v1
+After inclusion: (72, 6)  y_train_df
+
+
+After inclusion: (72, 10)  X_train_v1
+After inclusion: (72, 10)  X_train_v2
+After inclusion: (72, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+1
+par
+257 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 257, dtype: float64
+
+Before inclusion: (72, 10)  X_train_v1
 Before inclusion: (72, 6)  y_train_df
-vai campeao
-target_LBL+ALLminpA+bt7d_000         NaN
-target_LBL+ALLminp0+bt7d_000   -0.391112
-target_LBL+aDLminpA+bt7d_000   -0.415443
-target_LBL+aCOminpA+bt7d_000   -0.583793
-target_LBL+aFLminpA+bt7d_000   -0.227012
-target_LBL+aUAminpA+bt7d_000         NaN
-Name: 55, dtype: float64
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 6)  y_train_df
+After inclusion: (73, 10)  X_train_v1
+After inclusion: (73, 6)  y_train_df
 
 
-After inclusion: (72, 205)  X_train_v1
-After inclusion: (72, 206)  X_train_v2
-After inclusion: (72, 6)  y_train_df
-After inclusion: (207, 205)  X_pool_v1_df
-After inclusion: (207, 206)  X_pool_v2_df
-After inclusion: (207, 6)  y_pool
-A posicao (74, 1) nao esta vazia.
-A posicao (91, 3) nao esta vazia.
-A posicao (104, 1) nao esta vazia.
-A posicao (174, 4) nao esta vazia.
-A posicao (104, 2) nao esta vazia.
-A posicao (42, 2) nao esta vazia.
-A posicao (176, 1) nao esta vazia.
-A posicao (24, 4) nao esta vazia.
-A posicao (48, 4) nao esta vazia.
-A posicao (6, 3) nao esta vazia.
-A posicao (137, 1) nao esta vazia.
-A posicao (112, 1) nao esta vazia.
-A posicao (95, 4) nao esta vazia.
-A posicao (178, 2) nao esta vazia.
-A posicao (74, 0) nao esta vazia.
-A posicao (203, 1) nao esta vazia.
-A posicao (91, 1) nao esta vazia.
-A posicao (60, 2) nao esta vazia.
-A posicao (178, 3) nao esta vazia.
+After inclusion: (73, 10)  X_train_v1
+After inclusion: (73, 10)  X_train_v2
+After inclusion: (73, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+2
+par
+376 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 376, dtype: float64
+
+Before inclusion: (73, 10)  X_train_v1
+Before inclusion: (73, 6)  y_train_df
+
+After inclusion: (74, 10)  X_train_v1
+After inclusion: (74, 6)  y_train_df
+
+
+After inclusion: (74, 10)  X_train_v1
+After inclusion: (74, 10)  X_train_v2
+After inclusion: (74, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+3
+par
+349 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 349, dtype: float64
+
+Before inclusion: (74, 10)  X_train_v1
+Before inclusion: (74, 6)  y_train_df
+
+After inclusion: (75, 10)  X_train_v1
+After inclusion: (75, 6)  y_train_df
+
+
+After inclusion: (75, 10)  X_train_v1
+After inclusion: (75, 10)  X_train_v2
+After inclusion: (75, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+4
+par
+283 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 283, dtype: float64
+
+Before inclusion: (75, 10)  X_train_v1
+Before inclusion: (75, 6)  y_train_df
+
+After inclusion: (76, 10)  X_train_v1
+After inclusion: (76, 6)  y_train_df
+
+
+After inclusion: (76, 10)  X_train_v1
+After inclusion: (76, 10)  X_train_v2
+After inclusion: (76, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+5
+par
+78 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 78, dtype: float64
+
+Before inclusion: (76, 10)  X_train_v1
+Before inclusion: (76, 6)  y_train_df
+
+After inclusion: (77, 10)  X_train_v1
+After inclusion: (77, 6)  y_train_df
+
+
+After inclusion: (77, 10)  X_train_v1
+After inclusion: (77, 10)  X_train_v2
+After inclusion: (77, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
 linhas completas
 Index([], dtype='int64')
-        After pool clean: (72, 205)  X_train_v1
-        After pool clean: (72, 206)  X_train_v2
-        After pool clean: (72, 6)  y_train_df
-        After pool clean: (207, 205)  X_pool_v1_df
-        After pool clean: (207, 206)  X_pool_v2_df
-        After pool clean: (207, 6)  y_pool
 Target Cotraining Making predictions on test data...
-UE1
-6
-UE2
-UE2
-UE2
-UE2
-UE2
-UE2
-    Overall: R²=0.465, MSE=0.378, MAE=0.353, CA=0.291, ARRMSE=0.713
+    Overall: R²=-0.055, MSE=0.987, MAE=0.848, CA=0.055, ARRMSE=1.026
 ------------------------------------------------------------------------
-9
+5
 8
 ------------------------------------------------------------------------
 Iteration 10/10
-    Before cleaning: (72, 205)  X_train_v1
-    Before cleaning: (72, 206)  X_train_v2
-    Before cleaning: (72, 6)  y_train_df
-    Before cleaning: (207, 205)  X_pool_v1_df
-    After cleaning: (72, 205)  X_train_v1
-    After cleaning: (72, 206)  X_train_v2
-    After cleaning: (72, 6)  y_train_df
-    After cleaning: (207, 205)  X_pool_v1_df
-{(42, 1): -0.40513533426263104, (178, 1): -0.4129570626036263, (55, 1): -0.39592331057767616, (76, 1): -0.4187105931420067, (104, 1): -0.416501370682569, (13, 1): -0.4224014201264902, (198, 1): -0.39485978100427765, (44, 1): -0.42720379903448114, (13, 4): -0.29583958191934645, (60, 1): -0.4134642378241211, (86, 1): -0.4230168712913762, (95, 1): -0.4179879947831455, (24, 1): -0.3181657574948634, (60, 4): -0.29605124679353206, (76, 3): -0.7108383916428804, (63, 3): -0.676575437476731, (44, 4): -0.2735580790185368, (60, 2): -0.4992640908487014, (76, 4): -0.2662557902854244, (76, 2): -0.467883275762059, (176, 1): -0.3913350952421879, (143, 1): -0.39813016714633875, (6, 1): -0.41298388724515966, (80, 3): -0.6733946145303555, (1, 2): -0.4794589193927966, (140, 3): -0.7255563626836372, (178, 2): -0.4946966803070235, (55, 4): -0.22812513359685443, (174, 4): -0.2707659258566396, (42, 4): -0.23940785124684344, (42, 2): -0.4298205883513485, (74, 3): -0.7386481899081632, (112, 4): -0.2922231478891306, (86, 4): -0.2415476679498536, (0, 1): -0.39520779307201054, (127, 1): -0.31187837472902946, (203, 1): -0.38640069364882873, (48, 1): -0.39729415179607064, (70, 1): -0.3895483001511557, (95, 2): -0.4256585881216232, (40, 3): -0.712422532351117, (1, 3): -0.6974844914513207, (178, 4): -0.33943845656536303, (24, 4): -0.2556976983158995, (174, 1): -0.39698667756616296, (48, 3): -0.8014948793707559, (10, 3): -0.734840841091216, (73, 3): -0.7928097747590739, (143, 4): -0.361449632723994, (1, 4): -0.29768527103576686, (31, 3): -0.70566970484133, (143, 2): -0.5013798901826225, (6, 3): -0.6578653667569521, (1, 1): -0.41942611251646333, (91, 1): -0.42135084315100607, (91, 3): -0.6789351227853577, (73, 0): -0.011132223048560826, (74, 1): -0.3338353174646428, (137, 1): -0.33511446079319884, (112, 1): -0.34949416551821344}
-Before inclusion: (72, 205)  X_train_v1
-Before inclusion: (72, 6)  y_train_df
-Before inclusion: (207, 205)  X_pool_v1_df
+9: Tamanho antes do filtro: 28
+par(349, 5)ja apareceu
+par(360, 5)ja apareceu
+par(252, 5)ja apareceu
+par(317, 5)ja apareceu
+par(187, 5)ja apareceu
+par(350, 5)ja apareceu
+par(242, 5)ja apareceu
+par(286, 5)ja apareceu
+par(188, 5)ja apareceu
+par(221, 5)ja apareceu
+par(211, 5)ja apareceu
+par(232, 5)ja apareceu
+par(78, 5)ja apareceu
+par(112, 5)ja apareceu
+par(365, 5)ja apareceu
+par(257, 5)ja apareceu
+par(314, 5)ja apareceu
+par(140, 5)ja apareceu
+par(376, 5)ja apareceu
+par(170, 5)ja apareceu
+par(192, 5)ja apareceu
+par(179, 5)ja apareceu
+par(172, 5)ja apareceu
+par(325, 5)ja apareceu
+par(380, 5)ja apareceu
+par(283, 5)ja apareceu
+9: Tamanho depois do filtro: 2
+{(292, 5): -0.20605124381025547, (173, 5): -0.08862617504290157}
+Before inclusion: (77, 10)  X_train_v1
+Before inclusion: (77, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
 
-Quantidade de pares selecionados: 60
-Quantidade de linhas distintas 33
-A posicao (42, 1) nao esta vazia.
-A posicao (178, 1) nao esta vazia.
-A posicao (55, 1) nao esta vazia.
-A posicao (76, 1) nao esta vazia.
-A posicao (104, 1) nao esta vazia.
-A posicao (13, 1) nao esta vazia.
-A posicao (198, 1) nao esta vazia.
-A posicao (44, 1) nao esta vazia.
-A posicao (13, 4) nao esta vazia.
-A posicao (60, 1) nao esta vazia.
-A posicao (86, 1) nao esta vazia.
-A posicao (95, 1) nao esta vazia.
-A posicao (24, 1) nao esta vazia.
-A posicao (60, 4) nao esta vazia.
-A posicao (76, 3) nao esta vazia.
-A posicao (63, 3) nao esta vazia.
-A posicao (44, 4) nao esta vazia.
-A posicao (60, 2) nao esta vazia.
-A posicao (76, 4) nao esta vazia.
-A posicao (76, 2) nao esta vazia.
-A posicao (176, 1) nao esta vazia.
-A posicao (143, 1) nao esta vazia.
-A posicao (6, 1) nao esta vazia.
-A posicao (80, 3) nao esta vazia.
-A posicao (1, 2) nao esta vazia.
-A posicao (140, 3) nao esta vazia.
-A posicao (178, 2) nao esta vazia.
-A posicao (55, 4) nao esta vazia.
-A posicao (174, 4) nao esta vazia.
-A posicao (42, 4) nao esta vazia.
-A posicao (42, 2) nao esta vazia.
-A posicao (74, 3) nao esta vazia.
-A posicao (112, 4) nao esta vazia.
-A posicao (86, 4) nao esta vazia.
-A posicao (0, 1) nao esta vazia.
-A posicao (127, 1) nao esta vazia.
-A posicao (203, 1) nao esta vazia.
-A posicao (48, 1) nao esta vazia.
-A posicao (70, 1) nao esta vazia.
-A posicao (95, 2) nao esta vazia.
-A posicao (40, 3) nao esta vazia.
-A posicao (1, 3) nao esta vazia.
-A posicao (178, 4) nao esta vazia.
-A posicao (24, 4) nao esta vazia.
-A posicao (174, 1) nao esta vazia.
-A posicao (48, 3) nao esta vazia.
-A posicao (10, 3) nao esta vazia.
-A posicao (73, 3) nao esta vazia.
-A posicao (143, 4) nao esta vazia.
-A posicao (1, 4) nao esta vazia.
-A posicao (31, 3) nao esta vazia.
-A posicao (143, 2) nao esta vazia.
-A posicao (6, 3) nao esta vazia.
-A posicao (1, 1) nao esta vazia.
-A posicao (91, 1) nao esta vazia.
-A posicao (91, 3) nao esta vazia.
-A posicao (73, 0) nao esta vazia.
-A posicao (74, 1) nao esta vazia.
-A posicao (137, 1) nao esta vazia.
-A posicao (112, 1) nao esta vazia.
+Quantidade de pares selecionados: 2
+Quantidade de linhas distintas 2
+count
+0
+par
+292 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 292, dtype: float64
+
+Before inclusion: (77, 10)  X_train_v1
+Before inclusion: (77, 6)  y_train_df
+
+After inclusion: (78, 10)  X_train_v1
+After inclusion: (78, 6)  y_train_df
+
+
+After inclusion: (78, 10)  X_train_v1
+After inclusion: (78, 10)  X_train_v2
+After inclusion: (78, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+1
+par
+173 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 173, dtype: float64
+
+Before inclusion: (78, 10)  X_train_v1
+Before inclusion: (78, 6)  y_train_df
+
+After inclusion: (79, 10)  X_train_v1
+After inclusion: (79, 6)  y_train_df
+
+
+After inclusion: (79, 10)  X_train_v1
+After inclusion: (79, 10)  X_train_v2
+After inclusion: (79, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
 linhas completas
 Index([], dtype='int64')
-        After pool clean: (72, 205)  X_train_v1
-        After pool clean: (72, 206)  X_train_v2
-        After pool clean: (72, 6)  y_train_df
-        After pool clean: (207, 205)  X_pool_v1_df
-        After pool clean: (207, 206)  X_pool_v2_df
-        After pool clean: (207, 6)  y_pool
 Target Cotraining Making predictions on test data...
-UE1
-6
-UE2
-UE2
-UE2
-UE2
-UE2
-UE2
-    Overall: R²=0.459, MSE=0.382, MAE=0.354, CA=0.294, ARRMSE=0.715
+    Overall: R²=-0.059, MSE=0.991, MAE=0.847, CA=0.050, ARRMSE=1.028
 ------------------------------------------------------------------------
-9
+5
 9
 ------------------------------------------------------------------------
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.038, MSE=0.972, MAE=0.841, CA=0.052, ARRMSE=1.018
 saindo do training
+Index i: 5
+Length of added_pairs_per_iteration: 10
+added_pairs_per_iteration: [1, 3, 4, 1, 1, 3, 5, 3, 6, 2]
+Saved data...
+
+Training model in fold 6...
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+Iteration 1/10
+0: Tamanho antes do filtro: 1
+0: Tamanho depois do filtro: 1
+{(242, 5): -0.2830861593999552}
+Before inclusion: (50, 10)  X_train_v1
+Before inclusion: (50, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
+
+Quantidade de pares selecionados: 1
+Quantidade de linhas distintas 1
+count
+0
+par
+242 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 242, dtype: float64
+
+Before inclusion: (50, 10)  X_train_v1
+Before inclusion: (50, 6)  y_train_df
+
+After inclusion: (51, 10)  X_train_v1
+After inclusion: (51, 6)  y_train_df
+
+
+After inclusion: (51, 10)  X_train_v1
+After inclusion: (51, 10)  X_train_v2
+After inclusion: (51, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+linhas completas
+Index([], dtype='int64')
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.020, MSE=0.977, MAE=0.833, CA=0.072, ARRMSE=1.008
+------------------------------------------------------------------------
+6
+0
+------------------------------------------------------------------------
+Iteration 2/10
+1: Tamanho antes do filtro: 1
+par(242, 5)ja apareceu
+1: Tamanho depois do filtro: 0
+No confident predictions found.
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.027, MSE=0.984, MAE=0.834, CA=0.060, ARRMSE=1.011
+saindo do training
+Index i: 6
+Length of added_pairs_per_iteration: 1
+added_pairs_per_iteration: [1]
