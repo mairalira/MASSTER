@@ -490,79 +490,9 @@ with open(r'.\output.txt', 'w') as f:
                                 confident_pairs[(int(idx), col)] = value  # Add (index, column) pair to the dictionary
                     return confident_pairs
                 
-                def unique_fit(self, target_length, y_train_df, X_train):
-
-                    # Array para armazenar os modelos
-                    model_array = []
-                    columns = list(y_train_df.columns)
-                    # Função para instanciar modelo
-
-                    # Loop para cada coluna/target em y_train_df
-                    for i in range(target_length):
-                        # 1) Avaliar índices válidos para o target (não nulos)
-                        valid_indices = ~y_train_df.iloc[:, i].isna()  # Índices válidos para o target atual
-
-                        # 2) Pegar X_train válido
-                        X_train_valid = X_train[valid_indices] 
-
-                        # 3) Combinar os dados (se necessário) e pegar y_train válido para aquela coluna
-                        y_train_valid = y_train_df.loc[valid_indices, columns[i]]
-
-                        # 4) Ajustar o modelo para o target
-                        model = RandomForestRegressor(random_state=self.random_state, n_estimators=self.n_trees)
-                        model.fit(X_train_valid, y_train_valid)
-
-                        # 5) Salvar o modelo no array
-                        model_array.append(model)
-            
-                    # Retornar o array de modelos
-                    return model_array
-
-                def unique_evaluate_model(self, models_view1, models_view2, X_test_v1, X_test_v2, y_test_labeled):
-                    columns = list(X_test_v1.columns)
-                    print("Target Cotraining Making predictions on test data...")
-                    predictions_v1 = pd.DataFrame(np.nan, index=X_test_v1.index, columns=y_test_labeled.columns)
-                    predictions_v2 = pd.DataFrame(np.nan, index=X_test_v2.index, columns=y_test_labeled.columns)
-                    #um modelo por target 
-                    for i in range(len(models_view1)):
-                        rf_model_v1 = models_view1[i]
-                        rf_model_v2 = models_view2[i]
-
-                            # Make predictions for the current tree
-                        predictions_v1.iloc[:, i] = rf_model_v1.predict(X_test_v1)  # Atribuindo a predição na coluna correspondente
-                        predictions_v2.iloc[:, i] = rf_model_v2.predict(X_test_v2)  # Atribuindo a predição na coluna correspondente
-
-                    y_pred_combined = (predictions_v1 + predictions_v2) / 2
-                    
-                    r2 = np.round(r2_score(np.asarray(y_test_labeled), y_pred_combined), 4)
-
-                    mse = np.round(mean_squared_error(np.asarray(y_test_labeled), y_pred_combined), 4)
-
-                    mae = np.round(mean_absolute_error(np.asarray(y_test_labeled), y_pred_combined), 4)
-
-                    #ca = np.round(custom_accuracy(np.asarray(y_test_labeled), y_pred_combined, self.threshold), 4)
-                    ca = np.round(custom_accuracy(y_test_labeled.values, y_pred_combined.values, threshold=CA_THRESHOLD), 4)
-
-                    # Converter os DataFrames em arrays NumPy antes de passá-los para a função
-                    arrmse = np.round(arrmse_metric(np.asarray(y_test_labeled), np.asarray(y_pred_combined)), 4)
-
-                    print(f"    Overall: R²={r2:.3f}, MSE={mse:.3f}, MAE={mae:.3f}, CA={ca:.3f}, ARRMSE={arrmse:.3f}")
                 
-                    return r2, mse, mae, ca, arrmse
-
-                def unique_predict(self, models, X_pool, target_length, columns):
-
-                    # DataFrame para armazenar todas as previsões
-                    predictions = pd.DataFrame(
-                        data=[[None] * target_length for _ in range(len(X_pool))], 
-                        columns=columns,
-                        index=X_pool.index
-                    )
-                    
-                    for i, model in enumerate(models):
-                        predictions.iloc[:, i] = model.predict(X_pool)
-                        
-                    return predictions
+                
+                
 
                 def training(self, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_train_df, X_test_v1, X_test_v2, y_test, target_length, fold_index,target_names,feature_names_v1,feature_names_v2,y_pool):
                     
@@ -571,19 +501,21 @@ with open(r'.\output.txt', 'w') as f:
                             added_pairs_per_iteration = []
                             dict_index = {} # {chave:valor} -> {index_train:index_pool}
                             all_pred_selected_pairs = {}
+                            model = SingleTargetRegressor(self.random_state,self.n_trees)
                             for iteration in range(self.iterations):
+
                                 print(f"Iteration {iteration + 1}/{self.iterations}")
 
                                 start_time = time.time()
                                 
 
                                 
-                                models_view1_array = self.unique_fit(target_length, y_train_df, X_train_v1_df)
-                                models_view2_array = self.unique_fit(target_length, y_train_df, X_train_v2_df)
+                                models_view1_array = model.unique_fit(target_length, y_train_df, X_train_v1_df)
+                                models_view2_array = model.unique_fit(target_length, y_train_df, X_train_v2_df)
 
                                 columns = list(y_pool.columns)
-                                preds1 = self.unique_predict(models_view1_array, X_pool_v1_df,target_length,columns)
-                                preds2 = self.unique_predict(models_view2_array, X_pool_v2_df,target_length, columns)    
+                                preds1 = model.unique_predict(models_view1_array, X_pool_v1_df,target_length,columns)
+                                preds2 = model.unique_predict(models_view2_array, X_pool_v2_df,target_length, columns)    
                                 
                                 if self.stop_criterion(preds1, preds2):
                                     print(" No more unlabeled examples.")
@@ -800,7 +732,7 @@ with open(r'.\output.txt', 'w') as f:
                                     X_pool_v1_df = X_pool_v1_df.drop(indices_linhas_completas)
                                     X_pool_v2_df = X_pool_v2_df.drop(indices_linhas_completas)
 
-                                r2, mse, mae, ca, arrmse = self.unique_evaluate_model(models_view1_array, models_view2_array, X_test_v1, X_test_v2, y_test)
+                                r2, mse, mae, ca, arrmse = model.unique_evaluate_model(models_view1_array, models_view2_array, X_test_v1, X_test_v2, y_test)
                                 print("------------------------------------------------------------------------")
                                 print(fold_index)
                                 print(iteration)
@@ -813,9 +745,9 @@ with open(r'.\output.txt', 'w') as f:
                                 self.ARRMSE[fold_index, iteration] = arrmse
                                 print("------------------------------------------------------------------------")
 
-                            models_view1_array = self.unique_fit(target_length, y_train_df, X_train_v1_df)
-                            models_view2_array = self.unique_fit(target_length, y_train_df, X_train_v2_df)
-                            r2, mse, mae, ca, arrmse = self.unique_evaluate_model(models_view1_array, models_view2_array, X_test_v1, X_test_v2, y_test)
+                            models_view1_array = model.unique_fit(target_length, y_train_df, X_train_v1_df)
+                            models_view2_array = model.unique_fit(target_length, y_train_df, X_train_v2_df)
+                            r2, mse, mae, ca, arrmse = model.unique_evaluate_model(models_view1_array, models_view2_array, X_test_v1, X_test_v2, y_test)
                             self.R2[fold_index, -1] = r2
                             self.MSE[fold_index, -1] = mse
                             self.MAE[fold_index, -1] = mae
@@ -847,7 +779,85 @@ with open(r'.\output.txt', 'w') as f:
                 
                     return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE,added_pairs_per_iteration
                     #, added_pairs_per_iteration
+        class SingleTargetRegressor():
+            def __init__(self, random_state,n_trees):
+                    self.random_state = random_state
+                    self.n_trees=n_trees
+                    
+            def unique_evaluate_model(self, models_view1, models_view2, X_test_v1, X_test_v2, y_test_labeled):
+                    columns = list(X_test_v1.columns)
+                    print("Target Cotraining Making predictions on test data...")
+                    predictions_v1 = pd.DataFrame(np.nan, index=X_test_v1.index, columns=y_test_labeled.columns)
+                    predictions_v2 = pd.DataFrame(np.nan, index=X_test_v2.index, columns=y_test_labeled.columns)
+                    #um modelo por target 
+                    for i in range(len(models_view1)):
+                        rf_model_v1 = models_view1[i]
+                        rf_model_v2 = models_view2[i]
+
+                            # Make predictions for the current tree
+                        predictions_v1.iloc[:, i] = rf_model_v1.predict(X_test_v1)  # Atribuindo a predição na coluna correspondente
+                        predictions_v2.iloc[:, i] = rf_model_v2.predict(X_test_v2)  # Atribuindo a predição na coluna correspondente
+
+                    y_pred_combined = (predictions_v1 + predictions_v2) / 2
+                    
+                    r2 = np.round(r2_score(np.asarray(y_test_labeled), y_pred_combined), 4)
+
+                    mse = np.round(mean_squared_error(np.asarray(y_test_labeled), y_pred_combined), 4)
+
+                    mae = np.round(mean_absolute_error(np.asarray(y_test_labeled), y_pred_combined), 4)
+
+                    #ca = np.round(custom_accuracy(np.asarray(y_test_labeled), y_pred_combined, self.threshold), 4)
+                    ca = np.round(custom_accuracy(y_test_labeled.values, y_pred_combined.values, threshold=CA_THRESHOLD), 4)
+
+                    # Converter os DataFrames em arrays NumPy antes de passá-los para a função
+                    arrmse = np.round(arrmse_metric(np.asarray(y_test_labeled), np.asarray(y_pred_combined)), 4)
+
+                    print(f"    Overall: R²={r2:.3f}, MSE={mse:.3f}, MAE={mae:.3f}, CA={ca:.3f}, ARRMSE={arrmse:.3f}")
                 
+                    return r2, mse, mae, ca, arrmse
+
+            def unique_predict(self, models, X_pool, target_length, columns):
+
+                    # DataFrame para armazenar todas as previsões
+                    predictions = pd.DataFrame(
+                        data=[[None] * target_length for _ in range(len(X_pool))], 
+                        columns=columns,
+                        index=X_pool.index
+                    )
+                    
+                    for i, model in enumerate(models):
+                        predictions.iloc[:, i] = model.predict(X_pool)
+                        
+                    return predictions
+            def unique_fit(self, target_length, y_train_df, X_train):
+
+                    # Array para armazenar os modelos
+                    model_array = []
+                    columns = list(y_train_df.columns)
+                    # Função para instanciar modelo
+
+                    # Loop para cada coluna/target em y_train_df
+                    for i in range(target_length):
+                        # 1) Avaliar índices válidos para o target (não nulos)
+                        valid_indices = ~y_train_df.iloc[:, i].isna()  # Índices válidos para o target atual
+
+                        # 2) Pegar X_train válido
+                        X_train_valid = X_train[valid_indices] 
+
+                        # 3) Combinar os dados (se necessário) e pegar y_train válido para aquela coluna
+                        y_train_valid = y_train_df.loc[valid_indices, columns[i]]
+
+                        # 4) Ajustar o modelo para o target
+                        model = RandomForestRegressor(random_state=self.random_state, n_estimators=self.n_trees)
+                        model.fit(X_train_valid, y_train_valid)
+
+                        # 5) Salvar o modelo no array
+                        model_array.append(model)
+            
+                    # Retornar o array de modelos
+                    return model_array
+
+
         if __name__ == "__main__":
                 data_dir = config.DATA_DIR
                 dataset_name = config.DATASET_NAME
