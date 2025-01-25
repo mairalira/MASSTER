@@ -18,6 +18,7 @@ from data.data_processing import *
 #from utils.metrics import custom_accuracy, arrmse_metric
 from contextlib import redirect_stdout
 from models.single_target_model import SingleTargetRegressor
+from data.dataframes_creation import data_read, read_data
 
 with open(r'.\output.txt', 'w') as f:
     with redirect_stdout(f):
@@ -48,40 +49,6 @@ with open(r'.\output.txt', 'w') as f:
                 self.MAE = np.zeros([self.k_folds, self.iterations+1])
                 self.CA = np.zeros([self.k_folds, self.iterations+1])
                 self.ARRMSE = np.zeros([self.k_folds, self.iterations+1])
-
-            def data_read(self, dataset):
-                # Dataset path
-                folder_dir = data_dir / 'processed' / f'{self.dataset_name}'
-                data_path = folder_dir / f'{dataset}'
-                df = pd.read_csv(data_path)
-
-                # Identify input and target columns
-                col_names = list(df.columns)
-                target_names = [col for col in col_names if 'target' in col]
-                feature_names = [col for col in col_names if col not in target_names]
-
-                # Separate inputs from targets in different DataFrames
-                inputs = df[feature_names]
-                targets = df[target_names]
-
-                # Number of instances and target lenght
-                n_instances = len(targets)
-                target_length = len(target_names)
-
-                return inputs, targets, n_instances, target_length, target_names, feature_names
-                
-            def read_data(self, iteration):
-                X_train, y_train, _, target_length, target_names, feature_names = self.data_read(f'train_{iteration}')
-                X_pool, y_pool, n_pool, target_length, target_names, feature_names = self.data_read(f'pool_{iteration}')
-                X_rest, y_rest, _, target_length, target_names, feature_names = self.data_read(f'train+pool_{iteration}')
-                X_test, y_test, _, target_length, target_names, feature_names = self.data_read(f'test_{iteration}')
-                y_pool_nan = pd.DataFrame(np.nan, index=y_pool.index, columns=y_pool.columns)
-
-                X_pool.index = pd.RangeIndex(start = len(X_train), stop = len(X_train) + len(X_pool), step = 1)
-                y_pool_nan.index = pd.RangeIndex(start = len(y_train), stop = len(y_train) + len(y_pool), step = 1)
-
-        
-                return X_train, y_train, X_pool, y_pool_nan, X_rest, y_rest, X_test, y_test,target_length, target_names, feature_names
 
             def split_features(self, X, feature_names):
                 
@@ -364,7 +331,7 @@ with open(r'.\output.txt', 'w') as f:
                 def train_and_evaluate(self, fold_index):
 
                     print(f"\nTraining model in fold {fold_index}...")
-                    X_train_labeled, y_labeled, X_pool, y_pool, X_rest, y_rest, X_test_labeled, y_test_labeled, target_length,target_names,feature_names = self.read_data(fold_index+1)
+                    X_train_labeled, y_labeled, X_pool, y_pool, X_rest, y_rest, X_test_labeled, y_test_labeled, target_length,target_names,feature_names = read_data(self.data_dir, self.dataset_name, fold_index+1)
 
                     X_train_labeled_v1, X_train_labeled_v2,feature_names_v1,feature_names_v2 = self.split_features(X_train_labeled,feature_names)
                     X_pool_v1, X_pool_v2,feature_names_v1,feature_names_v2  = self.split_features(X_pool,feature_names)
@@ -382,8 +349,8 @@ with open(r'.\output.txt', 'w') as f:
                 dataset_name = config.DATASET_NAME
                 
                 print('Target-based Co-Training...')
-                cotraining_model = CoTraining(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees)
-                X_train, y_labeled, X_pool, y_pool, X_rest, y_rest, X_test, y_test, target_length,target_names,feature_names = cotraining_model.read_data(1)
+                #cotraining_model = CoTraining(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees)
+                X_train, y_labeled, X_pool, y_pool, X_rest, y_rest, X_test, y_test, target_length,target_names,feature_names = read_data(data_dir, dataset_name, 1)
 
                 batch_size = round((batch_percentage / 100) * len(X_pool))
 
