@@ -647,7 +647,7 @@ with open(r'.\output.txt', 'w') as f:
                                 indices = set()
                                 for idx_pool, j in pred_selected_pairs.keys():
                                     indices.add(idx_pool)
-                                added_pairs_per_iteration.extend(pred_selected_pairs)
+                                added_pairs_per_iteration.append(len(pred_selected_pairs))
 
                                 print("Quantidade de linhas distintas "+str(len(indices)))
                                 count = 0 
@@ -822,7 +822,7 @@ with open(r'.\output.txt', 'w') as f:
                             self.CA[fold_index, -1] = ca
                             self.ARRMSE[fold_index, -1] = arrmse
                             print('saindo do training')
-                            return set(added_pairs_per_iteration)
+                            return added_pairs_per_iteration
                             #return models_view1_array, models_view2_array, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_labeled, execution_times, added_pairs_per_iteration
                         
                 def train_and_evaluate(self, fold_index):
@@ -963,15 +963,14 @@ with open(r'.\output.txt', 'w') as f:
                     MAE_flat = MAE[i, :].flatten()
                     CA_flat = CA[i, :].flatten()
                     ARRMSE_flat = ARRMSE[i, :].flatten()
-                    if added_pairs_per_iteration:
-                        added_pairs_flat = [len(added_pairs_per_iteration)]
-                    else:
+                    if not added_pairs_per_iteration:
                         added_pairs_flat = [0]
+                        
                         
                     num_entries = max(R2[i, :].size, MSE[i, :].size, MAE[i, :].size, CA[i, :].size, ARRMSE[i, :].size)
 
-                    if len(added_pairs_flat) < num_entries:
-                        added_pairs_flat.extend([0] * (num_entries - len(added_pairs_flat)))
+                    #if len(added_pairs_flat) < num_entries:
+                    #    added_pairs_flat.extend([0] * (num_entries - len(added_pairs_flat)))
                     if len(R2_flat) < num_entries:
                         R2_flat = np.append(R2_flat, [None] * (num_entries - len(R2_flat)))
                     if len(MSE_flat) < num_entries:
@@ -982,7 +981,9 @@ with open(r'.\output.txt', 'w') as f:
                         CA_flat = np.append(CA_flat, [None] * (num_entries - len(CA_flat)))
                     if len(ARRMSE_flat) < num_entries:
                         ARRMSE_flat = np.append(ARRMSE_flat, [None] * (num_entries - len(ARRMSE_flat)))
-
+                    print(len(R2_flat))
+                    print(len(added_pairs_per_iteration))
+                    added_pairs_per_iteration.append(0)
                     results_df = pd.DataFrame({
                         'Fold_Index': [i for _ in range(num_entries)],
                         'Iterations': list(range(num_entries)),
@@ -991,7 +992,7 @@ with open(r'.\output.txt', 'w') as f:
                         'MAE': MAE_flat,
                         'CA': CA_flat,
                         'ARRMSE': ARRMSE_flat,
-                        'Added_Pairs': added_pairs_flat
+                        'Added_Pairs': added_pairs_per_iteration
                     })
 
                     results_path = Path(f'reports/semi_supervised_learning/{dataset_name}')
