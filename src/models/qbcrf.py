@@ -1,4 +1,4 @@
-""" The subclass for QBC-RF. """
+""" The subclass for Target-based QBC """
 from models.active_learning import *
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
@@ -178,9 +178,9 @@ class qbcrf(activelearning):
             original_indices = list(range(len(X_pool)))
 
             # Filter out rows with NaN values in y_train
-            valid_indices = ~np.isnan(y_train).any(axis=1)
-            X_train = X_train[valid_indices]
-            y_train = y_train[valid_indices]
+            #valid_indices = ~np.isnan(y_train).any(axis=1)
+            #X_train = X_train[valid_indices]
+            #y_train = y_train[valid_indices]
 
         r2_auc = np.round(auc(self.epochs, R2[0,:-1]), 4)
         mse_auc = np.round(auc(self.epochs, MSE[0,:-1]), 4)

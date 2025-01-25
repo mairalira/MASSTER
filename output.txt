@@ -1,0 +1,1283 @@
+Target-based Co-Training...
+
+Training model in fold 0...
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+Iteration 1/10
+0: Tamanho antes do filtro: 1
+0: Tamanho depois do filtro: 1
+{(180, 5): -0.7404946943819737}
+Before inclusion: (50, 10)  X_train_v1
+Before inclusion: (50, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
+
+Quantidade de pares selecionados: 1
+Quantidade de linhas distintas 1
+count
+0
+par
+180 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 180, dtype: float64
+
+Before inclusion: (50, 10)  X_train_v1
+Before inclusion: (50, 6)  y_train_df
+
+After inclusion: (51, 10)  X_train_v1
+After inclusion: (51, 6)  y_train_df
+
+
+After inclusion: (51, 10)  X_train_v1
+After inclusion: (51, 10)  X_train_v2
+After inclusion: (51, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+linhas completas
+Index([], dtype='int64')
+Target Cotraining Making predictions on test data...
+    Overall: R²=0.023, MSE=1.015, MAE=0.853, CA=0.057, ARRMSE=0.986
+------------------------------------------------------------------------
+0
+0
+------------------------------------------------------------------------
+Iteration 2/10
+1: Tamanho antes do filtro: 2
+par(180, 5)ja apareceu
+1: Tamanho depois do filtro: 1
+{(130, 5): -0.3528942912544678}
+Before inclusion: (51, 10)  X_train_v1
+Before inclusion: (51, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
+
+Quantidade de pares selecionados: 1
+Quantidade de linhas distintas 1
+count
+0
+par
+130 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 130, dtype: float64
+
+Before inclusion: (51, 10)  X_train_v1
+Before inclusion: (51, 6)  y_train_df
+
+After inclusion: (52, 10)  X_train_v1
+After inclusion: (52, 6)  y_train_df
+
+
+After inclusion: (52, 10)  X_train_v1
+After inclusion: (52, 10)  X_train_v2
+After inclusion: (52, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+linhas completas
+Index([], dtype='int64')
+Target Cotraining Making predictions on test data...
+    Overall: R²=0.023, MSE=1.014, MAE=0.853, CA=0.057, ARRMSE=0.986
+------------------------------------------------------------------------
+0
+1
+------------------------------------------------------------------------
+Iteration 3/10
+2: Tamanho antes do filtro: 2
+par(180, 5)ja apareceu
+par(130, 5)ja apareceu
+2: Tamanho depois do filtro: 0
+No confident predictions found.
+Target Cotraining Making predictions on test data...
+    Overall: R²=0.023, MSE=1.015, MAE=0.852, CA=0.065, ARRMSE=0.986
+saindo do training
+Index i: 0
+Length of added_pairs_per_iteration: 2
+added_pairs_per_iteration: [1, 1]
+Saved data...
+
+Training model in fold 1...
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+Iteration 1/10
+0: Tamanho antes do filtro: 0
+0: Tamanho depois do filtro: 0
+No confident predictions found.
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.086, MSE=1.056, MAE=0.852, CA=0.063, ARRMSE=1.040
+saindo do training
+Index i: 1
+Length of added_pairs_per_iteration: 0
+added_pairs_per_iteration: []
+Saved data...
+
+Training model in fold 2...
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+Iteration 1/10
+0: Tamanho antes do filtro: 0
+0: Tamanho depois do filtro: 0
+No confident predictions found.
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.043, MSE=1.092, MAE=0.888, CA=0.058, ARRMSE=1.019
+saindo do training
+Index i: 2
+Length of added_pairs_per_iteration: 0
+added_pairs_per_iteration: []
+Saved data...
+
+Training model in fold 3...
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+Iteration 1/10
+0: Tamanho antes do filtro: 0
+0: Tamanho depois do filtro: 0
+No confident predictions found.
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.037, MSE=1.058, MAE=0.863, CA=0.060, ARRMSE=1.017
+saindo do training
+Index i: 3
+Length of added_pairs_per_iteration: 0
+added_pairs_per_iteration: []
+Saved data...
+
+Training model in fold 4...
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+Iteration 1/10
+0: Tamanho antes do filtro: 0
+0: Tamanho depois do filtro: 0
+No confident predictions found.
+Target Cotraining Making predictions on test data...
+    Overall: R²=0.004, MSE=0.971, MAE=0.832, CA=0.063, ARRMSE=0.994
+saindo do training
+Index i: 4
+Length of added_pairs_per_iteration: 0
+added_pairs_per_iteration: []
+Saved data...
+
+Training model in fold 5...
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+Iteration 1/10
+0: Tamanho antes do filtro: 1
+0: Tamanho depois do filtro: 1
+{(172, 5): -0.4806866048304841}
+Before inclusion: (50, 10)  X_train_v1
+Before inclusion: (50, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
+
+Quantidade de pares selecionados: 1
+Quantidade de linhas distintas 1
+count
+0
+par
+172 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 172, dtype: float64
+
+Before inclusion: (50, 10)  X_train_v1
+Before inclusion: (50, 6)  y_train_df
+
+After inclusion: (51, 10)  X_train_v1
+After inclusion: (51, 6)  y_train_df
+
+
+After inclusion: (51, 10)  X_train_v1
+After inclusion: (51, 10)  X_train_v2
+After inclusion: (51, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+linhas completas
+Index([], dtype='int64')
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.060, MSE=0.992, MAE=0.851, CA=0.038, ARRMSE=1.029
+------------------------------------------------------------------------
+5
+0
+------------------------------------------------------------------------
+Iteration 2/10
+1: Tamanho antes do filtro: 4
+par(172, 5)ja apareceu
+1: Tamanho depois do filtro: 3
+{(314, 5): -0.3750416835782903, (286, 5): -0.5012825670391741, (170, 5): -0.07593320217409497}
+Before inclusion: (51, 10)  X_train_v1
+Before inclusion: (51, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
+
+Quantidade de pares selecionados: 3
+Quantidade de linhas distintas 3
+count
+0
+par
+314 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 314, dtype: float64
+
+Before inclusion: (51, 10)  X_train_v1
+Before inclusion: (51, 6)  y_train_df
+
+After inclusion: (52, 10)  X_train_v1
+After inclusion: (52, 6)  y_train_df
+
+
+After inclusion: (52, 10)  X_train_v1
+After inclusion: (52, 10)  X_train_v2
+After inclusion: (52, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+1
+par
+286 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 286, dtype: float64
+
+Before inclusion: (52, 10)  X_train_v1
+Before inclusion: (52, 6)  y_train_df
+
+After inclusion: (53, 10)  X_train_v1
+After inclusion: (53, 6)  y_train_df
+
+
+After inclusion: (53, 10)  X_train_v1
+After inclusion: (53, 10)  X_train_v2
+After inclusion: (53, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+2
+par
+170 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 170, dtype: float64
+
+Before inclusion: (53, 10)  X_train_v1
+Before inclusion: (53, 6)  y_train_df
+
+After inclusion: (54, 10)  X_train_v1
+After inclusion: (54, 6)  y_train_df
+
+
+After inclusion: (54, 10)  X_train_v1
+After inclusion: (54, 10)  X_train_v2
+After inclusion: (54, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+linhas completas
+Index([], dtype='int64')
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.045, MSE=0.978, MAE=0.842, CA=0.048, ARRMSE=1.021
+------------------------------------------------------------------------
+5
+1
+------------------------------------------------------------------------
+Iteration 3/10
+2: Tamanho antes do filtro: 8
+par(286, 5)ja apareceu
+par(170, 5)ja apareceu
+par(172, 5)ja apareceu
+par(314, 5)ja apareceu
+2: Tamanho depois do filtro: 4
+{(188, 5): -0.2069102836536208, (192, 5): -0.16452136357578037, (325, 5): -0.16499485628307337, (232, 5): -0.26735587209906153}
+Before inclusion: (54, 10)  X_train_v1
+Before inclusion: (54, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
+
+Quantidade de pares selecionados: 4
+Quantidade de linhas distintas 4
+count
+0
+par
+188 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 188, dtype: float64
+
+Before inclusion: (54, 10)  X_train_v1
+Before inclusion: (54, 6)  y_train_df
+
+After inclusion: (55, 10)  X_train_v1
+After inclusion: (55, 6)  y_train_df
+
+
+After inclusion: (55, 10)  X_train_v1
+After inclusion: (55, 10)  X_train_v2
+After inclusion: (55, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+1
+par
+192 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 192, dtype: float64
+
+Before inclusion: (55, 10)  X_train_v1
+Before inclusion: (55, 6)  y_train_df
+
+After inclusion: (56, 10)  X_train_v1
+After inclusion: (56, 6)  y_train_df
+
+
+After inclusion: (56, 10)  X_train_v1
+After inclusion: (56, 10)  X_train_v2
+After inclusion: (56, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+2
+par
+325 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 325, dtype: float64
+
+Before inclusion: (56, 10)  X_train_v1
+Before inclusion: (56, 6)  y_train_df
+
+After inclusion: (57, 10)  X_train_v1
+After inclusion: (57, 6)  y_train_df
+
+
+After inclusion: (57, 10)  X_train_v1
+After inclusion: (57, 10)  X_train_v2
+After inclusion: (57, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+3
+par
+232 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 232, dtype: float64
+
+Before inclusion: (57, 10)  X_train_v1
+Before inclusion: (57, 6)  y_train_df
+
+After inclusion: (58, 10)  X_train_v1
+After inclusion: (58, 6)  y_train_df
+
+
+After inclusion: (58, 10)  X_train_v1
+After inclusion: (58, 10)  X_train_v2
+After inclusion: (58, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+linhas completas
+Index([], dtype='int64')
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.048, MSE=0.981, MAE=0.844, CA=0.062, ARRMSE=1.023
+------------------------------------------------------------------------
+5
+2
+------------------------------------------------------------------------
+Iteration 4/10
+3: Tamanho antes do filtro: 9
+par(286, 5)ja apareceu
+par(172, 5)ja apareceu
+par(170, 5)ja apareceu
+par(192, 5)ja apareceu
+par(325, 5)ja apareceu
+par(188, 5)ja apareceu
+par(232, 5)ja apareceu
+par(314, 5)ja apareceu
+3: Tamanho depois do filtro: 1
+{(211, 5): -0.18553991584367463}
+Before inclusion: (58, 10)  X_train_v1
+Before inclusion: (58, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
+
+Quantidade de pares selecionados: 1
+Quantidade de linhas distintas 1
+count
+0
+par
+211 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 211, dtype: float64
+
+Before inclusion: (58, 10)  X_train_v1
+Before inclusion: (58, 6)  y_train_df
+
+After inclusion: (59, 10)  X_train_v1
+After inclusion: (59, 6)  y_train_df
+
+
+After inclusion: (59, 10)  X_train_v1
+After inclusion: (59, 10)  X_train_v2
+After inclusion: (59, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+linhas completas
+Index([], dtype='int64')
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.055, MSE=0.989, MAE=0.848, CA=0.060, ARRMSE=1.026
+------------------------------------------------------------------------
+5
+3
+------------------------------------------------------------------------
+Iteration 5/10
+4: Tamanho antes do filtro: 9
+par(286, 5)ja apareceu
+par(170, 5)ja apareceu
+par(192, 5)ja apareceu
+par(325, 5)ja apareceu
+par(188, 5)ja apareceu
+par(232, 5)ja apareceu
+par(314, 5)ja apareceu
+par(211, 5)ja apareceu
+4: Tamanho depois do filtro: 1
+{(187, 5): -0.5813130628702671}
+Before inclusion: (59, 10)  X_train_v1
+Before inclusion: (59, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
+
+Quantidade de pares selecionados: 1
+Quantidade de linhas distintas 1
+count
+0
+par
+187 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 187, dtype: float64
+
+Before inclusion: (59, 10)  X_train_v1
+Before inclusion: (59, 6)  y_train_df
+
+After inclusion: (60, 10)  X_train_v1
+After inclusion: (60, 6)  y_train_df
+
+
+After inclusion: (60, 10)  X_train_v1
+After inclusion: (60, 10)  X_train_v2
+After inclusion: (60, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+linhas completas
+Index([], dtype='int64')
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.058, MSE=0.989, MAE=0.848, CA=0.053, ARRMSE=1.027
+------------------------------------------------------------------------
+5
+4
+------------------------------------------------------------------------
+Iteration 6/10
+5: Tamanho antes do filtro: 12
+par(314, 5)ja apareceu
+par(286, 5)ja apareceu
+par(188, 5)ja apareceu
+par(170, 5)ja apareceu
+par(192, 5)ja apareceu
+par(325, 5)ja apareceu
+par(172, 5)ja apareceu
+par(232, 5)ja apareceu
+par(211, 5)ja apareceu
+5: Tamanho depois do filtro: 3
+{(252, 5): -0.5445409439455096, (140, 5): -0.1943689177120057, (112, 5): -0.21944348250204743}
+Before inclusion: (60, 10)  X_train_v1
+Before inclusion: (60, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
+
+Quantidade de pares selecionados: 3
+Quantidade de linhas distintas 3
+count
+0
+par
+252 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 252, dtype: float64
+
+Before inclusion: (60, 10)  X_train_v1
+Before inclusion: (60, 6)  y_train_df
+
+After inclusion: (61, 10)  X_train_v1
+After inclusion: (61, 6)  y_train_df
+
+
+After inclusion: (61, 10)  X_train_v1
+After inclusion: (61, 10)  X_train_v2
+After inclusion: (61, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+1
+par
+140 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 140, dtype: float64
+
+Before inclusion: (61, 10)  X_train_v1
+Before inclusion: (61, 6)  y_train_df
+
+After inclusion: (62, 10)  X_train_v1
+After inclusion: (62, 6)  y_train_df
+
+
+After inclusion: (62, 10)  X_train_v1
+After inclusion: (62, 10)  X_train_v2
+After inclusion: (62, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+2
+par
+112 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 112, dtype: float64
+
+Before inclusion: (62, 10)  X_train_v1
+Before inclusion: (62, 6)  y_train_df
+
+After inclusion: (63, 10)  X_train_v1
+After inclusion: (63, 6)  y_train_df
+
+
+After inclusion: (63, 10)  X_train_v1
+After inclusion: (63, 10)  X_train_v2
+After inclusion: (63, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+linhas completas
+Index([], dtype='int64')
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.057, MSE=0.988, MAE=0.847, CA=0.052, ARRMSE=1.026
+------------------------------------------------------------------------
+5
+5
+------------------------------------------------------------------------
+Iteration 7/10
+6: Tamanho antes do filtro: 16
+par(252, 5)ja apareceu
+par(286, 5)ja apareceu
+par(188, 5)ja apareceu
+par(211, 5)ja apareceu
+par(232, 5)ja apareceu
+par(112, 5)ja apareceu
+par(140, 5)ja apareceu
+par(170, 5)ja apareceu
+par(192, 5)ja apareceu
+par(314, 5)ja apareceu
+par(325, 5)ja apareceu
+6: Tamanho depois do filtro: 5
+{(360, 5): -0.4187240473062856, (317, 5): -0.23425546569313813, (242, 5): -0.5586732002895671, (221, 5): -0.5186802125088367, (365, 5): -0.24937499946416944}
+Before inclusion: (63, 10)  X_train_v1
+Before inclusion: (63, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
+
+Quantidade de pares selecionados: 5
+Quantidade de linhas distintas 5
+count
+0
+par
+360 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 360, dtype: float64
+
+Before inclusion: (63, 10)  X_train_v1
+Before inclusion: (63, 6)  y_train_df
+
+After inclusion: (64, 10)  X_train_v1
+After inclusion: (64, 6)  y_train_df
+
+
+After inclusion: (64, 10)  X_train_v1
+After inclusion: (64, 10)  X_train_v2
+After inclusion: (64, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+1
+par
+317 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 317, dtype: float64
+
+Before inclusion: (64, 10)  X_train_v1
+Before inclusion: (64, 6)  y_train_df
+
+After inclusion: (65, 10)  X_train_v1
+After inclusion: (65, 6)  y_train_df
+
+
+After inclusion: (65, 10)  X_train_v1
+After inclusion: (65, 10)  X_train_v2
+After inclusion: (65, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+2
+par
+242 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 242, dtype: float64
+
+Before inclusion: (65, 10)  X_train_v1
+Before inclusion: (65, 6)  y_train_df
+
+After inclusion: (66, 10)  X_train_v1
+After inclusion: (66, 6)  y_train_df
+
+
+After inclusion: (66, 10)  X_train_v1
+After inclusion: (66, 10)  X_train_v2
+After inclusion: (66, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+3
+par
+221 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 221, dtype: float64
+
+Before inclusion: (66, 10)  X_train_v1
+Before inclusion: (66, 6)  y_train_df
+
+After inclusion: (67, 10)  X_train_v1
+After inclusion: (67, 6)  y_train_df
+
+
+After inclusion: (67, 10)  X_train_v1
+After inclusion: (67, 10)  X_train_v2
+After inclusion: (67, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+4
+par
+365 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 365, dtype: float64
+
+Before inclusion: (67, 10)  X_train_v1
+Before inclusion: (67, 6)  y_train_df
+
+After inclusion: (68, 10)  X_train_v1
+After inclusion: (68, 6)  y_train_df
+
+
+After inclusion: (68, 10)  X_train_v1
+After inclusion: (68, 10)  X_train_v2
+After inclusion: (68, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+linhas completas
+Index([], dtype='int64')
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.051, MSE=0.983, MAE=0.845, CA=0.060, ARRMSE=1.024
+------------------------------------------------------------------------
+5
+6
+------------------------------------------------------------------------
+Iteration 8/10
+7: Tamanho antes do filtro: 21
+par(360, 5)ja apareceu
+par(252, 5)ja apareceu
+par(317, 5)ja apareceu
+par(187, 5)ja apareceu
+par(242, 5)ja apareceu
+par(286, 5)ja apareceu
+par(188, 5)ja apareceu
+par(211, 5)ja apareceu
+par(221, 5)ja apareceu
+par(232, 5)ja apareceu
+par(112, 5)ja apareceu
+par(365, 5)ja apareceu
+par(140, 5)ja apareceu
+par(170, 5)ja apareceu
+par(192, 5)ja apareceu
+par(172, 5)ja apareceu
+par(314, 5)ja apareceu
+par(325, 5)ja apareceu
+7: Tamanho depois do filtro: 3
+{(179, 5): -0.17074998625643395, (318, 5): 0.060109374077840005, (380, 5): -0.18868854147042213}
+Before inclusion: (68, 10)  X_train_v1
+Before inclusion: (68, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
+
+Quantidade de pares selecionados: 3
+Quantidade de linhas distintas 3
+count
+0
+par
+179 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 179, dtype: float64
+
+Before inclusion: (68, 10)  X_train_v1
+Before inclusion: (68, 6)  y_train_df
+
+After inclusion: (69, 10)  X_train_v1
+After inclusion: (69, 6)  y_train_df
+
+
+After inclusion: (69, 10)  X_train_v1
+After inclusion: (69, 10)  X_train_v2
+After inclusion: (69, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+1
+par
+318 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 318, dtype: float64
+
+Before inclusion: (69, 10)  X_train_v1
+Before inclusion: (69, 6)  y_train_df
+
+After inclusion: (70, 10)  X_train_v1
+After inclusion: (70, 6)  y_train_df
+
+
+After inclusion: (70, 10)  X_train_v1
+After inclusion: (70, 10)  X_train_v2
+After inclusion: (70, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+2
+par
+380 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 380, dtype: float64
+
+Before inclusion: (70, 10)  X_train_v1
+Before inclusion: (70, 6)  y_train_df
+
+After inclusion: (71, 10)  X_train_v1
+After inclusion: (71, 6)  y_train_df
+
+
+After inclusion: (71, 10)  X_train_v1
+After inclusion: (71, 10)  X_train_v2
+After inclusion: (71, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+linhas completas
+Index([], dtype='int64')
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.045, MSE=0.978, MAE=0.841, CA=0.057, ARRMSE=1.021
+------------------------------------------------------------------------
+5
+7
+------------------------------------------------------------------------
+Iteration 9/10
+8: Tamanho antes do filtro: 26
+par(360, 5)ja apareceu
+par(252, 5)ja apareceu
+par(317, 5)ja apareceu
+par(187, 5)ja apareceu
+par(242, 5)ja apareceu
+par(286, 5)ja apareceu
+par(188, 5)ja apareceu
+par(221, 5)ja apareceu
+par(211, 5)ja apareceu
+par(232, 5)ja apareceu
+par(112, 5)ja apareceu
+par(365, 5)ja apareceu
+par(140, 5)ja apareceu
+par(170, 5)ja apareceu
+par(192, 5)ja apareceu
+par(179, 5)ja apareceu
+par(172, 5)ja apareceu
+par(314, 5)ja apareceu
+par(325, 5)ja apareceu
+par(380, 5)ja apareceu
+8: Tamanho depois do filtro: 6
+{(350, 5): -0.33153557861734806, (257, 5): -0.030891102467693998, (376, 5): -0.17190523340498193, (349, 5): -0.585482212905698, (283, 5): -0.014587162764946371, (78, 5): -0.2421575921282952}
+Before inclusion: (71, 10)  X_train_v1
+Before inclusion: (71, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
+
+Quantidade de pares selecionados: 6
+Quantidade de linhas distintas 6
+count
+0
+par
+350 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 350, dtype: float64
+
+Before inclusion: (71, 10)  X_train_v1
+Before inclusion: (71, 6)  y_train_df
+
+After inclusion: (72, 10)  X_train_v1
+After inclusion: (72, 6)  y_train_df
+
+
+After inclusion: (72, 10)  X_train_v1
+After inclusion: (72, 10)  X_train_v2
+After inclusion: (72, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+1
+par
+257 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 257, dtype: float64
+
+Before inclusion: (72, 10)  X_train_v1
+Before inclusion: (72, 6)  y_train_df
+
+After inclusion: (73, 10)  X_train_v1
+After inclusion: (73, 6)  y_train_df
+
+
+After inclusion: (73, 10)  X_train_v1
+After inclusion: (73, 10)  X_train_v2
+After inclusion: (73, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+2
+par
+376 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 376, dtype: float64
+
+Before inclusion: (73, 10)  X_train_v1
+Before inclusion: (73, 6)  y_train_df
+
+After inclusion: (74, 10)  X_train_v1
+After inclusion: (74, 6)  y_train_df
+
+
+After inclusion: (74, 10)  X_train_v1
+After inclusion: (74, 10)  X_train_v2
+After inclusion: (74, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+3
+par
+349 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 349, dtype: float64
+
+Before inclusion: (74, 10)  X_train_v1
+Before inclusion: (74, 6)  y_train_df
+
+After inclusion: (75, 10)  X_train_v1
+After inclusion: (75, 6)  y_train_df
+
+
+After inclusion: (75, 10)  X_train_v1
+After inclusion: (75, 10)  X_train_v2
+After inclusion: (75, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+4
+par
+283 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 283, dtype: float64
+
+Before inclusion: (75, 10)  X_train_v1
+Before inclusion: (75, 6)  y_train_df
+
+After inclusion: (76, 10)  X_train_v1
+After inclusion: (76, 6)  y_train_df
+
+
+After inclusion: (76, 10)  X_train_v1
+After inclusion: (76, 10)  X_train_v2
+After inclusion: (76, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+5
+par
+78 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 78, dtype: float64
+
+Before inclusion: (76, 10)  X_train_v1
+Before inclusion: (76, 6)  y_train_df
+
+After inclusion: (77, 10)  X_train_v1
+After inclusion: (77, 6)  y_train_df
+
+
+After inclusion: (77, 10)  X_train_v1
+After inclusion: (77, 10)  X_train_v2
+After inclusion: (77, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+linhas completas
+Index([], dtype='int64')
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.055, MSE=0.987, MAE=0.848, CA=0.055, ARRMSE=1.026
+------------------------------------------------------------------------
+5
+8
+------------------------------------------------------------------------
+Iteration 10/10
+9: Tamanho antes do filtro: 28
+par(349, 5)ja apareceu
+par(360, 5)ja apareceu
+par(252, 5)ja apareceu
+par(317, 5)ja apareceu
+par(187, 5)ja apareceu
+par(350, 5)ja apareceu
+par(242, 5)ja apareceu
+par(286, 5)ja apareceu
+par(188, 5)ja apareceu
+par(221, 5)ja apareceu
+par(211, 5)ja apareceu
+par(232, 5)ja apareceu
+par(78, 5)ja apareceu
+par(112, 5)ja apareceu
+par(365, 5)ja apareceu
+par(257, 5)ja apareceu
+par(314, 5)ja apareceu
+par(140, 5)ja apareceu
+par(376, 5)ja apareceu
+par(170, 5)ja apareceu
+par(192, 5)ja apareceu
+par(179, 5)ja apareceu
+par(172, 5)ja apareceu
+par(325, 5)ja apareceu
+par(380, 5)ja apareceu
+par(283, 5)ja apareceu
+9: Tamanho depois do filtro: 2
+{(292, 5): -0.20605124381025547, (173, 5): -0.08862617504290157}
+Before inclusion: (77, 10)  X_train_v1
+Before inclusion: (77, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
+
+Quantidade de pares selecionados: 2
+Quantidade de linhas distintas 2
+count
+0
+par
+292 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 292, dtype: float64
+
+Before inclusion: (77, 10)  X_train_v1
+Before inclusion: (77, 6)  y_train_df
+
+After inclusion: (78, 10)  X_train_v1
+After inclusion: (78, 6)  y_train_df
+
+
+After inclusion: (78, 10)  X_train_v1
+After inclusion: (78, 10)  X_train_v2
+After inclusion: (78, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+count
+1
+par
+173 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 173, dtype: float64
+
+Before inclusion: (78, 10)  X_train_v1
+Before inclusion: (78, 6)  y_train_df
+
+After inclusion: (79, 10)  X_train_v1
+After inclusion: (79, 6)  y_train_df
+
+
+After inclusion: (79, 10)  X_train_v1
+After inclusion: (79, 10)  X_train_v2
+After inclusion: (79, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+linhas completas
+Index([], dtype='int64')
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.059, MSE=0.991, MAE=0.847, CA=0.050, ARRMSE=1.028
+------------------------------------------------------------------------
+5
+9
+------------------------------------------------------------------------
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.038, MSE=0.972, MAE=0.841, CA=0.052, ARRMSE=1.018
+saindo do training
+Index i: 5
+Length of added_pairs_per_iteration: 10
+added_pairs_per_iteration: [1, 3, 4, 1, 1, 3, 5, 3, 6, 2]
+Saved data...
+
+Training model in fold 6...
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+type split features:<class 'pandas.core.frame.DataFrame'>
+Iteration 1/10
+0: Tamanho antes do filtro: 1
+0: Tamanho depois do filtro: 1
+{(242, 5): -0.2830861593999552}
+Before inclusion: (50, 10)  X_train_v1
+Before inclusion: (50, 6)  y_train_df
+Before inclusion: (350, 10)  X_pool_v1_df
+
+Quantidade de pares selecionados: 1
+Quantidade de linhas distintas 1
+count
+0
+par
+242 5
+350
+target_oz21   NaN
+target_oz22   NaN
+target_oz23   NaN
+target_oz24   NaN
+target_oz25   NaN
+target_oz26   NaN
+Name: 242, dtype: float64
+
+Before inclusion: (50, 10)  X_train_v1
+Before inclusion: (50, 6)  y_train_df
+
+After inclusion: (51, 10)  X_train_v1
+After inclusion: (51, 6)  y_train_df
+
+
+After inclusion: (51, 10)  X_train_v1
+After inclusion: (51, 10)  X_train_v2
+After inclusion: (51, 6)  y_train_df
+After inclusion: (350, 10)  X_pool_v1_df
+After inclusion: (350, 10)  X_pool_v2_df
+After inclusion: (350, 6)  y_pool
+linhas completas
+Index([], dtype='int64')
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.020, MSE=0.977, MAE=0.833, CA=0.072, ARRMSE=1.008
+------------------------------------------------------------------------
+6
+0
+------------------------------------------------------------------------
+Iteration 2/10
+1: Tamanho antes do filtro: 1
+par(242, 5)ja apareceu
+1: Tamanho depois do filtro: 0
+No confident predictions found.
+Target Cotraining Making predictions on test data...
+    Overall: R²=-0.027, MSE=0.984, MAE=0.834, CA=0.060, ARRMSE=1.011
+saindo do training
+Index i: 6
+Length of added_pairs_per_iteration: 1
+added_pairs_per_iteration: [1]
