@@ -647,7 +647,8 @@ with open(r'.\output.txt', 'w') as f:
                                 indices = set()
                                 for idx_pool, j in pred_selected_pairs.keys():
                                     indices.add(idx_pool)
-                                added_pairs_per_iteration.append(len(pred_selected_pairs))
+                                added_pairs_per_iteration.extend(pred_selected_pairs)
+
                                 print("Quantidade de linhas distintas "+str(len(indices)))
                                 count = 0 
                                 
@@ -821,7 +822,7 @@ with open(r'.\output.txt', 'w') as f:
                             self.CA[fold_index, -1] = ca
                             self.ARRMSE[fold_index, -1] = arrmse
                             print('saindo do training')
-                            return added_pairs_per_iteration
+                            return set(added_pairs_per_iteration)
                             #return models_view1_array, models_view2_array, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_labeled, execution_times, added_pairs_per_iteration
                         
                 def train_and_evaluate(self, fold_index):
@@ -834,7 +835,7 @@ with open(r'.\output.txt', 'w') as f:
                     X_train_labeled_v1, X_train_labeled_v2,feature_names_v1,feature_names_v2 = self.split_features(X_train_labeled,feature_names)
                     X_pool_v1, X_pool_v2,feature_names_v1,feature_names_v2  = self.split_features(X_pool,feature_names)
                     X_test_labeled_v1, X_test_labeled_v2,feature_names_v1,feature_names_v2  = self.split_features(X_test_labeled,feature_names)
-
+                    
                     added_pairs_per_iteration = self.training(
                         X_train_labeled_v1, X_train_labeled_v2, X_pool_v1, X_pool_v2, y_labeled, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled, target_length, fold_index,target_names,feature_names_v1,feature_names_v2,y_pool
                     )
@@ -950,7 +951,7 @@ with open(r'.\output.txt', 'w') as f:
                 batch_size = round((batch_percentage / 100) * len(X_pool))
 
                 target_cotraining_model = TargetCoTraining(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees, batch_size)
-                
+
                 for i in range(k_folds):
                     R2, MSE, MAE, CA, ARRMSE,added_pairs_per_iteration = target_cotraining_model.train_and_evaluate(i)
                     print(f"Index i: {i}")
@@ -963,7 +964,7 @@ with open(r'.\output.txt', 'w') as f:
                     CA_flat = CA[i, :].flatten()
                     ARRMSE_flat = ARRMSE[i, :].flatten()
                     if added_pairs_per_iteration:
-                        added_pairs_flat = [added_pairs_per_iteration[i]]
+                        added_pairs_flat = [len(added_pairs_per_iteration)]
                     else:
                         added_pairs_flat = [0]
                         
