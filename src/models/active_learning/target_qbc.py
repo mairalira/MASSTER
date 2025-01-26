@@ -140,6 +140,16 @@ class TargetQBC(ActiveLearning):
             for idx_pool, j in oracle_pred_selected_pairs.keys():
                 indices.add(idx_pool)
 
+            print('TESTANDO')
+            all_indices = []
+            for idx_pool in range(y_pool.shape[0]):
+                for j in range(y_pool.shape[1]):
+                    if np.isnan(y_pool.iloc[idx_pool, j]):
+                        all_indices.append(idx_pool)
+                        break 
+
+            print(all_indices)
+
             added_pairs_per_iteration.append(len(oracle_pred_selected_pairs))
             
             print("# of distinct indices "+str(len(indices)))
@@ -147,7 +157,7 @@ class TargetQBC(ActiveLearning):
 
             for idx_pool, j in oracle_pred_selected_pairs.keys():
                 
-                if count == 0 and idx_pool not in indices:
+                if count == 0 and (idx_pool not in indices or idx_pool in all_indices):
                     print('initialization...')
 
                     # updating X_train
@@ -171,7 +181,7 @@ class TargetQBC(ActiveLearning):
 
                 else:             
                     # {train idx:pool idx}
-                    if idx_pool in dict_index.values():
+                    if idx_pool in dict_index.values() or idx_pool in all_indices:
                         keys = [k for k, v in dict_index.items() if v == idx_pool]
                         
                         y_pool.loc[idx_pool, columns[j]] = np.nan
@@ -215,15 +225,14 @@ class TargetQBC(ActiveLearning):
             self.CA[:,epoch] = (ca)
             self.ARRMSE[:,epoch] = (arrmse)
 
-        return added_pairs_per_iteration, all_pred_selected_pairs
+        return added_pairs_per_iteration, all_pred_selected_pairs, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length
 
-    def train_and_evaluate(self, fold_index):
-        print(f"\nTraining model in fold {fold_index}...")
-        X_train, y_train, X_pool, y_pool, y_pool_nan, X_rest, y_rest, X_test, y_test, target_length, target_names, feature_names = read_data(self.data_dir, self.dataset_name, fold_index+1)
+    def train_and_evaluate(self, fold_index, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length):
+        print(f"\nTraining target-based QBC model in fold {fold_index}...")
+        
+        added_pairs_per_iteration, all_pred_selected_pairs, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length = self.training(X_train, X_pool, X_test, y_train, y_pool, y_test, target_length)
 
-        added_pairs_per_iteration, all_pred_selected_pairs = self.training(X_train, X_pool, X_test, y_train, y_pool, y_test, target_length)
-
-        return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE, added_pairs_per_iteration, all_pred_selected_pairs
+        return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE, added_pairs_per_iteration, all_pred_selected_pairs, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length
 
 if __name__ == "__main__":
     data_dir = config.DATA_DIR
@@ -237,7 +246,8 @@ if __name__ == "__main__":
     target_active_model = TargetQBC(data_dir, dataset_name, k_folds, random_state, n_trees, n_epochs, batch_size)
 
     for fold in range(k_folds):
-        R2, MSE, MAE, CA, ARRMSE, added_pairs_per_iteration, all_pred_selected_pairs = target_active_model.train_and_evaluate(fold)
+        X_train, y_train, X_pool, y_pool, y_pool_nan, X_rest, y_rest, X_test, y_test, target_length, target_names, feature_names = read_data(data_dir, dataset_name, fold+1)
+        R2, MSE, MAE, CA, ARRMSE, added_pairs_per_iteration, all_pred_selected_pairs, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length = target_active_model.train_and_evaluate(fold, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length)
         print(f"Index i: {fold}")
         print(f"Length of added_pairs_per_iteration: {len(added_pairs_per_iteration)}")
         print(f"added_pairs_per_iteration: {added_pairs_per_iteration}")

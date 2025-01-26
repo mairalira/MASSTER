@@ -29,11 +29,23 @@ class SingleTargetRegressor:
     def unique_fit(self, target_length, y_train_df, X_train):
         model_array = []
         columns = list(y_train_df.columns)
+        print(f"y_train_df indices: {y_train_df.index}")
+        
         for i in range(target_length):
+            #print('----')
+            #print(i)
             valid_indices = ~y_train_df.iloc[:, i].isna()
             valid_indices = valid_indices.reindex(X_train.index, fill_value=False)
+            #print(f"X_train indices: {X_train.index}")
+            #print(f"y_train indices: {y_train_df.index}")
+
             X_train_valid = X_train[valid_indices]
             y_train_valid = y_train_df.loc[valid_indices, columns[i]]
+
+            #print(f"X_train after indices: {X_train_valid.index}")
+            #print(f"y_train after indices: {y_train_valid.index}")
+            #print('-----')
+
             model = RandomForestRegressor(random_state=self.random_state, n_estimators=self.n_trees)
             model.fit(X_train_valid, y_train_valid)
             model_array.append(model)

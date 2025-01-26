@@ -67,35 +67,71 @@ class MASSTER:
         
         return ss_model
     
+    def merge_features(self, X_v1, X_v2, feature_names_v1, feature_names_v2):
+        # verify if X_v1 and X_v2 are DataFrames
+        if not isinstance(X_v1, pd.DataFrame) or not isinstance(X_v2, pd.DataFrame):
+            raise ValueError("X_v1 and X_v2 must be DataFrames.")
+        
+        # verify if both dataframes have the same number of rows
+        if len(X_v1) != len(X_v2):
+            raise ValueError("X_v1 and X_v2 must have the same number of rows.")
+        
+        # metge DataFrames along columns
+        X_merged = pd.concat([X_v1, X_v2], axis=1)
+        
+        # combine feature names
+        feature_names_merged = feature_names_v1 + feature_names_v2
+        
+        return X_merged, feature_names_merged
+    
     def run_masster(self, fold):
         target_qbc_model = self.initialize_active_learning()
         ss_model = self.initialize_semi_supervised_learning()
 
-        X_train, y_train, X_pool, y_pool, y_pool_nan, X_rest, y_rest, X_test, y_test, target_length, target_names, feature_names = read_data(self.data_dir, self.dataset_name, fold + 1)
-
         stopping_criterion = False
         iteration = 0
         pairs_per_iteration_active = []
+        
+        # read data
+        X_train, y_train, X_pool, y_pool, y_pool_nan, X_rest, y_rest, X_test, y_test, target_length, target_names, feature_names = read_data(self.data_dir, self.dataset_name, fold + 1)
 
         while not stopping_criterion and iteration < self.iterations:
             # run active learning model by max_iter each turn
-            _, _, _, _, _, added_pairs_per_iteration_active, all_pred_selected_pairs_active = target_qbc_model.train_and_evaluate(fold)
-            pairs_per_iteration_active.append(added_pairs_per_iteration_active)
+            _, _, _, _, _, added_pairs_per_iteration_active, all_pred_selected_pairs_active, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length = target_qbc_model.train_and_evaluate(
+                fold, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length)
             
-
+            pairs_per_iteration_active.append(added_pairs_per_iteration_active)
+            print('ACTIVE')
+            print(f'X_train len: {len(X_train)}')
+            print(f'y_train len: {len(y_train)}')
+            # TODO: verify why is y_train not being adapted correctly here...
+            # NOTE: it works with only active learning, is something about the integration... maybe the same pair is being selected on active and semi-supervised
+            # TODO: introduce a condition into active and cotraining to verify if the X already exists to avoid double concatenation... use y_pool idx in order to evaluate that condition
+            
             # update y_pool_nan to avoid using same pairs on semi-supervised module
             y_pool_nan = update_y_pool_nan(y_pool_nan, all_pred_selected_pairs_active)
 
             # run semi-supervised learning model by max_iter each turn
-            _, _, _, _, _, added_pairs_per_iteration_ss, all_pred_selected_pairs_ss = ss_model.train_and_evaluate(fold)
+            if self.ss_model == 'cotraining':
+                _, _, _, _, _, added_pairs_per_iteration_ss, all_pred_selected_pairs_ss, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_train, X_test_v1, X_test_v2, y_test, target_length, feature_names_v1, feature_names_v2, fold_index, y_pool_nan = ss_model.train_and_evaluate(
+                    fold,  X_train, y_train, X_pool, X_test, y_test, y_pool_nan, target_length, target_names, feature_names)
+                
+                X_train, feature_names = self.merge_features(X_train_v1, X_train_v2, feature_names_v1, feature_names_v2)
+                X_pool, feature_names = self.merge_features(X_pool_v1, X_pool_v2, feature_names_v1, feature_names_v2)
+                X_test, feature_names = self.merge_features(X_test_v1, X_test_v2, feature_names_v1, feature_names_v2)
+            print('COTRAINING')
+            print(f'X_train len: {len(X_train)}')
+            print(f'y_train len: {len(y_train)}')
 
             # update y_pool to avoid using same pairs on active module 
             y_pool = update_y_pool(y_pool, all_pred_selected_pairs_ss)
 
+            print('---')
             # evaluate model
             model_array = self.model.unique_fit(target_length, y_train, X_train)
             predictions = self.model.unique_predict(model_array, X_test, target_length, y_test.columns)
             r2, mse, mae, ca, arrmse = self.model.unique_evaluate(y_test, predictions)
+            print('debug')
 
             # store metrics
             self.R2[fold, iteration] = r2
