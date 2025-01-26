@@ -34,7 +34,7 @@ X_train, y_train, X_pool, y_pool, y_pool_nan, X_rest, y_rest, X_test, y_test, ta
 batch_size = round((BATCH_PERCENTAGE / 100) * len(X_pool)) 
 
 class TargetQBC(ActiveLearning):
-    def __init__(self, data_dir, dataset_name, k_folds,  random_state, n_trees, n_epochs):
+    def __init__(self, data_dir, dataset_name, k_folds,  random_state, n_trees, n_epochs, batch_size):
         self.data_dir = data_dir
         self.dataset_name = dataset_name
         self.k_folds = k_folds
@@ -142,7 +142,7 @@ class TargetQBC(ActiveLearning):
 
             added_pairs_per_iteration.append(len(oracle_pred_selected_pairs))
             
-            print("# of distinctic indices "+str(len(indices)))
+            print("# of distinct indices "+str(len(indices)))
             count = 0 
 
             for idx_pool, j in oracle_pred_selected_pairs.keys():
@@ -215,15 +215,15 @@ class TargetQBC(ActiveLearning):
             self.CA[:,epoch] = (ca)
             self.ARRMSE[:,epoch] = (arrmse)
 
-        return added_pairs_per_iteration
+        return added_pairs_per_iteration, all_pred_selected_pairs
 
     def train_and_evaluate(self, fold_index):
         print(f"\nTraining model in fold {fold_index}...")
         X_train, y_train, X_pool, y_pool, y_pool_nan, X_rest, y_rest, X_test, y_test, target_length, target_names, feature_names = read_data(self.data_dir, self.dataset_name, fold_index+1)
 
-        added_pairs_per_iteration = self.training(X_train, X_pool, X_test, y_train, y_pool, y_test, target_length)
+        added_pairs_per_iteration, all_pred_selected_pairs = self.training(X_train, X_pool, X_test, y_train, y_pool, y_test, target_length)
 
-        return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE, added_pairs_per_iteration
+        return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE, added_pairs_per_iteration, all_pred_selected_pairs
 
 if __name__ == "__main__":
     data_dir = config.DATA_DIR
@@ -234,10 +234,10 @@ if __name__ == "__main__":
     
     batch_size = round((batch_percentage / 100) * len(X_pool))
 
-    target_active_model = TargetQBC(data_dir, dataset_name, k_folds, random_state, n_trees, n_epochs)
+    target_active_model = TargetQBC(data_dir, dataset_name, k_folds, random_state, n_trees, n_epochs, batch_size)
 
     for fold in range(k_folds):
-        R2, MSE, MAE, CA, ARRMSE, added_pairs_per_iteration = target_active_model.train_and_evaluate(fold)
+        R2, MSE, MAE, CA, ARRMSE, added_pairs_per_iteration, all_pred_selected_pairs = target_active_model.train_and_evaluate(fold)
         print(f"Index i: {fold}")
         print(f"Length of added_pairs_per_iteration: {len(added_pairs_per_iteration)}")
         print(f"added_pairs_per_iteration: {added_pairs_per_iteration}")

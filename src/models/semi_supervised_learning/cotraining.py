@@ -180,16 +180,17 @@ with open(r'.\output.txt', 'w') as f:
                         
                         sorted_confident_pairs_filtered = {}
                         
-                        print(f"{iteration}: Size before filter: {len(confident_pairs_combined)}")
+                        #print(f"{iteration}: Size before filter: {len(confident_pairs_combined)}")
 
                         for pair in confident_pairs_combined.keys():
                             
                             if pair in all_pred_selected_pairs.keys():
-                                print('pair'+ str(pair) + "already selected")
+                                continue
+                                #print('pair'+ str(pair) + "already selected")
                             else:
                                 sorted_confident_pairs_filtered[pair]= confident_pairs_combined[pair]
                         
-                        print(f"{iteration}: Size after filter: {len(sorted_confident_pairs_filtered)}")
+                        #print(f"{iteration}: Size after filter: {len(sorted_confident_pairs_filtered)}")
                         #dictionary (index, y position) -> variance
                         sorted_confident_pairs = sorted(sorted_confident_pairs_filtered.items(), key=lambda item: item[1])
 
@@ -202,39 +203,39 @@ with open(r'.\output.txt', 'w') as f:
                         if not pred_selected_pairs:
                             print("No confident predictions found.")
                             break
-                        else:
-                            print(pred_selected_pairs)
+                        #else:
+                            #print(pred_selected_pairs)
                             
-                        print(f"Before inclusion: {X_train_v1_df.shape}  X_train_v1")
-                        print(f"Before inclusion: {y_train_df.shape}  y_train_df")
-                        print(f"Before inclusion: {X_pool_v1_df.shape}  X_pool_v1_df")
+                        #print(f"Before inclusion: {X_train_v1_df.shape}  X_train_v1")
+                        #print(f"Before inclusion: {y_train_df.shape}  y_train_df")
+                        #print(f"Before inclusion: {X_pool_v1_df.shape}  X_pool_v1_df")
                         
-                        print()
+                        #print()
                         print("# of selected pairs: " + str(len(pred_selected_pairs)))
                         indices = set()
                         for idx_pool, j in pred_selected_pairs.keys():
                             indices.add(idx_pool)
                         added_pairs_per_iteration.append(len(pred_selected_pairs))
 
-                        print("# of distinctic indices "+str(len(indices)))
+                        print("# of distinct indices "+str(len(indices)))
                         count = 0 
                         
                         for idx_pool, j in pred_selected_pairs.keys():
                             
                             if pd.notna(y_pool.loc[idx_pool, columns[j]]):
-                                print(f"Pair ({idx_pool}, {j}) not empty.")
+                                #print(f"Pair ({idx_pool}, {j}) not empty.")
                                 continue
                             
                             if count == 0 and idx_pool not in indices:
                                 print('initialization...')
-                                print("count")
-                                print(count)
-                                print('pair')
-                                print(idx_pool, j)
-                                print()
-                                print(f"Before inclusion: {X_train_v1_df.shape}  X_train_v1")
-                                print(f"Before inclusion: {y_train_df.shape}  y_train_df")
-                                print()
+                                #print("count")
+                                #print(count)
+                                #print('pair')
+                                #print(idx_pool, j)
+                                #print()
+                                #print(f"Before inclusion: {X_train_v1_df.shape}  X_train_v1")
+                                #print(f"Before inclusion: {y_train_df.shape}  y_train_df")
+                                #print()
 
                                 # updating X_trains
                                 X_train_v1_df = pd.concat([X_train_v1_df, X_pool_v1_df.loc[idx_pool]], ignore_index=False)
@@ -255,21 +256,19 @@ with open(r'.\output.txt', 'w') as f:
 
                                 count = count + 1
                                 
-                                print()
-                                print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
-                                print(f"After inclusion: {y_train_df.shape}  y_train_df")
+                                #print()
+                                #print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
+                                #print(f"After inclusion: {y_train_df.shape}  y_train_df")
                                 
-                                print()
-
                             else:
                                 
-                                print("count")
-                                print(count)
-                                print('pair')
-                                print(idx_pool, j)
-                                print()
-                                print(f"Before inclusion: {X_train_v1_df.shape}  X_train_v1")
-                                print(f"Before inclusion: {y_train_df.shape}  y_train_df")
+                                #print("count")
+                                #print(count)
+                                #print('pair')
+                                #print(idx_pool, j)
+                                #print()
+                                #print(f"Before inclusion: {X_train_v1_df.shape}  X_train_v1")
+                                #print(f"Before inclusion: {y_train_df.shape}  y_train_df")
 
                                 # {train idx:pool idx}
                                 if idx_pool in dict_index.values():
@@ -279,10 +278,10 @@ with open(r'.\output.txt', 'w') as f:
                                     y_train_df.loc[keys[0], columns[j]] = pred_selected_pairs[(idx_pool,j)]
                                     
                                     count = count + 1
-                                    print()
-                                    print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
-                                    print(f"After inclusion: {y_train_df.shape}  y_train_df")
-                                    print()
+                                    #print()
+                                    #print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
+                                    #print(f"After inclusion: {y_train_df.shape}  y_train_df")
+                                    #print()
 
 
                                 else:
@@ -301,18 +300,18 @@ with open(r'.\output.txt', 'w') as f:
                                     y_train_df.loc[last_index, columns[j]] = pred_selected_pairs[(idx_pool,j)]
                                     
                                     count = count + 1
-                                    print()
-                                    print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
-                                    print(f"After inclusion: {y_train_df.shape}  y_train_df")
-                                    print()
+                                    #print()
+                                    #print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
+                                    #print(f"After inclusion: {y_train_df.shape}  y_train_df")
+                                    #print()
 
-                                print()
-                                print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
-                                print(f"After inclusion: {X_train_v2_df.shape}  X_train_v2")
-                                print(f"After inclusion: {y_train_df.shape}  y_train_df")
-                                print(f"After inclusion: {X_pool_v1_df.shape}  X_pool_v1_df")
-                                print(f"After inclusion: {X_pool_v2_df.shape}  X_pool_v2_df")
-                                print(f"After inclusion: {y_pool.shape}  y_pool")
+                                #print()
+                                #print(f"After inclusion: {X_train_v1_df.shape}  X_train_v1")
+                                #print(f"After inclusion: {X_train_v2_df.shape}  X_train_v2")
+                                #print(f"After inclusion: {y_train_df.shape}  y_train_df")
+                                #print(f"After inclusion: {X_pool_v1_df.shape}  X_pool_v1_df")
+                                #print(f"After inclusion: {X_pool_v2_df.shape}  X_pool_v2_df")
+                                #print(f"After inclusion: {y_pool.shape}  y_pool")
 
                         # CONDITION: check for complete lines (instances)
                         complete_instances_idx = y_pool[y_pool.notna().all(axis=1)].index
@@ -346,7 +345,7 @@ with open(r'.\output.txt', 'w') as f:
                     self.CA[fold_index, -1] = ca
                     self.ARRMSE[fold_index, -1] = arrmse
                     
-                    return added_pairs_per_iteration
+                    return added_pairs_per_iteration, all_pred_selected_pairs
                             
                 def train_and_evaluate(self, fold_index):
 
@@ -357,11 +356,11 @@ with open(r'.\output.txt', 'w') as f:
                     X_pool_v1, X_pool_v2,feature_names_v1,feature_names_v2  = self.split_features(X_pool,feature_names)
                     X_test_labeled_v1, X_test_labeled_v2,feature_names_v1,feature_names_v2  = self.split_features(X_test_labeled,feature_names)
                     
-                    added_pairs_per_iteration = self.training(
+                    added_pairs_per_iteration, all_pred_selected_pairs = self.training(
                         X_train_labeled_v1, X_train_labeled_v2, X_pool_v1, X_pool_v2, y_labeled, X_test_labeled_v1, X_test_labeled_v2, y_test_labeled, target_length, fold_index,target_names,feature_names_v1,feature_names_v2,y_pool
                     )
                     
-                    return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE, added_pairs_per_iteration
+                    return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE, added_pairs_per_iteration, all_pred_selected_pairs
                     
 
         if __name__ == "__main__":
@@ -376,7 +375,7 @@ with open(r'.\output.txt', 'w') as f:
                 target_cotraining_model = TargetCoTraining(data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees, batch_size)
 
                 for i in range(k_folds):
-                    R2, MSE, MAE, CA, ARRMSE, added_pairs_per_iteration = target_cotraining_model.train_and_evaluate(i)
+                    R2, MSE, MAE, CA, ARRMSE, added_pairs_per_iteration, all_pred_selected_pairs = target_cotraining_model.train_and_evaluate(i)
                     print(f"Index i: {i}")
                     print(f"Length of added_pairs_per_iteration: {len(added_pairs_per_iteration)}")
                     print(f"added_pairs_per_iteration: {added_pairs_per_iteration}")
