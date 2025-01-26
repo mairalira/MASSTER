@@ -178,8 +178,6 @@ class TargetQBC(ActiveLearning):
                         y_train.loc[keys[0], columns[j]] = oracle_pred_selected_pairs[(idx_pool,j)]
                         
                         count = count + 1
-                        
-
 
                     else:
                         # fill new x_train instance 
@@ -195,8 +193,7 @@ class TargetQBC(ActiveLearning):
                         y_pool.loc[idx_pool, columns[j]] = np.nan
                         y_train.loc[last_index, columns[j]] = oracle_pred_selected_pairs[(idx_pool,j)]
                         
-                        count = count + 1
-                        
+                        count = count + 1 
 
             # CONDITION: check for complete lines (instances)
             complete_instances_idx = y_pool[y_pool.isna().all(axis=1)].index
@@ -227,7 +224,6 @@ class TargetQBC(ActiveLearning):
         added_pairs_per_iteration = self.training(X_train, X_pool, X_test, y_train, y_pool, y_test, target_length)
 
         return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE, added_pairs_per_iteration
-
 
 if __name__ == "__main__":
     data_dir = config.DATA_DIR
