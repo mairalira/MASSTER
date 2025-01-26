@@ -30,15 +30,17 @@ threshold = THRESHOLD
 random_state = RANDOM_STATE
 n_trees = N_TREES
 batch_percentage = BATCH_PERCENTAGE
+batch_percentage_ssl = BATCH_PERCENTAGE_SSL
 iterations = ITERATIONS
 threshold = THRESHOLD
 
 # read the first version of the datasets to define the batch size
 X_train, y_train, X_pool, y_pool, y_pool_nan, X_rest, y_rest, X_test, y_test, target_length, target_names, feature_names = read_data(data_dir, dataset_name, 1)
 batch_size = round((BATCH_PERCENTAGE / 100) * len(X_pool)) 
+batch_size_ssl = round((BATCH_PERCENTAGE_SSL / 100) * len(X_pool)) 
 
 class MASSTER:
-    def __init__(self, ss_model, data_dir, dataset_name, k_folds, random_state, n_trees, batch_size, iterations, threshold):
+    def __init__(self, ss_model, data_dir, dataset_name, k_folds, random_state, n_trees, batch_size, batch_size_ssl, iterations, threshold):
         self.ss_model = ss_model # string ['cotraining', 'self-learning']
         self.data_dir = data_dir
         self.dataset_name = dataset_name
@@ -47,6 +49,7 @@ class MASSTER:
         self.n_trees = n_trees
         self.max_iter = 1 #iterations by turn
         self.batch_size = batch_size
+        self.batch_size_ssl = batch_size_ssl
         self.iterations = iterations
         self.threshold = threshold
         self.model = SingleTargetRegressor(random_state, n_trees)
@@ -64,9 +67,9 @@ class MASSTER:
     
     def initialize_semi_supervised_learning(self):
         if self.ss_model == 'cotraining':
-            ss_model = TargetCoTraining(self.data_dir, self.dataset_name, self.k_folds, self.max_iter, self.threshold ,self.random_state, self.n_trees, self.batch_size)
+            ss_model = TargetCoTraining(self.data_dir, self.dataset_name, self.k_folds, self.max_iter, self.threshold ,self.random_state, self.n_trees, self.batch_size_ssl)
         if self.ss_model == 'self_learning':
-            ss_model = TargetSelfLearning(self.data_dir, self.dataset_name, self.k_folds, self.max_iter, self.threshold, self.random_state, self.n_trees, self.batch_size)
+            ss_model = TargetSelfLearning(self.data_dir, self.dataset_name, self.k_folds, self.max_iter, self.threshold, self.random_state, self.n_trees, self.batch_size_ssl)
         return ss_model
     
     def merge_features(self, X_v1, X_v2, feature_names_v1, feature_names_v2):
@@ -200,6 +203,7 @@ if __name__ == "__main__":
     print('Proposed method...')
     X_train, y_labeled, X_pool, y_pool, y_pool_nan, X_rest, y_rest, X_test, y_test, target_length,target_names,feature_names = read_data(data_dir, dataset_name, 1)
     batch_size = round((batch_percentage / 100) * len(X_pool))
+    batch_size_ssl = round((batch_percentage_ssl / 100) * len(X_pool))
 
     #ss_model = 'cotraining'
     #ss_model = 'self_learning'
@@ -207,7 +211,7 @@ if __name__ == "__main__":
 
     for ss_model in ssl_options:
         print(f'The selected semi_supervised model is: {ss_model}')
-        masster = MASSTER(ss_model, data_dir, dataset_name, k_folds, random_state, n_trees, batch_size, iterations, threshold)
+        masster = MASSTER(ss_model, data_dir, dataset_name, k_folds, random_state, n_trees, batch_size, batch_size_ssl, iterations, threshold)
 
         for fold in range(k_folds):
             masster.run_masster(fold)

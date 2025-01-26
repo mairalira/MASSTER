@@ -29,7 +29,7 @@ iterations = ITERATIONS
 threshold = THRESHOLD
 random_state = RANDOM_STATE
 n_trees = N_TREES
-batch_percentage = BATCH_PERCENTAGE
+batch_percentage = BATCH_PERCENTAGE_SSL
 
 class CoTraining:
     def __init__(self, data_dir, dataset_name, k_folds, iterations, threshold, random_state, n_trees):
