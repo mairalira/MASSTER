@@ -20,6 +20,7 @@ from data.dataframes_creation import read_data
 from models.proposed_method.unlabeled_targets_update import update_y_pool_nan, update_y_pool
 from models.active_learning.target_qbc import TargetQBC
 from models.semi_supervised_learning.cotraining import TargetCoTraining
+from models.semi_supervised_learning.self_learning import TargetSelfLearning
 
 data_dir = DATA_DIR
 dataset_name = DATASET_NAME
@@ -64,7 +65,8 @@ class MASSTER:
     def initialize_semi_supervised_learning(self):
         if self.ss_model == 'cotraining':
             ss_model = TargetCoTraining(self.data_dir, self.dataset_name, self.k_folds, self.max_iter, self.threshold ,self.random_state, self.n_trees, self.batch_size)
-        
+        if self.ss_model == 'self_learning':
+            ss_model = TargetSelfLearning(self.data_dir, self.dataset_name, self.k_folds, self.max_iter, self.threshold, self.random_state, self.n_trees, self.batch_size)
         return ss_model
     
     def merge_features(self, X_v1, X_v2, feature_names_v1, feature_names_v2):
@@ -116,6 +118,11 @@ class MASSTER:
                 X_train, feature_names = self.merge_features(X_train_v1, X_train_v2, feature_names_v1, feature_names_v2)
                 X_pool, feature_names = self.merge_features(X_pool_v1, X_pool_v2, feature_names_v1, feature_names_v2)
                 X_test, feature_names = self.merge_features(X_test_v1, X_test_v2, feature_names_v1, feature_names_v2)
+
+            if self.ss_model == 'self_learning':
+                _, _, _, _, _, added_pairs_per_iteration_ss, all_pred_selected_pairs_ss, X_train, X_pool, y_train, X_test, y_test, target_length, feature_names, fold_index, y_pool_nan = ss_model.train_and_evaluate(
+                    fold,  X_train, y_train, X_pool, X_test, y_test, y_pool_nan, target_length, target_names, feature_names)
+                
             #print('COTRAINING')
             #print(f'X_train len: {len(X_train)}')
             #print(f'y_train len: {len(y_train)}')
@@ -194,13 +201,17 @@ if __name__ == "__main__":
     X_train, y_labeled, X_pool, y_pool, y_pool_nan, X_rest, y_rest, X_test, y_test, target_length,target_names,feature_names = read_data(data_dir, dataset_name, 1)
     batch_size = round((batch_percentage / 100) * len(X_pool))
 
-    ss_model = 'cotraining'
+    #ss_model = 'cotraining'
+    #ss_model = 'self_learning'
+    ssl_options = ['cotraining', 'self_learning']
 
-    masster = MASSTER(ss_model, data_dir, dataset_name, k_folds, random_state, n_trees, batch_size, iterations, threshold)
+    for ss_model in ssl_options:
+        print(f'The selected semi_supervised model is: {ss_model}')
+        masster = MASSTER(ss_model, data_dir, dataset_name, k_folds, random_state, n_trees, batch_size, iterations, threshold)
 
-    for fold in range(k_folds):
-        masster.run_masster(fold)
-        print(fold)
+        for fold in range(k_folds):
+            masster.run_masster(fold)
+            print(fold)
 
 
 
