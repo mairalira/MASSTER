@@ -155,7 +155,6 @@ class TargetCoTraining(CoTraining):
                 models_view2_array = model.unique_fit(target_length, y_train_df, X_train_v2_df)
 
                 columns = list(y_test.columns)
-                print(columns)
                 preds1 = model.unique_predict(models_view1_array, X_pool_v1_df,target_length,columns)
                 preds2 = model.unique_predict(models_view2_array, X_pool_v2_df,target_length, columns)    
                 
@@ -223,9 +222,10 @@ class TargetCoTraining(CoTraining):
                         print('initialization...')
 
                         # updating X_trains
-                        X_train_v1_df = pd.concat([X_train_v1_df, X_pool_v1_df.loc[idx_pool]], ignore_index=False)
-                        X_train_v2_df = pd.concat([X_train_v2_df, X_pool_v2_df.loc[idx_pool]], ignore_index=False)
-                        
+                        if idx_pool not in X_train_v1_df.index:
+                            X_train_v1_df = pd.concat([X_train_v1_df, X_pool_v1_df.loc[idx_pool]], ignore_index=False)
+                            X_train_v2_df = pd.concat([X_train_v2_df, X_pool_v2_df.loc[idx_pool]], ignore_index=False)
+                            
                         # columns names
                         columns = list(y_pool.columns)
                         
@@ -254,9 +254,10 @@ class TargetCoTraining(CoTraining):
 
                         else:
                             # fill new x_train instance 
-                            X_train_v1_df = pd.concat([X_train_v1_df,X_pool_v1_df.loc[[idx_pool]]], ignore_index=False)
-                            X_train_v2_df = pd.concat([X_train_v2_df, X_pool_v2_df.loc[[idx_pool]]], ignore_index=False)
-                            
+                            if idx_pool not in X_train_v1_df.index:
+                                X_train_v1_df = pd.concat([X_train_v1_df,X_pool_v1_df.loc[[idx_pool]]], ignore_index=False)
+                                X_train_v2_df = pd.concat([X_train_v2_df, X_pool_v2_df.loc[[idx_pool]]], ignore_index=False)
+                                
                             columns = list(y_pool.columns)
                             
                             # create {idx_pool, idx_train} pair
@@ -274,10 +275,17 @@ class TargetCoTraining(CoTraining):
                 print(f'Complete instances: {complete_instances_idx}')
 
                 if not complete_instances_idx.empty:
-                    
-                    y_pool = y_pool.drop(complete_instances_idx)
-                    X_pool_v1_df = X_pool_v1_df.drop(complete_instances_idx)
-                    X_pool_v2_df = X_pool_v2_df.drop(complete_instances_idx)
+                    exclusion_indices = complete_instances_idx[
+                        complete_instances_idx.isin(y_pool.index) |
+                        complete_instances_idx.isin(X_pool_v1_df.index) |
+                        complete_instances_idx.isin(X_pool_v2_df.index)
+                    ]
+
+                    if not exclusion_indices.empty:
+                        print('i have already excluded that for you (co-training)...')
+                        y_pool = y_pool.drop(exclusion_indices, errors='ignore')
+                        X_pool_v1_df = X_pool_v1_df.drop(exclusion_indices, errors='ignore')
+                        X_pool_v2_df = X_pool_v2_df.drop(exclusion_indices, errors='ignore')
 
                 r2, mse, mae, ca, arrmse = self.unique_evaluate_model(models_view1_array, models_view2_array, X_test_v1, X_test_v2, y_test)
                 

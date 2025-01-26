@@ -29,7 +29,7 @@ class SingleTargetRegressor:
     def unique_fit(self, target_length, y_train_df, X_train):
         model_array = []
         columns = list(y_train_df.columns)
-        print(f"y_train_df indices: {y_train_df.index}")
+        #print(f"y_train_df indices: {y_train_df.index}")
         
         for i in range(target_length):
             #print('----')

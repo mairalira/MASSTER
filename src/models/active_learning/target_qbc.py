@@ -140,15 +140,6 @@ class TargetQBC(ActiveLearning):
             for idx_pool, j in oracle_pred_selected_pairs.keys():
                 indices.add(idx_pool)
 
-            print('TESTANDO')
-            all_indices = []
-            for idx_pool in range(y_pool.shape[0]):
-                for j in range(y_pool.shape[1]):
-                    if np.isnan(y_pool.iloc[idx_pool, j]):
-                        all_indices.append(idx_pool)
-                        break 
-
-            print(all_indices)
 
             added_pairs_per_iteration.append(len(oracle_pred_selected_pairs))
             
@@ -157,11 +148,12 @@ class TargetQBC(ActiveLearning):
 
             for idx_pool, j in oracle_pred_selected_pairs.keys():
                 
-                if count == 0 and (idx_pool not in indices or idx_pool in all_indices):
+                if count == 0 and (idx_pool not in indices):
                     print('initialization...')
 
                     # updating X_train
-                    X_train = pd.concat([X_train, X_pool.loc[idx_pool]], ignore_index=False)
+                    if idx_pool not in X_train.index:
+                        X_train = pd.concat([X_train, X_pool.loc[idx_pool]], ignore_index=False)
                     
                     # columns names
                     columns = list(y_pool.columns)
@@ -181,7 +173,7 @@ class TargetQBC(ActiveLearning):
 
                 else:             
                     # {train idx:pool idx}
-                    if idx_pool in dict_index.values() or idx_pool in all_indices:
+                    if idx_pool in dict_index.values():
                         keys = [k for k, v in dict_index.items() if v == idx_pool]
                         
                         y_pool.loc[idx_pool, columns[j]] = np.nan
@@ -191,7 +183,8 @@ class TargetQBC(ActiveLearning):
 
                     else:
                         # fill new x_train instance 
-                        X_train = pd.concat([X_train,X_pool.loc[[idx_pool]]], ignore_index=False)
+                        if idx_pool not in X_train.index:
+                            X_train = pd.concat([X_train,X_pool.loc[[idx_pool]]], ignore_index=False)
                         
                         columns = list(y_pool.columns)
                         
@@ -211,8 +204,16 @@ class TargetQBC(ActiveLearning):
             print(complete_instances_idx)
 
             if not complete_instances_idx.empty:
-                y_pool = y_pool.drop(complete_instances_idx)
-                X_pool = X_pool.drop(complete_instances_idx)   
+                exclusion_indices = complete_instances_idx[
+                    complete_instances_idx.isin(y_pool.index) |
+                    complete_instances_idx.isin(X_pool.index)
+                ]
+
+                if not exclusion_indices.empty:
+                    print('i have already excluded that for you (active)...') 
+                    y_pool = y_pool.drop(exclusion_indices, errors='ignore')
+                    X_pool = X_pool.drop(exclusion_indices, errors='ignore')   
+
 
             # update predictions
             preds = self.model.unique_predict(models_array, X_test, target_length, columns)

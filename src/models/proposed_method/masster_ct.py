@@ -101,12 +101,9 @@ class MASSTER:
                 fold, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length)
             
             pairs_per_iteration_active.append(added_pairs_per_iteration_active)
-            print('ACTIVE')
-            print(f'X_train len: {len(X_train)}')
-            print(f'y_train len: {len(y_train)}')
-            # TODO: verify why is y_train not being adapted correctly here...
-            # NOTE: it works with only active learning, is something about the integration... maybe the same pair is being selected on active and semi-supervised
-            # TODO: introduce a condition into active and cotraining to verify if the X already exists to avoid double concatenation... use y_pool idx in order to evaluate that condition
+            #print('ACTIVE')
+            #print(f'X_train len: {len(X_train)}')
+            #print(f'y_train len: {len(y_train)}')
             
             # update y_pool_nan to avoid using same pairs on semi-supervised module
             y_pool_nan = update_y_pool_nan(y_pool_nan, all_pred_selected_pairs_active)
@@ -119,9 +116,9 @@ class MASSTER:
                 X_train, feature_names = self.merge_features(X_train_v1, X_train_v2, feature_names_v1, feature_names_v2)
                 X_pool, feature_names = self.merge_features(X_pool_v1, X_pool_v2, feature_names_v1, feature_names_v2)
                 X_test, feature_names = self.merge_features(X_test_v1, X_test_v2, feature_names_v1, feature_names_v2)
-            print('COTRAINING')
-            print(f'X_train len: {len(X_train)}')
-            print(f'y_train len: {len(y_train)}')
+            #print('COTRAINING')
+            #print(f'X_train len: {len(X_train)}')
+            #print(f'y_train len: {len(y_train)}')
 
             # update y_pool to avoid using same pairs on active module 
             y_pool = update_y_pool(y_pool, all_pred_selected_pairs_ss)
@@ -131,8 +128,7 @@ class MASSTER:
             model_array = self.model.unique_fit(target_length, y_train, X_train)
             predictions = self.model.unique_predict(model_array, X_test, target_length, y_test.columns)
             r2, mse, mae, ca, arrmse = self.model.unique_evaluate(y_test, predictions)
-            print('debug')
-
+            
             # store metrics
             self.R2[fold, iteration] = r2
             self.MSE[fold, iteration] = mse
@@ -140,7 +136,9 @@ class MASSTER:
             self.CA[fold, iteration] = ca
             self.ARRMSE[fold, iteration] = arrmse
 
-            print(f"Iteration {iteration} metrics: R²={r2}, MSE={mse}, MAE={mae}, CA={ca}, ARRMSE={arrmse}")
+            print(f"MASSTER Iteration {iteration} metrics: R²={r2}, MSE={mse}, MAE={mae}, CA={ca}, ARRMSE={arrmse}")
+            print('---')
+            print()
 
             stopping_criterion = len(X_pool) == 0  # empty X_pool
             iteration += 1
