@@ -26,37 +26,6 @@ class SingleTargetRegressor:
         self.random_state = random_state
         self.n_trees = n_trees
 
-    def unique_evaluate_model(self, models_view1, models_view2, X_test_v1, X_test_v2, y_test_labeled):
-        columns = list(X_test_v1.columns)
-        print("Target Cotraining Making predictions on test data...")
-        predictions_v1 = pd.DataFrame(np.nan, index=X_test_v1.index, columns=y_test_labeled.columns)
-        predictions_v2 = pd.DataFrame(np.nan, index=X_test_v2.index, columns=y_test_labeled.columns)
-        for i in range(len(models_view1)):
-            rf_model_v1 = models_view1[i]
-            rf_model_v2 = models_view2[i]
-            predictions_v1.iloc[:, i] = rf_model_v1.predict(X_test_v1)
-            predictions_v2.iloc[:, i] = rf_model_v2.predict(X_test_v2)
-
-        y_pred_combined = (predictions_v1 + predictions_v2) / 2
-        r2 = np.round(r2_score(np.asarray(y_test_labeled), y_pred_combined), 4)
-        mse = np.round(mean_squared_error(np.asarray(y_test_labeled), y_pred_combined), 4)
-        mae = np.round(mean_absolute_error(np.asarray(y_test_labeled), y_pred_combined), 4)
-        ca = np.round(custom_accuracy(y_test_labeled.values, y_pred_combined.values, threshold=CA_THRESHOLD), 4)
-        arrmse = np.round(arrmse_metric(np.asarray(y_test_labeled), np.asarray(y_pred_combined)), 4)
-
-        print(f"    Overall: R²={r2:.3f}, MSE={mse:.3f}, MAE={mae:.3f}, CA={ca:.3f}, ARRMSE={arrmse:.3f}")
-        return r2, mse, mae, ca, arrmse
-
-    def unique_predict(self, models, X_pool, target_length, columns):
-        predictions = pd.DataFrame(
-            data=[[None] * target_length for _ in range(len(X_pool))], 
-            columns=columns,
-            index=X_pool.index
-        )
-        for i, model in enumerate(models):
-            predictions.iloc[:, i] = model.predict(X_pool)
-        return predictions
-
     def unique_fit(self, target_length, y_train_df, X_train):
         model_array = []
         columns = list(y_train_df.columns)
@@ -69,3 +38,24 @@ class SingleTargetRegressor:
             model.fit(X_train_valid, y_train_valid)
             model_array.append(model)
         return model_array
+
+    def unique_predict(self, models, X_pool, target_length, columns):
+        predictions = pd.DataFrame(
+            data=[[None] * target_length for _ in range(len(X_pool))], 
+            columns=columns,
+            index=X_pool.index
+        )
+        for i, model in enumerate(models):
+            predictions.iloc[:, i] = model.predict(X_pool)
+        return predictions
+
+    def unique_evaluate(self, y_test, predictions):
+        r2 = np.round(r2_score(np.asarray(y_test), predictions), 4)
+        mse = np.round(mean_squared_error(np.asarray(y_test), predictions), 4)
+        mae = np.round(mean_absolute_error(np.asarray(y_test), predictions), 4)
+        ca = np.round(custom_accuracy(y_test.values, predictions.values, threshold=CA_THRESHOLD), 4)
+        arrmse = np.round(arrmse_metric(np.asarray(y_test), np.asarray(predictions)), 4)
+
+        print(f"    Overall: R²={r2:.3f}, MSE={mse:.3f}, MAE={mae:.3f}, CA={ca:.3f}, ARRMSE={arrmse:.3f}")
+        return r2, mse, mae, ca, arrmse
+

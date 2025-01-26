@@ -1,5 +1,5 @@
 """ The subclass for Target-based QBC """
-from models.active_learning import *
+from models.active_learning.original.active_learning import *
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from statistics import variance

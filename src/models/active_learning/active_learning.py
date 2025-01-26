@@ -1,13 +1,14 @@
 import pandas as pd
 import sys
 from pathlib import Path
-from src.data.dataframes_creation import data_read
+
 
 # Absolute path using Path
-project_root = Path(__file__).resolve().parent.parent.parent.parent
+project_root = Path(__file__).resolve().parent.parent.parent
 # Adding path to sys.path
 sys.path.append(str(project_root))
 
+from data.dataframes_creation import data_read
 from config import *
 
 data_dir = DATA_DIR

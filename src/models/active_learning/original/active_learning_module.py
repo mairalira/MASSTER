@@ -22,7 +22,7 @@ os.environ["OMP_NUM_THREADS"] = "1"  # Set the environment variable to avoid mem
 warnings.filterwarnings("ignore", message="KMeans is known to have a memory leak on Windows with MKL")
 
 # Absolute path using Path
-project_root = Path(__file__).resolve().parent.parent
+project_root = Path(__file__).resolve().parent.parent.parent.parent
 # Adding path to sys.path   
 sys.path.append(str(project_root))
 
@@ -30,12 +30,12 @@ import config
 from utils.data_handling import *
 from utils.aux_active import *
 from models.active_learning import *
-from models.instance_based import *
-from models.upperbound import *
-from models.randomsampling import *
-from models.greedy_sampling import *
-from models.qbcrf import *
-from models.rtal import *
+from models.active_learning.original.instance_based import *
+from models.active_learning.original.upperbound import *
+from models.active_learning.original.randomsampling import *
+from models.active_learning.original.greedy_sampling import *
+from models.active_learning.original.qbcrf import *
+from models.active_learning.original.rtal import *
 
 # Main script
 data_dir = config.DATA_DIR
