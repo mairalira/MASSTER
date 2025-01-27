@@ -166,7 +166,7 @@ def run_reports(dataset_names, metric_names, considered_epochs, method_names):
     #evaluator.generate_subplot_image(dataset_names, metric_names)
  
 #n_epochs = 15
-#iterations = ITERATIONS
+iterations = ITERATIONS
 
 #considered_epochs = [int(n_epochs/3), int(n_epochs*(2/3)), n_epochs]
 #dataset_names = ['atp7d', 'friedman', 'mp5spec', 'musicOrigin2', 'rf2', 'oes97', 'enb', 'osales', 'wq', 'scm1d', 'jura']
