@@ -44,6 +44,19 @@ class ActiveLearningEvaluator:
         
         index = [f'Iteration {i+1}' for i in range(self.iterations)]
         self.auc_df = pd.DataFrame(auc_data, index=index)
+
+        # Normalizar os valores de AUC usando z-score
+        for method in self.methods_autorank:
+            auc_values = self.auc_df[method]
+            mean_value = auc_values.mean()
+            std_dev = auc_values.std()
+            
+            # Evitar divisão por zero ao normalizar
+            if std_dev > 0:
+                self.auc_df[method] = (auc_values - mean_value) / std_dev
+            else:
+                self.auc_df[method] = 0  # Ajustar para 0 se todos os valores forem iguais
+        
         
         return self.auc_df
     
