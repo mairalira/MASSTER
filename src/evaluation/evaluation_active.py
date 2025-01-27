@@ -47,16 +47,6 @@ class ActiveLearningEvaluator:
         
         return self.auc_df
     
-    def calculate_general_performance(self):
-        """Calculate the general performance (mean AUC across folds) for each method."""
-        self.general_performance = self.auc_df.mean(axis=0)
-        return self.general_performance
-    
-    def save_general_performance(self):
-        """Save the general performance results to a CSV file."""
-        output_path = Path(f'reports/active_learning_old/{self.dataset_name}/{self.metric_name}/general_performance_auc_{self.considered_epoch}.csv')
-        self.general_performance.to_csv(output_path, header=["Mean AUC"])
-    
     def save_reports(self):
         output_path_auc = Path(f'reports/active_learning_old/{self.dataset_name}/{self.metric_name}/resume_auc_{self.considered_epoch}.csv')
         self.auc_df.to_csv(output_path_auc)
@@ -101,39 +91,6 @@ class ActiveLearningEvaluator:
         ax = plot_stats(result, allow_insignificant=True) 
         fig = ax.get_figure()
         plot_path = Path(f'reports/active_learning_old/{self.dataset_name}/{self.metric_name}/autorank_plot_auc_{self.considered_epoch}.png')
-        fig.savefig(plot_path)
-        plt.close(fig) 
-        plt.close('all')
-
-    def multi_auc(self, dataset_names, metric_name, considered_epoch):
-        multidataset_performance = pd.DataFrame()
-
-        for dataset in dataset_names:
-            evaluator = ActiveLearningEvaluator(dataset, metric_name, self.n_epochs, considered_epoch)
-            evaluator.assemble_auc()
-            general_performance = self.calculate_general_performance()
-            multidataset_performance = pd.concat(
-                [multidataset_performance, general_performance.rename(dataset)],
-                axis=1
-            )
-
-        multidataset_performance = multidataset_performance.transpose()
-        self.multidataset_auc = multidataset_performance
-
-        return self.multidataset_auc
-
-    def run_multi_autorank(self):
-        df_type = self.multidataset_auc
-        result = autorank(df_type, alpha=0.05, verbose=False)
-        report_path = Path(f'reports/active_learning_old/{self.metric_name}/autorank_report_auc_{self.considered_epoch}.txt')
-        with open(report_path, 'w') as report_file:
-            old_stdout = sys.stdout
-            sys.stdout = report_file
-            latex_report(result, decimal_places=3, complete_document=False)
-            sys.stdout = old_stdout
-        ax = plot_stats(result, allow_insignificant=True) 
-        fig = ax.get_figure()
-        plot_path = Path(f'reports/active_learning_old/{self.metric_name}/autorank_plot_auc_{self.considered_epoch}.png')
         fig.savefig(plot_path)
         plt.close(fig) 
         plt.close('all')
@@ -207,49 +164,70 @@ def run_reports(dataset_names, metric_names, considered_epochs, method_names):
                 evaluator.save_summary_metrics()
                 
     #evaluator.generate_subplot_image(dataset_names, metric_names)
+ 
+#n_epochs = 15
+#iterations = ITERATIONS
 
-def run_multi_report(dataset_names, metric_names, considered_epoch, method_names):
-    for metric in metric_names:
-        print(f'Metric: {metric}')
-        multidataset_performance = pd.DataFrame()
-        for dataset in dataset_names:
-            evaluator = ActiveLearningEvaluator(dataset, metric, n_epochs, considered_epoch)
-            evaluator.assemble_auc()
-            general_performance = evaluator.calculate_general_performance()
-            
-            # Add performance to the multidataset DataFrame
-            multidataset_performance = pd.concat(
-                [multidataset_performance, general_performance.rename(dataset)],
-                axis=1
-            )
-        
-        # Transpose to have datasets as rows and methods as columns
-        multidataset_performance = multidataset_performance.transpose()
-        print("Multidataset performance summary:")
-        print(multidataset_performance)
-        output_path = Path(f"reports/active_learning_old/{metric}/multidataset_performance_auc_{considered_epoch}.csv")
-        multidataset_performance.to_csv(output_path)
-        
-        # Perform autorank analysis across datasets
-        evaluator.multidataset_auc = multidataset_performance
-        evaluator.run_multi_autorank()
-            
+#considered_epochs = [int(n_epochs/3), int(n_epochs*(2/3)), n_epochs]
+#dataset_names = ['atp7d', 'friedman', 'mp5spec', 'musicOrigin2', 'rf2', 'oes97', 'enb', 'osales', 'wq', 'scm1d', 'jura']
+#dataset_names = ['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'scm1d', 'wq']
+#metric_names = ['arrmse', 'r2']
+#metric_names = ['arrmse', 'ca', 'mae', 'mse', 'r2'] 
+#method_names = ['greedy', 'instance', 'qbcrf', 'random', 'rtal', 'upperbound']
+#run_reports(dataset_names, metric_names, considered_epochs, method_names)
 
+class MultiEvaluatorActive:
+    def __init__(self, dataset_names, metric_names, all_methods, considered_epoch):
+        self.dataset_names = dataset_names
+        self.metric_names = metric_names
+        self.all_methods = all_methods
+        self.considered_epoch = considered_epoch
 
+    def fetch_auc(self):
+        for metric in self.metric_names:
+            general_auc = pd.DataFrame(index=self.dataset_names, columns=self.all_methods)
+            for dataset in self.dataset_names:
+                output_path_auc = Path(f'reports/active_learning_old/{dataset}/{metric}/resume_auc_{self.considered_epoch}.csv')
+                df_auc = pd.read_csv(output_path_auc, index_col=0)
+                print(df_auc)
+                mean_auc = df_auc.mean(axis=0)
+                general_auc.loc[dataset] = mean_auc[self.all_methods].values
+            output_path_mean_auc = Path(f'reports/active_learning_old/resume_auc_{metric}.csv')
+            general_auc.to_csv(output_path_mean_auc)
 
-    
+    def multi_autorank(self):
+        for metric in self.metric_names:
+            output_path_mean_auc = Path(f'reports/active_learning_old/resume_auc_{metric}.csv')
+            general_auc = pd.read_csv(output_path_mean_auc, index_col=0)
+            #print(general_auc)
+            result = autorank(general_auc, alpha=0.05, verbose=False)
+            report_path = Path(f'reports/active_learning_old/{metric}_autorank_report_auc.txt')
+            with open(report_path, 'w') as report_file:
+                old_stdout = sys.stdout
+                sys.stdout = report_file
+                latex_report(result, decimal_places=3, complete_document=False)
+                sys.stdout = old_stdout
+            ax = plot_stats(result, allow_insignificant=True) 
+            fig = ax.get_figure()
+            plot_path = Path(f'reports/active_learning_old/{metric}_autorank_plot_auc.png')
+            fig.savefig(plot_path)
+            plt.close(fig) 
+            plt.close('all')
 
-            
-n_epochs = N_EPOCHS
-iterations = ITERATIONS
+def run_multi_evaluation(dataset_names, metric_names, all_methods, considered_epoch):
+    multi_eval_module = MultiEvaluatorActive(dataset_names, metric_names, all_methods, considered_epoch)
+    multi_eval_module.fetch_auc()
+    multi_eval_module.multi_autorank()
 
-considered_epochs = [int(n_epochs/3), int(n_epochs*(2/3)), N_EPOCHS]
+n_epochs = 15
+considered_epoch = int(n_epochs/3)#, int(n_epochs*(2/3)), n_epochs]
 dataset_names = ['atp7d', 'friedman', 'mp5spec', 'musicOrigin2', 'rf2', 'oes97', 'enb', 'osales', 'wq', 'scm1d', 'jura']
 #dataset_names = ['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'scm1d', 'wq']
 #metric_names = ['arrmse', 'r2']
 metric_names = ['arrmse', 'ca', 'mae', 'mse', 'r2'] 
-method_names = ['greedy', 'instance', 'qbcrf', 'random', 'rtal', 'upperbound']
-run_reports(dataset_names, metric_names, considered_epochs, method_names)
+all_methods = ['greedy', 'instance', 'qbcrf', 'random', 'rtal']#, 'upperbound']
+run_multi_evaluation(dataset_names, metric_names, all_methods, considered_epoch)
 
-#run_multi_report(dataset_names, metric_names, considered_epochs, method_names)
+
+
 
