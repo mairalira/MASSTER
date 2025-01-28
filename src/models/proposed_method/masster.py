@@ -66,13 +66,16 @@ class MASSTER:
         return target_qbc_model
     
     def initialize_semi_supervised_learning(self):
+        if self.ss_model is None:
+            ss_model = None
         if self.ss_model == 'cotraining':
             ss_model = TargetCoTraining(self.data_dir, self.dataset_name, self.k_folds, self.max_iter, self.threshold ,self.random_state, self.n_trees, self.batch_size_ssl)
         if self.ss_model == 'self_learning':
             ss_model = TargetSelfLearning(self.data_dir, self.dataset_name, self.k_folds, self.max_iter, self.threshold, self.random_state, self.n_trees, self.batch_size_ssl)
         return ss_model
     
-    def merge_features(self, X_v1, X_v2, feature_names_v1, feature_names_v2):
+     
+    """ def merge_features(self, X_v1, X_v2, feature_names_v1, feature_names_v2):
         # verify if X_v1 and X_v2 are DataFrames
         if not isinstance(X_v1, pd.DataFrame) or not isinstance(X_v2, pd.DataFrame):
             raise ValueError("X_v1 and X_v2 must be DataFrames.")
@@ -87,12 +90,9 @@ class MASSTER:
         # combine feature names
         feature_names_merged = feature_names_v1 + feature_names_v2
         
-        return X_merged, feature_names_merged
+        return X_merged, feature_names_merged """
     
     def run_masster(self, fold):
-        target_qbc_model = self.initialize_active_learning()
-        ss_model = self.initialize_semi_supervised_learning()
-
         stopping_criterion = False
         iteration = 0
         pairs_per_iteration_active = []
@@ -101,52 +101,62 @@ class MASSTER:
         X_train, y_train, X_pool, y_pool, y_pool_nan, X_rest, y_rest, X_test, y_test, target_length, target_names, feature_names = read_data(self.data_dir, self.dataset_name, fold + 1)
 
         while not stopping_criterion and iteration < self.iterations:
+            target_qbc_model = self.initialize_active_learning()
+            #ss_model = self.initialize_semi_supervised_learning()
+
             # run active learning model by max_iter each turn
-            _, _, _, _, _, added_pairs_per_iteration_active, all_pred_selected_pairs_active, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length = target_qbc_model.train_and_evaluate(
-                fold, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length)
+            r2, mse, mae, ca, arrmse, added_pairs_per_iteration_active, all_pred_selected_pairs_active, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length = target_qbc_model.training(
+                X_train, X_pool, X_test, y_train, y_pool, y_test, target_length)
             
+            print('TENTANDO DEBUGAR')
+            print(X_train.shape[0])
+
             pairs_per_iteration_active.append(added_pairs_per_iteration_active)
             #print('ACTIVE')
             #print(f'X_train len: {len(X_train)}')
             #print(f'y_train len: {len(y_train)}')
             
-            # update y_pool_nan to avoid using same pairs on semi-supervised module
+            """ # update y_pool_nan to avoid using same pairs on semi-supervised module
             y_pool_nan = update_y_pool_nan(y_pool_nan, all_pred_selected_pairs_active)
 
             # run semi-supervised learning model by max_iter each turn
             if self.ss_model == 'cotraining':
-                _, _, _, _, _, added_pairs_per_iteration_ss, all_pred_selected_pairs_ss, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_train, X_test_v1, X_test_v2, y_test, target_length, feature_names_v1, feature_names_v2, fold_index, y_pool_nan = ss_model.train_and_evaluate(
-                    fold,  X_train, y_train, X_pool, X_test, y_test, y_pool_nan, target_length, target_names, feature_names)
+                r2, mse, mae, ca, arrmse, added_pairs_per_iteration_ss, all_pred_selected_pairs_ss, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_train, X_test_v1, X_test_v2, y_test, target_length, feature_names_v1, feature_names_v2, fold_index, y_pool_nan = ss_model.training(
+                    X_train, y_train, X_pool, X_test, y_test, target_length, feature_names, fold, y_pool_nan)
                 
                 X_train, feature_names = self.merge_features(X_train_v1, X_train_v2, feature_names_v1, feature_names_v2)
                 X_pool, feature_names = self.merge_features(X_pool_v1, X_pool_v2, feature_names_v1, feature_names_v2)
                 X_test, feature_names = self.merge_features(X_test_v1, X_test_v2, feature_names_v1, feature_names_v2)
 
             if self.ss_model == 'self_learning':
-                _, _, _, _, _, added_pairs_per_iteration_ss, all_pred_selected_pairs_ss, X_train, X_pool, y_train, X_test, y_test, target_length, feature_names, fold_index, y_pool_nan = ss_model.train_and_evaluate(
-                    fold,  X_train, y_train, X_pool, X_test, y_test, y_pool_nan, target_length, target_names, feature_names)
+                r2, mse, mae, ca, arrmse, added_pairs_per_iteration_ss, all_pred_selected_pairs_ss, X_train, X_pool, y_train, X_test, y_test, target_length, feature_names, fold_index, y_pool_nan = ss_model.training(
+                    X_train, y_train, X_pool, X_test, y_test, target_length, feature_names, fold, y_pool_nan)
                 
             #print('COTRAINING')
             #print(f'X_train len: {len(X_train)}')
             #print(f'y_train len: {len(y_train)}')
 
             # update y_pool to avoid using same pairs on active module 
-            y_pool = update_y_pool(y_pool, all_pred_selected_pairs_ss)
+            y_pool = update_y_pool(y_pool, all_pred_selected_pairs_ss) """
 
             print('---')
-            # evaluate model
-            model_array = self.model.unique_fit(target_length, y_train, X_train)
-            predictions = self.model.unique_predict(model_array, X_test, target_length, y_test.columns)
-            r2, mse, mae, ca, arrmse = self.model.unique_evaluate(y_test, predictions)
             
-            # store metrics
-            self.R2[fold, iteration] = r2
-            self.MSE[fold, iteration] = mse
-            self.MAE[fold, iteration] = mae
-            self.CA[fold, iteration] = ca
-            self.ARRMSE[fold, iteration] = arrmse
+            # Ensure metrics are single values
+            r2_value = r2[-1,0] if isinstance(r2, (list, np.ndarray)) else r2
+            mse_value = mse[-1,0] if isinstance(mse, (list, np.ndarray)) else mse
+            mae_value = mae[-1,0] if isinstance(mae, (list, np.ndarray)) else mae
+            ca_value = ca[-1,0] if isinstance(ca, (list, np.ndarray)) else ca
+            arrmse_value = arrmse[-1,0] if isinstance(arrmse, (list, np.ndarray)) else arrmse
 
-            print(f"MASSTER Iteration {iteration} metrics: R²={r2}, MSE={mse}, MAE={mae}, CA={ca}, ARRMSE={arrmse}")
+            # store metrics
+            self.R2[fold, iteration] = r2_value
+            self.MSE[fold, iteration] = mse_value
+            self.MAE[fold, iteration] = mae_value
+            self.CA[fold, iteration] = ca_value
+            self.ARRMSE[fold, iteration] = arrmse_value
+
+
+            print(f"MASSTER Iteration {iteration} metrics: R²={r2_value}, MSE={mse_value}, MAE={mae_value}, CA={ca_value}, ARRMSE={arrmse_value}")
             print('---')
             print()
 
@@ -203,19 +213,23 @@ if __name__ == "__main__":
     print('Proposed method...')
     X_train, y_labeled, X_pool, y_pool, y_pool_nan, X_rest, y_rest, X_test, y_test, target_length,target_names,feature_names = read_data(data_dir, dataset_name, 1)
     batch_size = round((batch_percentage / 100) * len(X_pool))
-    batch_size_ssl = round((batch_percentage_ssl / 100) * len(X_pool))
+    #batch_size_ssl = round((batch_percentage_ssl / 100) * len(X_pool))
 
     #ss_model = 'cotraining'
     #ss_model = 'self_learning'
-    ssl_options = ['cotraining', 'self_learning']
+    #ssl_options = ['cotraining', 'self_learning']
 
-    for ss_model in ssl_options:
+    """ for ss_model in ssl_options:
         print(f'The selected semi_supervised model is: {ss_model}')
         masster = MASSTER(ss_model, data_dir, dataset_name, k_folds, random_state, n_trees, batch_size, batch_size_ssl, iterations, threshold)
 
         for fold in range(k_folds):
             masster.run_masster(fold)
-            print(fold)
+            print(fold) """
+    
+    masster = MASSTER(None, data_dir, dataset_name, k_folds, random_state, n_trees, batch_size, batch_size_ssl, iterations, threshold)
+    for fold in range(k_folds):
+        masster.run_masster(fold)
 
 
 

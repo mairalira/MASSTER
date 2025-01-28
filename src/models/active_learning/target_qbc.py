@@ -140,7 +140,6 @@ class TargetQBC(ActiveLearning):
             for idx_pool, j in oracle_pred_selected_pairs.keys():
                 indices.add(idx_pool)
 
-
             added_pairs_per_iteration.append(len(oracle_pred_selected_pairs))
             
             print("# of distinct indices "+str(len(indices)))
@@ -226,12 +225,12 @@ class TargetQBC(ActiveLearning):
             self.CA[:,epoch] = (ca)
             self.ARRMSE[:,epoch] = (arrmse)
 
-        return added_pairs_per_iteration, all_pred_selected_pairs, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length
+        return r2, mse, mae, ca, arrmse, added_pairs_per_iteration, all_pred_selected_pairs, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length
 
     def train_and_evaluate(self, fold_index, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length):
         print(f"\nTraining target-based QBC model in fold {fold_index}...")
         
-        added_pairs_per_iteration, all_pred_selected_pairs, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length = self.training(X_train, X_pool, X_test, y_train, y_pool, y_test, target_length)
+        r2, mse, mae, ca, arrmse, added_pairs_per_iteration, all_pred_selected_pairs, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length = self.training(X_train, X_pool, X_test, y_train, y_pool, y_test, target_length)
 
         return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE, added_pairs_per_iteration, all_pred_selected_pairs, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length
 
