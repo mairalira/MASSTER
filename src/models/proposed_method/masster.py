@@ -96,14 +96,14 @@ class MASSTER:
         stopping_criterion = False
         iteration = 0
         pairs_per_iteration_active = []
+        target_qbc_model = self.initialize_active_learning()
+        #ss_model = self.initialize_semi_supervised_learning()
         
         # read data
         X_train, y_train, X_pool, y_pool, y_pool_nan, X_rest, y_rest, X_test, y_test, target_length, target_names, feature_names = read_data(self.data_dir, self.dataset_name, fold + 1)
 
         while not stopping_criterion and iteration < self.iterations:
-            target_qbc_model = self.initialize_active_learning()
-            #ss_model = self.initialize_semi_supervised_learning()
-
+            
             # run active learning model by max_iter each turn
             r2, mse, mae, ca, arrmse, added_pairs_per_iteration_active, all_pred_selected_pairs_active, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length = target_qbc_model.training(
                 X_train, X_pool, X_test, y_train, y_pool, y_test, target_length)
