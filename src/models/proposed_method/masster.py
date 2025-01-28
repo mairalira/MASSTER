@@ -101,16 +101,15 @@ class MASSTER:
         
         # read data
         X_train, y_train, X_pool, y_pool, y_pool_nan, X_rest, y_rest, X_test, y_test, target_length, target_names, feature_names = read_data(self.data_dir, self.dataset_name, fold + 1)
-
+        all_pred_selected_pairs = None
+        added_pairs_per_iteration = None
+        dict_index = None
         while not stopping_criterion and iteration < self.iterations:
             
             # run active learning model by max_iter each turn
-            r2, mse, mae, ca, arrmse, added_pairs_per_iteration_active, all_pred_selected_pairs_active, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length = target_qbc_model.training(
-                X_train, X_pool, X_test, y_train, y_pool, y_test, target_length)
-            
-            print('TENTANDO DEBUGAR')
-            print(X_train.shape[0])
 
+            r2, mse, mae, ca, arrmse, added_pairs_per_iteration_active, all_pred_selected_pairs_active, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length,  all_pred_selected_pairs, added_pairs_per_iteration, dict_index = target_qbc_model.training(X_train, X_pool, X_test, y_train, y_pool, y_test, target_length, all_pred_selected_pairs, added_pairs_per_iteration, dict_index)
+           # pd.DataFrame(target_qbc_model.v).to_csv("variance_master.csv" + str(iteration))            
             pairs_per_iteration_active.append(added_pairs_per_iteration_active)
             #print('ACTIVE')
             #print(f'X_train len: {len(X_train)}')

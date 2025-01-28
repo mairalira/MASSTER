@@ -95,17 +95,33 @@ class TargetQBC(ActiveLearning):
         
         return pred_selected_pairs
     
-    def training(self, X_train, X_pool, X_test, y_train, y_pool, y_test, target_length):
+    def training(self, X_train, X_pool, X_test, y_train, y_pool, y_test, target_length,
+                all_pred_selected_pairs = None,
+                added_pairs_per_iteration = None,
+                dict_index = None):
         # initialize instances_pool and targets_pool as empty dataframes with target columns and ??? lines
-        all_pred_selected_pairs = {}
-        added_pairs_per_iteration = []
-        dict_index = {} # {key:value} -> {index_train:index_pool}
+#        print(X_train)
+        if all_pred_selected_pairs is None:
+            all_pred_selected_pairs = {}
+            added_pairs_per_iteration = []
+            dict_index = {} # {key:value} -> {index_train:index_pool}
 
         for epoch in range(self.n_epochs):
+            # all_pred_selected_pairs = {}
+            # added_pairs_per_iteration = []
+            # dict_index = {} # {key:value} -> {index_train:index_pool}
+#            print(X_train.dtypes)
+ #           print(y_train.dtypes)
+
+            # pd.DataFrame(X_train.to_csv("targetbased_x.csv" + str(epoch)) )            
+            # pd.DataFrame(y_train.to_csv("targetbased_y.csv" + str(epoch)))            
+            # pd.DataFrame(X_pool.to_csv("targetbased_x_pool.csv" + str(epoch)) )            
+            # pd.DataFrame(y_pool.to_csv("targetbased_y_pool.csv" + str(epoch)))            
+
             print("Epoch {}:".format(epoch+1))
             print("     The training set size: {}".format(len(X_train)))
             print("     The unlabelled pool size: {}".format(len(X_pool)))
-            
+#            print(X_train.shape[0])
             # initialize models 
             # NOTE: models_array will containg target_length models, since we are using a local approach to MTR
             models_array = self.model.unique_fit(target_length, y_train, X_train)
@@ -116,7 +132,10 @@ class TargetQBC(ActiveLearning):
 
             # compute variances
             variances = self.calculate_variances(models_array, X_pool, target_length)
-           
+#            print(variances)
+#            self.v = variances
+
+#            pd.DataFrame(variances).to_csv("variance_target.csv" + str(epoch))
             # compute top_k_variances using max_var
             pred_selected_pairs = {}
             pred_selected_pairs = self.max_var(variances, target_length, all_pred_selected_pairs)
@@ -225,12 +244,15 @@ class TargetQBC(ActiveLearning):
             self.CA[:,epoch] = (ca)
             self.ARRMSE[:,epoch] = (arrmse)
 
-        return r2, mse, mae, ca, arrmse, added_pairs_per_iteration, all_pred_selected_pairs, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length
+        #return r2, mse, mae, ca, arrmse, added_pairs_per_iteration, all_pred_selected_pairs, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length
+        return r2, mse, mae, ca, arrmse, added_pairs_per_iteration, all_pred_selected_pairs, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length,  all_pred_selected_pairs, added_pairs_per_iteration, dict_index
+
+#        return r2, mse, mae, ca, arrmse, added_pairs_per_iteration, all_pred_selected_pairs, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length
 
     def train_and_evaluate(self, fold_index, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length):
         print(f"\nTraining target-based QBC model in fold {fold_index}...")
         
-        r2, mse, mae, ca, arrmse, added_pairs_per_iteration, all_pred_selected_pairs, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length = self.training(X_train, X_pool, X_test, y_train, y_pool, y_test, target_length)
+        r2, mse, mae, ca, arrmse, added_pairs_per_iteration, all_pred_selected_pairs, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length, _, _, _ = self.training(X_train, X_pool, X_test, y_train, y_pool, y_test, target_length)
 
         return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE, added_pairs_per_iteration, all_pred_selected_pairs, X_train, y_train, X_pool, y_pool, X_test, y_test, target_length
 
