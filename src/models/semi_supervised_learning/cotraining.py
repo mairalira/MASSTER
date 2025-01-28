@@ -303,7 +303,7 @@ class TargetCoTraining(CoTraining):
             self.CA[fold_index, -1] = ca
             self.ARRMSE[fold_index, -1] = arrmse
             
-            return added_pairs_per_iteration, all_pred_selected_pairs, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_train_df, X_test_v1, X_test_v2, y_test, target_length, feature_names_v1,feature_names_v2, fold_index, y_pool
+            return r2, mse, mae, ca, arrmse, added_pairs_per_iteration, all_pred_selected_pairs, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_train_df, X_test_v1, X_test_v2, y_test, target_length, feature_names_v1,feature_names_v2, fold_index, y_pool
         
         def train_and_evaluate(self, fold_index, X_train, y_train_df, X_pool, X_test, y_test, y_pool, target_length, target_names, feature_names):
 

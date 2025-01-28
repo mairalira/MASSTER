@@ -266,7 +266,7 @@ class TargetSelfLearning(SelfLearning):
             self.CA[fold_index, -1] = ca
             self.ARRMSE[fold_index, -1] = arrmse
             
-            return added_pairs_per_iteration, all_pred_selected_pairs, X_train_df, X_pool_df, y_train_df, X_test, y_test,  target_length, feature_names, fold_index, y_pool
+            return r2, mse, mae, ca, arrmse, added_pairs_per_iteration, all_pred_selected_pairs, X_train_df, X_pool_df, y_train_df, X_test, y_test,  target_length, feature_names, fold_index, y_pool
         
         def train_and_evaluate(self, fold_index, X_train, y_train_df, X_pool, X_test, y_test, y_pool, target_length, target_names, feature_names):
 
