@@ -1,6 +1,4 @@
-# Active and Self-Learning for Multi-target Regression
-
-Template structure for data science projects from cookiecutter
+# MASSTER
 
 ## Project Description
 Application of active-learning and semi-supervised learning to multi-target regression.
@@ -57,6 +55,7 @@ https://github.com/AshnaJose/Regression-Tree-based-Active-Learning
 │                         the creator's initials, and a short `-` delimited description, e.g.
 │                         `1.0-jqp-initial-data-exploration`.
 │
+│  
 ├── pyproject.toml     <- Project configuration file with package metadata for 
 │                         template and configuration for tools like black
 │
@@ -64,30 +63,41 @@ https://github.com/AshnaJose/Regression-Tree-based-Active-Learning
 │
 ├── reports             <- Generated analysis as HTML, PDF, LaTeX, etc.
 │   └── figures         <- Generated graphics and figures to be used in reporting
-|   └── active_learning <- Generated results for active-learning module
-│
+|   └── active_learning_only <- Generated results for active-learning module for diferent active-learning models
+|   └── active_learning <- Generated results for active-learning module for target qbc
+│   └── paper_evaluation <- Generated evaluation results from the proposed models
+    └── semi_supervised_learning <- Generated results for semi_supervised_learning models
+
 ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
 │                         generated with `pip freeze > requirements.txt`
 │
 ├── setup.cfg          <- Configuration file for flake8
 │
-└── template   <- Source code for use in this project.
+└── src   <- Source code for use in this project.
     │
-    ├── __init__.py             <- Makes template a Python module
-    │
-    ├── config.py               <- Store useful variables and configuration
-    │
-    ├── dataset.py              <- Scripts to download or generate data
-    │
-    ├── features.py             <- Code to create features for modeling
-    │
-    ├── modeling                
-    │   ├── __init__.py 
-    │   ├── predict.py          <- Code to run model inference with trained models          
-    │   └── train.py            <- Code to train models
-    │
-    └── plots.py                <- Code to create visualizations
-```
+    └──  data
+         └── data_processing.py        <- ´Process raw data into train, test and pool
+         └── datframes_creation.py        <- Transform data into dataframes
+    └──  evaluation
+         └── evaluation_active.py        <-Generate reports for active learning
+         └── evaluation_paper.py        <- Generate reports for paper analysis
+│
+├── models                <- Store useful variables and configuration
+   └── active_learning        <-Active Learning models
+            └── original        <- All active_learning models implemented in numpy
+            └── active_learning.py <- active_learning in pandas
+            └── target_qbc.py <- target qbc inplemented in pandas
+   └── proposed_method        <- MASSTER model
+         └── masster.py       <- MASSTER model
+   └── semi_supervised_learning        
+         └── cotraning.py       <- MASSTER model
+         └── self_learning.py       <- MASSTER model
+│
+├── utils               <- Useful functions to help the readability of the code
+      └── aux_active  <-Functions used during active_learning
+      └── data_handling  <-Read and save csv files
+      └── metrics  <- Functions to calculate metrics
 
+├── config.py               <- Store useful variables and configuration
 --------
 
