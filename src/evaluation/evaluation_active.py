@@ -27,7 +27,7 @@ class ActiveLearningEvaluator:
         auc_data = {method: [] for method in self.methods_autorank}
         
         for method in self.methods_autorank:
-            file_path = Path(f'reports/active_learning_old/{self.dataset_name}/{self.metric_name}/{method}_{self.metric_name}.csv')
+            file_path = Path(f'reports/active_learning_only/{self.dataset_name}/{self.metric_name}/{method}_{self.metric_name}.csv')
             if file_path.exists():
                 df = pd.read_csv(file_path, index_col=0)
                 if 'AUC' in df.columns:
@@ -61,11 +61,11 @@ class ActiveLearningEvaluator:
         return self.auc_df
     
     def save_reports(self):
-        output_path_auc = Path(f'reports/active_learning_old/{self.dataset_name}/{self.metric_name}/resume_auc_{self.considered_epoch}.csv')
+        output_path_auc = Path(f'reports/active_learning_only/{self.dataset_name}/{self.metric_name}/resume_auc_{self.considered_epoch}.csv')
         self.auc_df.to_csv(output_path_auc)
 
         description_auc_df = self.auc_df.describe()
-        description_auc_path = Path(f'reports/active_learning_old/{self.dataset_name}/{self.metric_name}/resume_auc_{self.considered_epoch}_description.csv')
+        description_auc_path = Path(f'reports/active_learning_only/{self.dataset_name}/{self.metric_name}/resume_auc_{self.considered_epoch}_description.csv')
         description_auc_df.to_csv(description_auc_path)
         
     def save_summary_metrics(self):
@@ -77,7 +77,7 @@ class ActiveLearningEvaluator:
             mean_values = []
             std_values = []
             for dataset in dataset_names:
-                description_path = Path(f'reports/active_learning_old/{dataset}/{self.metric_name}/resume_auc_{self.considered_epoch}_description.csv')
+                description_path = Path(f'reports/active_learning_only/{dataset}/{self.metric_name}/resume_auc_{self.considered_epoch}_description.csv')
                 if description_path.exists():
                     description_df = pd.read_csv(description_path, index_col=0)
                     mean_value = description_df.at['mean', method]
@@ -89,13 +89,13 @@ class ActiveLearningEvaluator:
             summary_data[method] = mean_values
 
         summary_df = pd.DataFrame(summary_data, index=dataset_names)
-        output_path = Path(f'reports/active_learning_old/summary_auc_{self.considered_epoch}_{self.metric_name}.csv')
+        output_path = Path(f'reports/active_learning_only/summary_auc_{self.considered_epoch}_{self.metric_name}.csv')
         summary_df.to_csv(output_path)
 
     def run_autorank(self):
         df_type = self.auc_df
         result = autorank(df_type, alpha=0.05, verbose=False)
-        report_path = Path(f'reports/active_learning_old/{self.dataset_name}/{self.metric_name}/autorank_report_auc_{self.considered_epoch}.txt')
+        report_path = Path(f'reports/active_learning_only/{self.dataset_name}/{self.metric_name}/autorank_report_auc_{self.considered_epoch}.txt')
         with open(report_path, 'w') as report_file:
             old_stdout = sys.stdout
             sys.stdout = report_file
@@ -103,7 +103,7 @@ class ActiveLearningEvaluator:
             sys.stdout = old_stdout
         ax = plot_stats(result, allow_insignificant=True) 
         fig = ax.get_figure()
-        plot_path = Path(f'reports/active_learning_old/{self.dataset_name}/{self.metric_name}/autorank_plot_auc_{self.considered_epoch}.png')
+        plot_path = Path(f'reports/active_learning_only/{self.dataset_name}/{self.metric_name}/autorank_plot_auc_{self.considered_epoch}.png')
         fig.savefig(plot_path)
         plt.close(fig) 
         plt.close('all')
@@ -124,7 +124,7 @@ class ActiveLearningEvaluator:
             for j, metric in enumerate(metric_names):
                 ax = axes[j, i]
                 for method in self.methods:
-                    file_path = Path(f'reports/active_learning_old/{dataset}/{metric}/{method}_{metric}.csv')
+                    file_path = Path(f'reports/active_learning_only/{dataset}/{metric}/{method}_{metric}.csv')
                     if file_path.exists():
                         df = pd.read_csv(file_path, index_col=0)
                         if 'AUC' in df.columns:
@@ -142,13 +142,13 @@ class ActiveLearningEvaluator:
         
         handles, labels = ax.get_legend_handles_labels()
         fig.legend(handles, labels, loc='lower center', ncol=len(self.methods), fontsize = 18)
-        plt.savefig('reports/active_learning_old/summary_subplot_image.png')
+        plt.savefig('reports/active_learning_only/summary_subplot_image.png')
         plt.close(fig)
 
 def compile_summary_reports(considered_epochs, metric_name):
     all_summaries = []
     for considered_epoch in considered_epochs:
-        summary_path = Path(f'reports/active_learning_old/summary_auc_{considered_epoch}_{metric_name}.csv', index_col = 0)
+        summary_path = Path(f'reports/active_learning_only/summary_auc_{considered_epoch}_{metric_name}.csv', index_col = 0)
         if summary_path.exists():
             summary_df = pd.read_csv(summary_path)
             if 'Unnamed: 0' in summary_df.columns:
@@ -163,7 +163,7 @@ def compile_summary_reports(considered_epochs, metric_name):
 
     final_summary_df = final_summary_df.sort_values(by='dataset')
 
-    final_summary_path = Path(f'reports/active_learning_old/summary_auc_{metric_name}.csv')
+    final_summary_path = Path(f'reports/active_learning_only/summary_auc_{metric_name}.csv')
     final_summary_df.to_csv(final_summary_path)
 
 def run_reports(dataset_names, metric_names, considered_epochs, method_names):
@@ -200,21 +200,21 @@ class MultiEvaluatorActive:
         for metric in self.metric_names:
             general_auc = pd.DataFrame(index=self.dataset_names, columns=self.all_methods)
             for dataset in self.dataset_names:
-                output_path_auc = Path(f'reports/active_learning_old/{dataset}/{metric}/resume_auc_{self.considered_epoch}.csv')
+                output_path_auc = Path(f'reports/active_learning_only/{dataset}/{metric}/resume_auc_{self.considered_epoch}.csv')
                 df_auc = pd.read_csv(output_path_auc, index_col=0)
                 print(df_auc)
                 mean_auc = df_auc.mean(axis=0)
                 general_auc.loc[dataset] = mean_auc[self.all_methods].values
-            output_path_mean_auc = Path(f'reports/active_learning_old/resume_auc_{metric}.csv')
+            output_path_mean_auc = Path(f'reports/active_learning_only/resume_auc_{metric}.csv')
             general_auc.to_csv(output_path_mean_auc)
 
     def multi_autorank(self):
         for metric in self.metric_names:
-            output_path_mean_auc = Path(f'reports/active_learning_old/resume_auc_{metric}.csv')
+            output_path_mean_auc = Path(f'reports/active_learning_only/resume_auc_{metric}.csv')
             general_auc = pd.read_csv(output_path_mean_auc, index_col=0)
             #print(general_auc)
             result = autorank(general_auc, alpha=0.05, verbose=False)
-            report_path = Path(f'reports/active_learning_old/{metric}_autorank_report_auc.txt')
+            report_path = Path(f'reports/active_learning_only/{metric}_autorank_report_auc.txt')
             with open(report_path, 'w') as report_file:
                 old_stdout = sys.stdout
                 sys.stdout = report_file
@@ -222,7 +222,7 @@ class MultiEvaluatorActive:
                 sys.stdout = old_stdout
             ax = plot_stats(result, allow_insignificant=True) 
             fig = ax.get_figure()
-            plot_path = Path(f'reports/active_learning_old/{metric}_autorank_plot_auc.png')
+            plot_path = Path(f'reports/active_learning_only/{metric}_autorank_plot_auc.png')
             fig.savefig(plot_path)
             plt.close(fig) 
             plt.close('all')
