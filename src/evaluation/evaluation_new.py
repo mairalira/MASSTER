@@ -123,8 +123,12 @@ class Evaluator:
         output_path_auc = Path(f'reports/paper_evaluation/{self.dataset_name}/resume_auc_{self.metric_name}.csv')
         output_path_auc.parent.mkdir(parents=True, exist_ok=True) 
         self.resume_auc.to_csv(output_path_auc)
+        print(self.resume_auc)
 
-        description_auc_df = self.resume_auc.describe()
+        df = self.resume_auc
+        df = df.astype(float)
+        description_auc_df = df.describe()
+        print(description_auc_df)
         description_auc_path = Path(f'reports/paper_evaluation/{self.dataset_name}/resume_auc_{self.metric_name}_description.csv')
         description_auc_df.to_csv(description_auc_path)
 
@@ -198,6 +202,30 @@ class Evaluator:
         plt.savefig('reports/paper_evaluation/summary_subplot_image.png')
         plt.close(fig)
 
+    def save_summary_metrics(self):
+        df_type = self.auc_df
+        
+        summary_data = {method: [] for method in self.all_methods}
+        
+        for method in self.all_methods:
+            mean_values = []
+            std_values = []
+            for dataset in dataset_names:
+                description_path = Path(f'reports/paper_evaluation/{dataset}/resume_auc_{self.metric_name}_description.csv')
+                if description_path.exists():
+                    description_df = pd.read_csv(description_path, index_col=0)
+                    mean_value = description_df.at['mean', method]
+                    std_value = description_df.at['std', method]
+                    mean_values.append(f"{mean_value:.3f} +/- {std_value:.3f}")
+                else:
+                    print(f"File not found: {description_path}")  
+                    mean_values.append(None)
+            summary_data[method] = mean_values
+
+        summary_df = pd.DataFrame(summary_data, index=dataset_names)
+        output_path = Path(f'reports/paper_evaluation/summary_auc_{self.metric_name}.csv')
+        summary_df.to_csv(output_path)
+
 def run_reports(dataset_names, metric_names, iterations, folds):
     for dataset in dataset_names:
         for metric in metric_names:
@@ -205,6 +233,7 @@ def run_reports(dataset_names, metric_names, iterations, folds):
             resume_auc, resume_avg = evaluator.compile_methods()
             evaluator.save_reports()
             evaluator.run_autorank()
+            evaluator.save_summary_metrics()
 
     evaluator.generate_subplot_image(dataset_names, metric_names)
 
@@ -228,11 +257,8 @@ class MultiEvaluator:
             for dataset in self.dataset_names:
                 output_path_auc = Path(f'reports/paper_evaluation/{dataset}/resume_auc_{metric}.csv')
                 df_auc = pd.read_csv(output_path_auc, index_col=0)
-                print(df_auc)
                 mean_auc = df_auc.mean(axis=0)
-                print(mean_auc)
                 general_auc.loc[dataset] = mean_auc[self.all_methods].values
-                print(general_auc)
             output_path_mean_auc = Path(f'reports/paper_evaluation/resume_auc_{metric}.csv')
             general_auc.to_csv(output_path_mean_auc)
 
