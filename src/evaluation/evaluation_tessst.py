@@ -61,32 +61,68 @@ class Evaluator:
 
         return self.full_df #by method
     
-    def compute_auc(self, method):
-        full_df = self.full_df # by method
-        auc_df = pd.DataFrame(index=full_df.index.unique(), columns=['R2', 'MSE', 'MAE', 'CA', 'ARRMSE'])
+    def calculate_auc(self,fold_df, metrics):
+        auc_values = {}
+        for metric in metrics:
+            x = fold_df['Iterations']
+            y = fold_df[metric]
+            auc_value = auc(x, y)  # Calcula a AUC
+            auc_values[metric] = auc_value
+        return auc_values
+    
+    def normalize_auc(self,auc_df):
+        for metric in auc_df.columns:
+            mean_value = auc_df[metric].mean()
+            std_dev = auc_df[metric].std()
+            if std_dev > 0:
+                auc_df[metric] = (auc_df[metric] - mean_value) / std_dev
+            else:
+                auc_df[metric] = 0
+        return auc_df
+    
+    def process_and_save_auc(self, method):
+        full_df = self.full_df 
+        metrics = ['R2', 'MSE', 'MAE', 'CA', 'ARRMSE']
+        auc_df = pd.DataFrame(index=full_df.index.unique(), columns=metrics)
 
         for fold_index in full_df.index.unique():
             fold_df = full_df.loc[fold_index]
-            for metric in auc_df.columns:
-                x = fold_df['Iterations']
-                y = fold_df[metric]
-                auc_value = auc(x, y)
-                auc_df.loc[fold_index, metric] = auc_value
+            auc_values = self.calculate_auc(fold_df, metrics)
+            for metric, value in auc_values.items():
+                auc_df.loc[fold_index, metric] = value
 
+        auc_df = self.normalize_auc(auc_df)
         auc_df['Method'] = method
 
-        for metric in auc_df.columns[:-1]:  
-            mean_value = auc_df[metric].mean()
-            std_dev = auc_df[metric].std()
-            if std_dev > 0:  
-                auc_df[metric] = (auc_df[metric] - mean_value) / std_dev
-            else:
-                auc_df[metric] = 0  
+        # Concatenate the new auc_df with the existing auc_complete_df
+        if hasattr(self, 'auc_complete_df'):
+            self.auc_complete_df = pd.concat([self.auc_complete_df, auc_df], axis=0)
+        else:
+            self.auc_complete_df = auc_df
 
-        auc_df['Method'] = method
-        self.auc_df = auc_df
+        # Save the complete DataFrame to a CSV file
+        output_dir = Path(f'reports/paper_evaluation/{self.dataset_name}')
+        output_dir.mkdir(parents=True, exist_ok=True)
+        complete_output_path = Path(f'reports/paper_evaluation/{self.dataset_name}/full_auc_{self.metric_name}.csv')
+        self.auc_complete_df.to_csv(complete_output_path, index=True)
 
-        return self.auc_df
+        # Generate separate DataFrames for each metric and save them
+        for metric in metrics:
+            metric_df = self.auc_complete_df.pivot(index=self.auc_complete_df.index, columns='Method', values=metric)
+            metric_output_path = Path(f'reports/paper_evaluation/{self.dataset_name}/full_auc_{metric}.csv')
+            metric_df.to_csv(metric_output_path, index=True)
+
+            # Generate and save the describe DataFrame for each metric
+            description_metric_df = metric_df.describe()
+            description_output_path = Path(f'reports/paper_evaluation/{self.dataset_name}/describe_auc_{metric}.csv')
+            description_metric_df.to_csv(description_output_path, index=True)
+
+        return self.auc_complete_df
+
+    def compute_auc(self, method):
+        self.full_df = self.concate_dataframes(method)
+        return self.process_and_save_auc(method)
+
     
     def compute_average(self, method):
         full_df = self.full_df  # by method
@@ -109,28 +145,20 @@ class Evaluator:
         for unique_method in self.all_methods:
             self.method = unique_method
             full_df = self.concate_dataframes(unique_method)
-            auc_df = self.compute_auc(unique_method)
-            resume_auc[unique_method] = auc_df[self.metric_name]
+            complete_auc_df= self.compute_auc(unique_method)
+            resume_auc[unique_method] = complete_auc_df[self.metric_name]
             self.resume_auc = resume_auc
 
             avg_df = self.compute_average(unique_method)
             resume_avg[unique_method] = avg_df[self.metric_name]
             self.resume_avg = resume_avg
 
-        return self.resume_auc, self.resume_avg
+            output_path_avg = Path(f'reports/paper_evaluation/{self.dataset_name}/resume_avg_{self.metric_name}.csv')
+            self.resume_avg.to_csv(output_path_avg)
+
+        return 
     
-    def save_reports(self):
-        output_path_auc = Path(f'reports/paper_evaluation/{self.dataset_name}/resume_auc_{self.metric_name}.csv')
-        output_path_auc.parent.mkdir(parents=True, exist_ok=True) 
-        self.resume_auc.to_csv(output_path_auc)
-
-        description_auc_df = self.resume_auc.describe()
-        description_auc_path = Path(f'reports/paper_evaluation/{self.dataset_name}/resume_auc_{self.metric_name}_description.csv')
-        description_auc_df.to_csv(description_auc_path)
-
-        output_path_avg = Path(f'reports/paper_evaluation/{self.dataset_name}/resume_avg_{self.metric_name}.csv')
-        self.resume_avg.to_csv(output_path_avg)
-
+        
     def save_summary_metrics(self):
         df_type = self.auc_df
         
@@ -140,14 +168,14 @@ class Evaluator:
             mean_values = []
             std_values = []
             for dataset in dataset_names:
-                file_path = Path(f'reports/paper_evaluation/{self.dataset_name}/resume_auc_{self.metric_name}.csv')
-                if file_path.exists():
-                    df = pd.read_csv(file_path, index_col=0)
-                    mean_value = df[method].mean()
-                    std_value = df[method].std()
+                description_path = Path(f'reports/paper_evaluation/{self.dataset_name}/resume_auc_{self.metric_name}_description.csv')
+                if description_path.exists():
+                    description_df = pd.read_csv(description_path, index_col=0)
+                    mean_value = description_df.at['mean', method]
+                    std_value = description_df.at['std', method]
                     mean_values.append(f"{mean_value:.3f} +/- {std_value:.3f}")
                 else:
-                    print(f"File not found: {file_path}")  
+                    print(f"File not found: {description_path}")  
                     mean_values.append(None)
             summary_data[method] = mean_values
 
@@ -242,18 +270,6 @@ def compile_summary_reports(metric_name):
     final_summary_df.to_csv(final_summary_path)
 
 
-def run_reports(dataset_names, metric_names, iterations, folds):
-    for dataset in dataset_names:
-        for metric in metric_names:
-            evaluator = Evaluator(dataset, metric, iterations, folds)
-            resume_auc, resume_avg = evaluator.compile_methods()
-            evaluator.save_reports()
-            evaluator.run_autorank()
-            evaluator.save_summary_metrics()
-
-    evaluator.generate_subplot_image(dataset_names, metric_names)
-    for metric in metric_names:
-        compile_summary_reports(metric)
 
 
 iterations = ITERATIONS
@@ -262,6 +278,20 @@ dataset_names = ['enb', 'friedman', 'jura', 'mp5spec', 'musicOrigin2', 'oes97', 
 #dataset_names = ['atp7d', 'jura', 'enb', 'mp5spec',]
 metric_names = ['ARRMSE', 'CA', 'MAE', 'MSE', 'R2'] 
 #metric_names = ['ARRMSE', 'R2', 'MSE']
+
+
+def run_reports(dataset_names, metric_names, iterations, folds):
+    for dataset in dataset_names:
+        for metric in metric_names:
+            evaluator = Evaluator(dataset, metric, iterations, folds)
+            evaluator.compile_methods()
+            evaluator.run_autorank()
+            evaluator.save_summary_metrics()
+
+    evaluator.generate_subplot_image(dataset_names, metric_names)
+    for metric in metric_names:
+        compile_summary_reports(metric)
+
 run_reports(dataset_names, metric_names, iterations, folds)
 
 class MultiEvaluator:
