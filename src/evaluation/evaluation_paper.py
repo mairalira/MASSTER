@@ -19,7 +19,7 @@ class Evaluator:
         self.metric_name = metric_name
         self.iterations = iterations
         self.folds = folds
-        self.all_methods = ['target_qbc', 'masster_cotraining', 'masster_self_learning', 'self_learning', 'cotraining']
+        self.all_methods = ['target_qbc', 'masster_cotraining', 'masster_self_learning', 'self_learning', 'cotraining', 'pct']
 
     # method is in self.all_methods
     def generate_path(self, fold_number, method):
@@ -36,8 +36,8 @@ class Evaluator:
             type = 'semi_supervised_learning'
             file_path = Path(f'reports\{type}\{self.dataset_name}\\target_{method}_results_fold_{fold_number}.csv')
         if method == 'pct':
-            type = 'pct'
-            file_path = Path(f'reports\{type}\{self.dataset_name}\{method}_fold_{fold_number}.csv')
+            type = 'semi_supervised_learning'
+            file_path = Path(f'reports\{type}\{self.dataset_name}\{method}_results_fold_{fold_number}.csv')
         return file_path
     
     def read_clean_dataframe(self, file_path):
@@ -156,12 +156,12 @@ class Evaluator:
 
     def generate_subplot_image(self, dataset_names, metric_names):
         legend_labels = {
-            'target_qbc': 'Active Learning',
+            'target_qbc': 'MASSTER - AL',
             'masster_cotraining': 'MASSTER - CT',
             'masster_self_learning': 'MASSTER - SL',
-            'pct': 'SSL - PCT',
             'self_learning': 'SSL - SL',
-            'cotraining': 'SSL - CT'
+            'cotraining': 'SSL - CT',
+            'pct': 'SSL - PCT',
         }
         #fig, axes = plt.subplots(len(metric_names), len(dataset_names), figsize=(5*len(dataset_names), 4*len(metric_names)), sharex=True)
         #fig.subplots_adjust(bottom=0.15, top = 0.95)
@@ -239,10 +239,10 @@ def run_reports(dataset_names, metric_names, iterations, folds):
 
 iterations = ITERATIONS
 folds = 5
-dataset_names = ['enb', 'friedman', 'jura', 'mp5spec', 'musicOrigin2', 'oes97', 'osales']
-#dataset_names = ['atp7d', 'jura', 'enb', 'mp5spec',]
-metric_names = ['ARRMSE', 'CA', 'MAE', 'MSE', 'R2'] 
-#metric_names = ['ARRMSE', 'R2', 'MSE']
+#dataset_names = ['atp7d','enb', 'friedman', 'jura', 'mp5spec', 'musicOrigin2', 'oes97', 'osales', 'rf2', 'wq']
+dataset_names =['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'wq'] #need to include scm1d when ready
+#metric_names = ['ARRMSE', 'CA', 'MAE', 'MSE', 'R2'] 
+metric_names = ['ARRMSE', 'R2']
 run_reports(dataset_names, metric_names, iterations, folds)
 
 class MultiEvaluator:
@@ -286,7 +286,7 @@ def run_multi_evaluation(dataset_names, metric_names, all_methods):
     multi_eval_module.fetch_auc()
     multi_eval_module.multi_autorank()
 
-dataset_names = ['enb', 'friedman', 'jura', 'mp5spec', 'musicOrigin2', 'oes97', 'osales']
+dataset_names =['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'wq']
 metric_names = ['ARRMSE', 'CA', 'MAE', 'MSE', 'R2'] 
-all_methods = ['target_qbc', 'masster_cotraining', 'masster_self_learning', 'self_learning']
+all_methods = ['target_qbc', 'masster_cotraining', 'masster_self_learning', 'self_learning', 'pct']
 run_multi_evaluation(dataset_names, metric_names, all_methods)
