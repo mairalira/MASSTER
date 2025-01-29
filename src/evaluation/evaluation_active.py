@@ -18,8 +18,8 @@ class ActiveLearningEvaluator:
         self.dataset_name = dataset_name
         self.metric_name = metric_name
         self.n_epochs = n_epochs
-        self.methods_autorank = ['greedy', 'instance', 'qbcrf', 'random', 'rtal']
-        self.methods = ['greedy', 'instance', 'qbcrf', 'random', 'rtal', 'upperbound']
+        self.methods_autorank = ['qbcrf', 'instance', 'greedy', 'random', 'rtal']
+        self.methods = ['qbcrf', 'instance','greedy', 'random', 'rtal', 'upperbound']
         self.iterations = iterations
         self.considered_epoch = considered_epoch
 
@@ -108,20 +108,23 @@ class ActiveLearningEvaluator:
         plt.close(fig) 
         plt.close('all')
 
-    def generate_subplot_image(self, dataset_names, metric_names):
+    def generate_subplot_image(self, dataset_names):
         legend_labels = {
-            'greedy': 'Greedy',
+            'qbcrf': 'MASSTER - AL',
             'instance': 'Instance-based QBC',
-            'qbcrf': 'Target-based QBC',
+            'greedy': 'Greedy',
             'random': 'Random',
             'rtal': 'RT-AL',
             'upperbound': 'Upper-bound'
         }
+
+        metric_fig = ['ARRMSE', 'R2']
+
         fig, axes = plt.subplots(len(metric_names), len(dataset_names), figsize=(5*len(dataset_names), 4*len(metric_names)), sharex=True)
         fig.subplots_adjust(bottom=0.15, top = 0.95)
     
         for i, dataset in enumerate(dataset_names):
-            for j, metric in enumerate(metric_names):
+            for j, metric in enumerate(metric_fig):
                 ax = axes[j, i]
                 for method in self.methods:
                     file_path = Path(f'reports/active_learning_only/{dataset}/{metric}/{method}_{metric}.csv')
@@ -173,21 +176,21 @@ def run_reports(dataset_names, metric_names, considered_epochs, method_names):
                 evaluator = ActiveLearningEvaluator(dataset, metric, n_epochs, considered_epoch)
                 auc_df = evaluator.assemble_auc()
                 evaluator.save_reports()
-                #evaluator.run_autorank()
+                evaluator.run_autorank()
                 evaluator.save_summary_metrics()
                 
-    #evaluator.generate_subplot_image(dataset_names, metric_names)
+    evaluator.generate_subplot_image(dataset_names)
  
-#n_epochs = 15
+n_epochs = 15
 iterations = ITERATIONS
 
-#considered_epochs = [int(n_epochs/3), int(n_epochs*(2/3)), n_epochs]
+considered_epochs = [int(n_epochs/3), int(n_epochs*(2/3)), n_epochs]
 #dataset_names = ['atp7d', 'friedman', 'mp5spec', 'musicOrigin2', 'rf2', 'oes97', 'enb', 'osales', 'wq', 'scm1d', 'jura']
-#dataset_names = ['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'scm1d', 'wq']
-#metric_names = ['arrmse', 'r2']
+dataset_names = ['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'scm1d', 'wq']
+metric_names = ['arrmse', 'r2']
 #metric_names = ['arrmse', 'ca', 'mae', 'mse', 'r2'] 
-#method_names = ['greedy', 'instance', 'qbcrf', 'random', 'rtal', 'upperbound']
-#run_reports(dataset_names, metric_names, considered_epochs, method_names)
+method_names = ['greedy', 'instance', 'qbcrf', 'random', 'rtal', 'upperbound']
+run_reports(dataset_names, metric_names, considered_epochs, method_names)
 
 class MultiEvaluatorActive:
     def __init__(self, dataset_names, metric_names, all_methods, considered_epoch):
@@ -202,7 +205,6 @@ class MultiEvaluatorActive:
             for dataset in self.dataset_names:
                 output_path_auc = Path(f'reports/active_learning_only/{dataset}/{metric}/resume_auc_{self.considered_epoch}.csv')
                 df_auc = pd.read_csv(output_path_auc, index_col=0)
-                print(df_auc)
                 mean_auc = df_auc.mean(axis=0)
                 general_auc.loc[dataset] = mean_auc[self.all_methods].values
             output_path_mean_auc = Path(f'reports/active_learning_only/resume_auc_{metric}.csv')
@@ -212,7 +214,6 @@ class MultiEvaluatorActive:
         for metric in self.metric_names:
             output_path_mean_auc = Path(f'reports/active_learning_only/resume_auc_{metric}.csv')
             general_auc = pd.read_csv(output_path_mean_auc, index_col=0)
-            #print(general_auc)
             result = autorank(general_auc, alpha=0.05, verbose=False)
             report_path = Path(f'reports/active_learning_only/{metric}_autorank_report_auc.txt')
             with open(report_path, 'w') as report_file:

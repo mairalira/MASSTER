@@ -20,6 +20,7 @@ class Evaluator:
         self.iterations = iterations
         self.folds = folds
         self.all_methods = ['target_qbc', 'masster_cotraining', 'masster_self_learning', 'self_learning', 'cotraining', 'pct']
+        self.method_plots = ['target_qbc', 'masster_cotraining', 'masster_self_learning', 'self_learning', 'cotraining', 'pct', 'upperbound']
 
     # method is in self.all_methods
     def generate_path(self, fold_number, method):
@@ -123,12 +124,10 @@ class Evaluator:
         output_path_auc = Path(f'reports/paper_evaluation/{self.dataset_name}/resume_auc_{self.metric_name}.csv')
         output_path_auc.parent.mkdir(parents=True, exist_ok=True) 
         self.resume_auc.to_csv(output_path_auc)
-        print(self.resume_auc)
 
         df = self.resume_auc
         df = df.astype(float)
         description_auc_df = df.describe()
-        print(description_auc_df)
         description_auc_path = Path(f'reports/paper_evaluation/{self.dataset_name}/resume_auc_{self.metric_name}_description.csv')
         description_auc_df.to_csv(description_auc_path)
 
@@ -154,7 +153,7 @@ class Evaluator:
         plt.close(fig) 
         plt.close('all')
 
-    def generate_subplot_image(self, dataset_names, metric_names):
+    def generate_subplot_image(self, dataset_names):
         legend_labels = {
             'target_qbc': 'MASSTER - AL',
             'masster_cotraining': 'MASSTER - CT',
@@ -162,32 +161,41 @@ class Evaluator:
             'self_learning': 'SSL - SL',
             'cotraining': 'SSL - CT',
             'pct': 'SSL - PCT',
+            'upperbound': 'Upper-bound'
         }
-        #fig, axes = plt.subplots(len(metric_names), len(dataset_names), figsize=(5*len(dataset_names), 4*len(metric_names)), sharex=True)
-        #fig.subplots_adjust(bottom=0.15, top = 0.95)
+
+        metric_fig = ['ARRMSE', 'R2']
     
-        if len(dataset_names) == 1 and len(metric_names) == 1:
+        if len(dataset_names) == 1 and len(metric_fig) == 1:
             fig, ax = plt.subplots(figsize=(5, 4))
             axes = [[ax]]
         elif len(dataset_names) == 1:
-            fig, axes = plt.subplots(len(metric_names), 1, figsize=(5*len(metric_names), 4*len(metric_names)), sharex=True)
+            fig, axes = plt.subplots(len(metric_fig), 1, figsize=(5*len(metric_fig), 4*len(dataset_names)), sharex=True)
             axes = [[ax] for ax in axes]
-        elif len(metric_names) == 1:
+        elif len(metric_fig) == 1:
             fig, axes = plt.subplots(1, len(dataset_names), figsize=(5*len(dataset_names), 4), sharex=True)
             axes = [axes]
         else:
-            fig, axes = plt.subplots(len(metric_names), len(dataset_names), figsize=(5*len(dataset_names), 4*len(metric_names)), sharex=True)
+            fig, axes = plt.subplots(len(metric_fig), len(dataset_names), figsize=(5*len(dataset_names), 4*len(metric_fig)), sharex=True)
         
         fig.subplots_adjust(bottom=0.15, top=0.95)
         
         for i, dataset in enumerate(dataset_names):
-            for j, metric in enumerate(metric_names):
+            for j, metric in enumerate(metric_fig):
                 ax = axes[j][i]
-                for method in self.all_methods:
-                    file_path = Path(f'reports/paper_evaluation/{dataset}/resume_avg_{metric}.csv')
+                for method in self.method_plots:
+                    if method == 'upperbound':
+                        file_path = Path(f'reports/active_learning_only/{dataset}/{metric}/upperbound_{metric}.csv')
+                    else:
+                        file_path = Path(f'reports/paper_evaluation/{dataset}/resume_avg_{metric}.csv')
                     if file_path.exists():
                         df = pd.read_csv(file_path, index_col=0)
-                        mean_values = df[method].values
+                        if method == 'upperbound':
+                            filtered_df = df.loc['Iteration 1':'Iteration 5', 'Epoch 1': 'Epoch 5']
+                            mean_values = filtered_df.mean()
+                            mean_values = mean_values.values
+                        else:
+                            mean_values = df[method].values
                         ax.plot(range(1, len(mean_values) + 1), mean_values, label=legend_labels[method])
                         
                 if i == 0:
@@ -195,10 +203,10 @@ class Evaluator:
                 if j == 0:
                     ax.set_title(dataset, fontsize=18)
                 if j == len(metric_names) - 1:
-                    ax.set_xlabel('Iteration', fontsize=14)
+                    ax.set_xlabel('Epochs', fontsize=14)
         
         handles, labels = ax.get_legend_handles_labels()
-        fig.legend(handles, labels, loc='lower center', ncol=len(self.all_methods), fontsize=18)
+        fig.legend(handles, labels, loc='lower center', ncol=len(self.method_plots), fontsize=18)
         plt.savefig('reports/paper_evaluation/summary_subplot_image.png')
         plt.close(fig)
 
@@ -235,14 +243,14 @@ def run_reports(dataset_names, metric_names, iterations, folds):
             evaluator.run_autorank()
             evaluator.save_summary_metrics()
 
-    evaluator.generate_subplot_image(dataset_names, metric_names)
+    evaluator.generate_subplot_image(dataset_names)
 
 iterations = ITERATIONS
 folds = 5
-#dataset_names = ['atp7d','enb', 'friedman', 'jura', 'mp5spec', 'musicOrigin2', 'oes97', 'osales', 'rf2', 'wq']
-dataset_names =['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'wq'] #need to include scm1d when ready
-#metric_names = ['ARRMSE', 'CA', 'MAE', 'MSE', 'R2'] 
-metric_names = ['ARRMSE', 'R2']
+#dataset_names = ['atp7d','enb', 'friedman', 'jura', 'mp5spec', 'musicOrigin2', 'oes97', 'osales', 'rf2', 'scm1d', 'wq']
+dataset_names =['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'scm1d', 'wq']
+metric_names = ['ARRMSE', 'CA', 'MAE', 'MSE', 'R2'] 
+#metric_names = ['ARRMSE', 'R2']
 run_reports(dataset_names, metric_names, iterations, folds)
 
 class MultiEvaluator:
@@ -286,7 +294,7 @@ def run_multi_evaluation(dataset_names, metric_names, all_methods):
     multi_eval_module.fetch_auc()
     multi_eval_module.multi_autorank()
 
-dataset_names =['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'wq']
+dataset_names =['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'scm1d', 'wq']
 metric_names = ['ARRMSE', 'CA', 'MAE', 'MSE', 'R2'] 
 all_methods = ['target_qbc', 'masster_cotraining', 'masster_self_learning', 'self_learning', 'pct']
 run_multi_evaluation(dataset_names, metric_names, all_methods)
