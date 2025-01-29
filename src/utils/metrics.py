@@ -1,9 +1,22 @@
 import numpy as np
 from models.active_learning import *
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error, pairwise_distances_argmin_min, auc
+import sys
+from pathlib import Path
 
-def custom_accuracy(y_true, y_pred, threshold= CA_THRESHOLD):
+# Absolute path using Path
+project_root = Path(__file__).resolve().parent.parent
+# Adding path to sys.path
+sys.path.append(str(project_root))
+import config
+from config import *
+
+def custom_accuracy(y_true, y_pred, threshold=CA_THRESHOLD):
     """Custom accuracy: percentage of predictions within a certain threshold adapted to multi-target."""
+    # Ensure y_true and y_pred are numpy arrays
+    y_true = np.asarray(y_true)
+    y_pred = np.asarray(y_pred)
+    
     M = y_true.shape[1]  # Number of targets
     custom_accuracy_value = 0
 
