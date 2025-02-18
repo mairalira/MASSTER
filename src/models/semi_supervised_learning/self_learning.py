@@ -272,7 +272,7 @@ class TargetSelfLearning(SelfLearning):
 
             print(f"\nTraining self-learning model in fold {fold_index}...")
            
-            added_pairs_per_iteration, all_pred_selected_pairs, X_train, X_pool, y_train_df, X_test, y_test,  target_length, feature_names, fold_index, y_pool = self.training(
+            r2, mse, mae, ca, arrmse, added_pairs_per_iteration, all_pred_selected_pairs, X_train, X_pool, y_train, X_test, y_test, target_length, feature_names, fold_index, y_pool_nan = self.training(
                 X_train, y_train_df, X_pool, X_test, y_test, target_length, feature_names, fold_index, y_pool
 
             )

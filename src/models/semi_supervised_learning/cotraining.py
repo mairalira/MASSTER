@@ -309,11 +309,11 @@ class TargetCoTraining(CoTraining):
 
             print(f"\nTraining co-training model in fold {fold_index}...")
            
-            added_pairs_per_iteration, all_pred_selected_pairs, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_train_df, X_test_v1, X_test_v2, y_test,  target_length, feature_names_v1,feature_names_v2, fold_index, y_pool = self.training(
+            r2, mse, mae, ca, arrmse, added_pairs_per_iteration, all_pred_selected_pairs, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_train, X_test_v1, X_test_v2, y_test, target_length, feature_names_v1, feature_names_v2, fold_index, y_pool_nan = self.training(
                 X_train, y_train_df, X_pool, X_test, y_test, target_length, feature_names, fold_index, y_pool
             )
             
-            return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE, added_pairs_per_iteration, all_pred_selected_pairs, X_train_v1_df, X_train_v2_df, X_pool_v1_df, X_pool_v2_df, y_train_df, X_test_v1, X_test_v2, y_test, target_length, feature_names_v1,feature_names_v2, fold_index, y_pool
+            return self.R2, self.MSE, self.MAE, self.CA, self.ARRMSE, added_pairs_per_iteration, all_pred_selected_pairs, X_train_v1, X_train_v2, X_pool_v1, X_pool_v2, y_train, X_test_v1, X_test_v2, y_test, target_length, feature_names_v1,feature_names_v2, fold_index, y_pool
 
 if __name__ == "__main__":
     data_dir = config.DATA_DIR
