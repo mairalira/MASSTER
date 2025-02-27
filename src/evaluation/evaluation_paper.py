@@ -39,6 +39,7 @@ class Evaluator:
         if method == 'pct':
             type = 'semi_supervised_learning'
             file_path = Path(f'reports\{type}\{self.dataset_name}\{method}_results_fold_{fold_number}.csv')
+
         return file_path
     
     def read_clean_dataframe(self, file_path):
@@ -155,16 +156,16 @@ class Evaluator:
 
     def generate_subplot_image(self, dataset_names):
         legend_labels = {
-            'target_qbc': 'MASSTER - AL',
-            'masster_cotraining': 'MASSTER - CT',
-            'masster_self_learning': 'MASSTER - SL',
-            'self_learning': 'SSL - SL',
-            'cotraining': 'SSL - CT',
-            'pct': 'SSL - PCT',
-            'upperbound': 'Upper-bound'
+            'target_qbc': 'MASSTER-AL',
+            'masster_cotraining': 'MASSTER-CT',
+            'masster_self_learning': 'MASSTER-SL',
+            'self_learning': 'SSL-SL',
+            'cotraining': 'SSL-CT',
+            'pct': 'SSL-PCT',
+            'upperbound': 'Bound'
         }
 
-        metric_fig = ['ARRMSE', 'R2']
+        metric_fig = ['aRRMSE', 'R2']
     
         if len(dataset_names) == 1 and len(metric_fig) == 1:
             fig, ax = plt.subplots(figsize=(5, 4))
@@ -191,7 +192,7 @@ class Evaluator:
                     if file_path.exists():
                         df = pd.read_csv(file_path, index_col=0)
                         if method == 'upperbound':
-                            filtered_df = df.loc['Iteration 1':'Iteration 5', 'Epoch 1': 'Epoch 5']
+                            filtered_df = df.loc['Iteration 1':'Iteration 10', 'Epoch 1': 'Epoch 10']
                             mean_values = filtered_df.mean()
                             mean_values = mean_values.values
                         else:
@@ -202,8 +203,8 @@ class Evaluator:
                     ax.set_ylabel(metric, fontsize=18)
                 if j == 0:
                     ax.set_title(dataset, fontsize=18)
-                if j == len(metric_names) - 1:
-                    ax.set_xlabel('Epochs', fontsize=14)
+                if j == 1:
+                    ax.set_xlabel('Epoch', fontsize=14)
         
         handles, labels = ax.get_legend_handles_labels()
         fig.legend(handles, labels, loc='lower center', ncol=len(self.method_plots), fontsize=18)
@@ -246,7 +247,7 @@ def run_reports(dataset_names, metric_names, iterations, folds):
     evaluator.generate_subplot_image(dataset_names)
 
 iterations = ITERATIONS
-folds = 5
+folds = 10
 #dataset_names = ['atp7d','enb', 'friedman', 'jura', 'mp5spec', 'musicOrigin2', 'oes97', 'osales', 'rf2', 'scm1d', 'wq']
 dataset_names =['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'scm1d', 'wq']
 metric_names = ['ARRMSE', 'CA', 'MAE', 'MSE', 'R2'] 
@@ -297,4 +298,4 @@ def run_multi_evaluation(dataset_names, metric_names, all_methods):
 dataset_names =['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'scm1d', 'wq']
 metric_names = ['ARRMSE', 'CA', 'MAE', 'MSE', 'R2'] 
 all_methods = ['target_qbc', 'masster_cotraining', 'masster_self_learning', 'self_learning', 'pct']
-run_multi_evaluation(dataset_names, metric_names, all_methods)
+#run_multi_evaluation(dataset_names, metric_names, all_methods)

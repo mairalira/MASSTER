@@ -115,10 +115,10 @@ class ActiveLearningEvaluator:
             'greedy': 'Greedy',
             'random': 'Random',
             'rtal': 'RT-AL',
-            'upperbound': 'Upper-bound'
+            'upperbound': 'Bound'
         }
 
-        metric_fig = ['ARRMSE', 'R2']
+        metric_fig = ['aRRMSE', 'R2']
 
         fig, axes = plt.subplots(len(metric_names), len(dataset_names), figsize=(5*len(dataset_names), 4*len(metric_names)), sharex=True)
         fig.subplots_adjust(bottom=0.15, top = 0.95)
@@ -174,10 +174,10 @@ def run_reports(dataset_names, metric_names, considered_epochs, method_names):
         for dataset in dataset_names:
             for metric in metric_names:
                 evaluator = ActiveLearningEvaluator(dataset, metric, n_epochs, considered_epoch)
-                auc_df = evaluator.assemble_auc()
-                evaluator.save_reports()
-                evaluator.run_autorank()
-                evaluator.save_summary_metrics()
+                #auc_df = evaluator.assemble_auc()
+                #evaluator.save_reports()
+                #evaluator.run_autorank()
+                #evaluator.save_summary_metrics()
                 
     evaluator.generate_subplot_image(dataset_names)
  
@@ -240,7 +240,7 @@ dataset_names = ['atp7d', 'friedman', 'mp5spec', 'musicOrigin2', 'rf2', 'oes97',
 #metric_names = ['arrmse', 'r2']
 metric_names = ['arrmse', 'ca', 'mae', 'mse', 'r2'] 
 all_methods = ['greedy', 'instance', 'qbcrf', 'random', 'rtal']#, 'upperbound']
-run_multi_evaluation(dataset_names, metric_names, all_methods, considered_epoch)
+#run_multi_evaluation(dataset_names, metric_names, all_methods, considered_epoch)
 
 
 
