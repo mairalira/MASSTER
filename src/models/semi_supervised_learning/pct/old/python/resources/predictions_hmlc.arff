@@ -1,0 +1,16 @@
+@RELATION 'exprindivSubset-predictions'
+
+@ATTRIBUTE class-a                                                          string
+@ATTRIBUTE class-a-GO0003674                                                {1,0}
+@ATTRIBUTE class-a-GO0003754                                                {1,0}
+...
+@ATTRIBUTE class-a-GO0045735                                                {1,0}
+@ATTRIBUTE Original-p-GO0003674                                             numeric
+@ATTRIBUTE Original-p-GO0003754                                             numeric
+...
+@ATTRIBUTE Original-p-GO0045735                                             numeric
+@ATTRIBUTE Original-models                                                  string
+@DATA
+GO0016491,1,0,0,...,0,1.0,0.0,0.0,0.0...,0.009230555231464087,"15+84+91+92+94"
+GO0016818@GO0030554,1,0,0...
+

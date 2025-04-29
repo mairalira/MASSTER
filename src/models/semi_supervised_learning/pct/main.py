@@ -10,7 +10,7 @@ import pathlib
 from eval import eval
 
 
-path_dataset = sys.argv[1] # path to data/processed/name_dataset/
+path_dataset = sys.argv[1]
 
 n_folds = 10
 
