@@ -145,7 +145,7 @@ class ActiveLearningEvaluator:
         
         handles, labels = ax.get_legend_handles_labels()
         fig.legend(handles, labels, loc='lower center', ncol=len(self.methods), fontsize = 18)
-        plt.savefig('reports/active_learning_only/summary_subplot_image.png')
+        plt.savefig('reports/figures/active_learning_evaluation.png')
         plt.close(fig)
 
 def compile_summary_reports(considered_epochs, metric_name):
@@ -186,7 +186,8 @@ iterations = ITERATIONS
 
 considered_epochs = [int(n_epochs/3), int(n_epochs*(2/3)), n_epochs]
 #dataset_names = ['atp7d', 'friedman', 'mp5spec', 'musicOrigin2', 'rf2', 'oes97', 'enb', 'osales', 'wq', 'scm1d', 'jura']
-dataset_names = ['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'scm1d', 'wq']
+#dataset_names = ['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'scm1d', 'wq']
+dataset_names=['atp7d', 'mp5spec', 'oes97', 'rf2', 'scm1d']
 metric_names = ['arrmse', 'r2']
 #metric_names = ['arrmse', 'ca', 'mae', 'mse', 'r2'] 
 method_names = ['greedy', 'instance', 'qbcrf', 'random', 'rtal', 'upperbound']
@@ -235,8 +236,9 @@ def run_multi_evaluation(dataset_names, metric_names, all_methods, considered_ep
 
 n_epochs = 15
 considered_epoch = int(n_epochs/3)#, int(n_epochs*(2/3)), n_epochs]
-dataset_names = ['atp7d', 'friedman', 'mp5spec', 'musicOrigin2', 'rf2', 'oes97', 'enb', 'osales', 'wq', 'scm1d', 'jura']
+#dataset_names = ['atp7d', 'friedman', 'mp5spec', 'musicOrigin2', 'rf2', 'oes97', 'enb', 'osales', 'wq', 'scm1d', 'jura']
 #dataset_names = ['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'scm1d', 'wq']
+dataset_names=['atp7d', 'mp5spec', 'oes97', 'rf2', 'scm1d']
 #metric_names = ['arrmse', 'r2']
 metric_names = ['arrmse', 'ca', 'mae', 'mse', 'r2'] 
 all_methods = ['greedy', 'instance', 'qbcrf', 'random', 'rtal']#, 'upperbound']

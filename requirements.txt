@@ -3,6 +3,7 @@
 
 # Package dependencies
 awscli==1.29.0
+autorank==1.2.1
 black==23.7.0
 flake8==6.0.0
 ipython==8.15.0

@@ -208,7 +208,7 @@ class Evaluator:
         
         handles, labels = ax.get_legend_handles_labels()
         fig.legend(handles, labels, loc='lower center', ncol=len(self.method_plots), fontsize=18)
-        plt.savefig('reports/paper_evaluation/summary_subplot_image.png')
+        plt.savefig('reports/figures/masster_evaluation.png')
         plt.close(fig)
 
     def save_summary_metrics(self):
@@ -249,7 +249,8 @@ def run_reports(dataset_names, metric_names, iterations, folds):
 iterations = ITERATIONS
 folds = 10
 #dataset_names = ['atp7d','enb', 'friedman', 'jura', 'mp5spec', 'musicOrigin2', 'oes97', 'osales', 'rf2', 'scm1d', 'wq']
-dataset_names =['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'scm1d', 'wq']
+#dataset_names =['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'scm1d', 'wq']
+dataset_names=['atp7d', 'mp5spec', 'oes97', 'rf2', 'scm1d']
 metric_names = ['ARRMSE', 'CA', 'MAE', 'MSE', 'R2'] 
 #metric_names = ['ARRMSE', 'R2']
 run_reports(dataset_names, metric_names, iterations, folds)
@@ -295,7 +296,8 @@ def run_multi_evaluation(dataset_names, metric_names, all_methods):
     multi_eval_module.fetch_auc()
     multi_eval_module.multi_autorank()
 
-dataset_names =['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'scm1d', 'wq']
+#dataset_names =['atp7d', 'friedman', 'jura', 'mp5spec', 'oes97', 'rf2', 'scm1d', 'wq']
+dataset_names=['atp7d', 'mp5spec', 'oes97', 'rf2', 'scm1d']
 metric_names = ['ARRMSE', 'CA', 'MAE', 'MSE', 'R2'] 
 all_methods = ['target_qbc', 'masster_cotraining', 'masster_self_learning', 'self_learning', 'pct']
 #run_multi_evaluation(dataset_names, metric_names, all_methods)
