@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pyclus"
+version = "1.0.2"
+authors = [
+  { name="Matej Petkovic", email="matej.petkovic@ijs.si" },
+  { name="Martin Breskvar", email="martin.breskvar@ijs.si"}
+]
+description = "A wrapper around Clus."
+readme = "README.md"
+requires-python = ">=3.6"
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+
+[project.urls]
+"Homepage" = "http://source.ijs.si/clus/clus-wrappers"
+
+
+[tool.hatch.build]
+include = [
+  "pkg/*.py",
+  "clus/clus.jar",
+]
