@@ -1,5 +1,5 @@
 """ The subclass for RT-AL. """
-from models.active_learning import *
+from models.active_learning.original.active_learning import *
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import pairwise_distances, r2_score, mean_squared_error, mean_absolute_error, auc

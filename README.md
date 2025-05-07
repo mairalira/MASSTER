@@ -35,7 +35,7 @@ https://github.com/AshnaJose/Regression-Tree-based-Active-Learning
    
 3. Run src/data/data_processing.py to generate train (labeled), pool (unlabeled) and test (labeled) datasets
 4. Run src/models/active_learning/original/active_learning_module.py to apply active-learning models
-5. Evaluate what active-learning model generated the best performance metrics for all datasets (use autorank to evaluates its statistical relevance
+5. Evaluate what active-learning model generated the best performance metrics for all datasets (use autorank to evaluates its statistical relevance)
 6. Choose the best active-learning model
 
 ### Semi-Supervised only

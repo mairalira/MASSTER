@@ -29,7 +29,7 @@ sys.path.append(str(project_root))
 import config
 from utils.data_handling import *
 from utils.aux_active import *
-from models.active_learning import *
+from models.active_learning.original import *
 from models.active_learning.original.instance_based import *
 from models.active_learning.original.upperbound import *
 from models.active_learning.original.randomsampling import *

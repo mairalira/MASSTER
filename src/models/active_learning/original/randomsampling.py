@@ -1,5 +1,5 @@
 """ The subclass for the lower bound method. """
-from models.active_learning import *
+from models.active_learning.original.active_learning import *
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error, auc

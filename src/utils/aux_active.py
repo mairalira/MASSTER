@@ -16,12 +16,12 @@ sys.path.append(str(project_root))
 
 from utils.data_handling import *
 from models.active_learning import *
-from models.instance_based import *
-from models.upperbound import *
-from models.randomsampling import *
-from models.greedy_sampling import *
-from models.qbcrf import *
-from models.rtal import *
+from models.active_learning.original.instance_based import *
+from models.active_learning.original.upperbound import *
+from models.active_learning.original.randomsampling import *
+from models.active_learning.original.greedy_sampling import *
+from models.active_learning.original.qbcrf import *
+from models.active_learning.original.rtal import *
 
 # Main script
 data_dir = DATA_DIR
