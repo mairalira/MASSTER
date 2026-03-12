@@ -4,10 +4,7 @@
 # Package dependencies
 awscli==1.29.0
 autorank==1.2.1
-black==23.7.0
-flake8==6.0.0
 ipython==8.15.0
-isort==5.12.0
 jupyterlab==4.0.5
 matplotlib==3.8.0
 mkdocs==1.5.2
@@ -19,3 +16,9 @@ python-dotenv==1.0.0
 PyYAML==5.3
 scikit-learn==1.3.0
 #-e .
+
+# Dev Tools only
+#black==23.7.0
+#flake8==6.0.0
+#isort==5.12.0
+
